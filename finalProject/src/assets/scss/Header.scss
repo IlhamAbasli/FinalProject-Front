@@ -84,3 +84,110 @@
     }
   }
 }
+
+#header-bottom {
+  background-color: #121212;
+  height: 100px;
+  position: sticky;
+  top: 0;
+  .search-input {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    .input-area {
+      display: flex;
+      align-items: center;
+      .search-icon {
+        height: 12.75px;
+        width: 12.75px;
+        position: relative;
+        img {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          top: -7px;
+          left: 24px;
+        }
+      }
+      .search {
+        font-size: 14px;
+        height: 40px;
+        border-radius: 24px;
+        background-color: #202020;
+        border: none;
+        outline: none;
+        color: whitesmoke;
+        padding: 0 30px;
+        width: 230px;
+      }
+      input {
+        &::placeholder {
+          color: #aaaaae;
+        }
+      }
+    }
+  }
+
+  .menus {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      margin-left: 20px;
+      li {
+        padding: 10px;
+        a {
+          text-decoration: none;
+          color: #aaaaae;
+          transition: 0.5s;
+          &:hover {
+            color: #f5f5f5;
+          }
+        }
+        .active {
+          color: #f5f5f5;
+        }
+      }
+    }
+  }
+
+  .cart-wishlist {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    ul {
+      margin-left: auto;
+      display: flex;
+      padding: 0;
+      margin-bottom: 0;
+      align-items: center;
+      list-style: none;
+      li {
+        a {
+          text-decoration: none;
+          padding: 10px;
+          color: #aaaaae;
+          transition: 0.5s;
+          &:hover {
+            color: #f5f5f5;
+          }
+        }
+        .active {
+          color: #f5f5f5;
+        }
+        .basket-count {
+          border-radius: 16px;
+          color: #121212;
+          background-color: whitesmoke;
+          font-weight: bold;
+          padding: 0px 10px;
+        }
+      }
+    }
+  }
+}
