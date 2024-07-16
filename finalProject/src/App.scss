@@ -16,3 +16,9 @@
 main {
   background-color: #121212;
 }
+
+@media only screen and (max-width: 768px) {
+  .container-main {
+    width: 95%;
+  }
+}

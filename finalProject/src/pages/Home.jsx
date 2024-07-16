@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../assets/scss/Home.scss";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -6,11 +6,12 @@ import game1 from "../assets/images/game1.avif";
 import game2 from "../assets/images/game2.avif";
 import gameLogo from "../assets/images/zenless-logo.png";
 import thumb1 from "../assets/images/game1thumbimage.avif";
+import crosshair from "../assets/images/crosshair.avif";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import chevronDownIcon from "../assets/icons/chevron-down.svg";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination } from "swiper/modules";
 function Home() {
   const [itemId, setItemId] = useState(1);
   const elements = [1, 2, 3, 4, 5, 6];
@@ -24,12 +25,36 @@ function Home() {
   const handleClick = (e, id) => {
     setItemId(id);
   };
+
+  const swiperRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+
+  const handlePrev = () => {
+    if (swiperRef.current) {
+      swiperRef.current.swiper.slidePrev();
+    }
+  };
+
+  const handleNext = () => {
+    if (swiperRef.current) {
+      swiperRef.current.swiper.slideNext();
+    }
+  };
+
+  const handleSlideChange = () => {
+    if (swiperRef.current) {
+      const swiperInstance = swiperRef.current.swiper;
+      setIsBeginning(swiperInstance.isBeginning);
+      setIsEnd(swiperInstance.isEnd);
+    }
+  };
   return (
     <>
       <section id="slider">
         <div className="container-main">
           <div className="row">
-            <div className="col-lg-9 d-none d-lg-block">
+            <div className="col-md-9 d-none d-md-block">
               {elements.map((id, index) => {
                 return (
                   <div
@@ -80,7 +105,7 @@ function Home() {
                 );
               })}
             </div>
-            <div className="col-lg-3 d-none d-lg-block">
+            <div className="col-md-3 d-none d-md-block">
               <div className="carousel-mini-item active-thumb">
                 <ul>
                   {elements.map((id, index) => {
@@ -97,7 +122,7 @@ function Home() {
                               <img src={thumb1} alt="" />
                             </div>
                             <div className="game-name">
-                              <span>Assassin's Creed Shadows</span>
+                              <span>Zenless Zone Zero</span>
                             </div>
                             {id == itemId && (
                               <div className="cover">
@@ -113,7 +138,7 @@ function Home() {
                 </ul>
               </div>
             </div>
-            <div className="col-12 d-lg-none">
+            {/* <div className="col-12 d-md-none">
               <Swiper
                 slidesPerView={3}
                 spaceBetween={30}
@@ -133,8 +158,231 @@ function Home() {
                 <SwiperSlide>Slide 8</SwiperSlide>
                 <SwiperSlide>Slide 9</SwiperSlide>
               </Swiper>
+            </div> */}
+          </div>
+        </div>
+      </section>
+
+      <section id="top-new-releases">
+        <div className="container-main">
+          <div className="top-title">
+            <div className="top-title-link">
+              <p>Top New Releases</p>
+            </div>
+            <div className="slider-controller">
+              <div className="prev-button">
+                <button
+                  className={`prev-btn bttn ${isBeginning && "disable"}`}
+                  onClick={handlePrev}
+                >
+                  <img src={chevronDownIcon} alt="" />
+                </button>
+              </div>
+              <div className="next-button">
+                <button
+                  className={`next-btn bttn ${isEnd && "disable"}`}
+                  onClick={handleNext}
+                >
+                  <img src={chevronDownIcon} alt="" />
+                </button>
+              </div>
             </div>
           </div>
+          <Swiper
+            slidesPerView={6}
+            spaceBetween={32}
+            ref={swiperRef}
+            onSlideChange={handleSlideChange}
+            className="mySwiper"
+            breakpoints={{
+              320: {
+                slidesPerView: 1.5,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 5,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 20,
+              },
+              1920: {
+                slidesPerView: 6,
+                spaceBetween: 32,
+              },
+            }}
+          >
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </SwiperSlide>
+          </Swiper>
         </div>
       </section>
     </>
