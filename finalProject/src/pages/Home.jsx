@@ -7,6 +7,9 @@ import game2 from "../assets/images/game2.avif";
 import gameLogo from "../assets/images/zenless-logo.png";
 import thumb1 from "../assets/images/game1thumbimage.avif";
 import crosshair from "../assets/images/crosshair.avif";
+import banner from "../assets/images/bannerImg.avif";
+import gta from "../assets/images/gtav.avif";
+import ad1 from "../assets/images/ad1.avif";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
@@ -254,6 +257,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -272,6 +282,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -290,6 +307,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -308,6 +332,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -326,6 +357,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -344,6 +382,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -362,6 +407,13 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -380,9 +432,868 @@ function Home() {
                     </div>
                   </div>
                 </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+            <SwiperSlide>
+              <div className="offer-card">
+                <Link>
+                  <div className="card-body">
+                    <div className="card-image">
+                      <img src={crosshair} alt="" />
+                    </div>
+                    <div className="card-desc">
+                      <span className="game-type">BASE GAME</span>
+                      <p className="name">Crosshair X</p>
+                      <div className="price">
+                        <span>$3.59</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                <div className="to-wishlist">
+                  <button className="add-to-wishlist">
+                    <div className="wishlist-circle">
+                      <div className="plus-item"></div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </SwiperSlide>
           </Swiper>
+        </div>
+      </section>
+
+      <section id="discover-page-list">
+        <div className="container-main">
+          <div className="row d-none d-md-flex">
+            <div
+              className="col-4"
+              style={{ borderRight: "1px solid #ffffff1a" }}
+            >
+              <ul>
+                <div className="list-title">
+                  <h2>Top Sellers</h2>
+                </div>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div
+              className="col-4"
+              style={{ borderRight: "1px solid #ffffff1a" }}
+            >
+              <ul>
+                <div className="list-title">
+                  <h2>Top Sellers</h2>
+                </div>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div className="col-4">
+              <ul>
+                <div className="list-title">
+                  <h2>Top Sellers</h2>
+                </div>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>{" "}
+                <li>
+                  <div className="item">
+                    <Link>
+                      <div className="left-side">
+                        <img src={gta} alt="" />
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="right-side">
+                        <p>Grand Theft Auto V: Premium Edition</p>
+                        <span>$24.99</span>
+                      </div>
+                    </Link>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="row d-flex d-md-none">
+            <Swiper
+              slidesPerView={6}
+              spaceBetween={32}
+              className="mySwiper"
+              breakpoints={{
+                320: {
+                  slidesPerView: 1.5,
+                  spaceBetween: 20,
+                },
+              }}
+            >
+              <SwiperSlide>
+                <ul>
+                  <div className="list-title">
+                    <h2>Top Sellers</h2>
+                  </div>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                </ul>
+              </SwiperSlide>
+              <SwiperSlide>
+                <ul>
+                  <div className="list-title">
+                    <h2>Top Sellers</h2>
+                  </div>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                </ul>
+              </SwiperSlide>
+              <SwiperSlide>
+                <ul>
+                  <div className="list-title">
+                    <h2>Top Sellers</h2>
+                  </div>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>{" "}
+                  <li>
+                    <div className="item">
+                      <Link>
+                        <div className="left-side">
+                          <img src={gta} alt="" />
+                          <div className="to-wishlist">
+                            <button className="add-to-wishlist">
+                              <div className="wishlist-circle">
+                                <div className="plus-item"></div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="right-side">
+                          <p>Grand Theft Auto V: Premium Edition</p>
+                          <span>$24.99</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </li>
+                </ul>
+              </SwiperSlide>
+            </Swiper>
+          </div>
+        </div>
+      </section>
+
+      <section id="discover-banner">
+        <div className="container-main">
+          <div className="row">
+            <div className="col-md-6 col-12">
+              <div className="banner-item">
+                <div className="banner-image">
+                  <Link>
+                    <img src={banner} alt="" />
+                  </Link>
+                  <div className="to-wishlist">
+                    <button className="add-to-wishlist">
+                      <div className="wishlist-circle">
+                        <div className="plus-item"></div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <div className="banner-desc">
+                  <div className="banner-name">
+                    <Link>Planet Coaster 2</Link>
+                  </div>
+                  <p>
+                    From towering rollercoasters to twisting water slides, build
+                    a coaster and waterpark paradise in Planet Coaster 2!
+                  </p>
+                  <div className="price">
+                    <Link>Wishlist Now</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6 col-12">
+              <div className="banner-item">
+                <div className="banner-image">
+                  <Link>
+                    <img src={banner} alt="" />
+                  </Link>
+                  <div className="to-wishlist">
+                    <button className="add-to-wishlist">
+                      <div className="wishlist-circle">
+                        <div className="plus-item"></div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <div className="banner-desc">
+                  <div className="banner-name">
+                    <Link>Planet Coaster 2</Link>
+                  </div>
+                  <p>
+                    From towering rollercoasters to twisting water slides, build
+                    a coaster and waterpark paradise in Planet Coaster 2!
+                  </p>
+                  <div className="price">
+                    <Link>Wishlist Now</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="discover-ad">
+        <div className="container-main">
+          <div className="row">
+            <div className="col-12 col-md-4">
+              <div className="ad-item">
+                <div className="ad-image">
+                  <Link>
+                    <img src={ad1} alt="" />
+                  </Link>
+                </div>
+                <div className="ad-desc">
+                  <div className="ad-name">
+                    <Link>Sales & Specials</Link>
+                  </div>
+                  <p>
+                    Save big on hit titles and hidden gems. There's always
+                    something on sale at the Epic Games Store!
+                  </p>
+                  <div className="browse-btn">
+                    <Link>Browse</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-md-4">
+              <div className="ad-item">
+                <div className="ad-image">
+                  <Link>
+                    <img src={ad1} alt="" />
+                  </Link>
+                </div>
+                <div className="ad-desc">
+                  <div className="ad-name">
+                    <Link>Sales & Specials</Link>
+                  </div>
+                  <p>
+                    Save big on hit titles and hidden gems. There's always
+                    something on sale at the Epic Games Store!
+                  </p>
+                  <div className="browse-btn">
+                    <Link>Browse</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 col-md-4">
+              <div className="ad-item">
+                <div className="ad-image">
+                  <Link>
+                    <img src={ad1} alt="" />
+                  </Link>
+                </div>
+                <div className="ad-desc">
+                  <div className="ad-name">
+                    <Link>Sales & Specials</Link>
+                  </div>
+                  <p>
+                    Save big on hit titles and hidden gems. There's always
+                    something on sale at the Epic Games Store!
+                  </p>
+                  <div className="browse-btn">
+                    <Link>Browse</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </>
