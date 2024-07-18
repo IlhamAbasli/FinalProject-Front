@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
@@ -14,10 +14,12 @@ import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 
 function App() {
+  const location = useLocation();
+  const noHeaderFooterPaths = ["/login", "/register"];
   return (
     <>
       <header>
-        <Header />
+        {!noHeaderFooterPaths.includes(location.pathname) && <Header />}
       </header>
       <main>
         <Routes>
@@ -33,7 +35,7 @@ function App() {
       </main>
 
       <footer>
-        <Footer />
+        {!noHeaderFooterPaths.includes(location.pathname) && <Footer />}
       </footer>
     </>
   );

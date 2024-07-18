@@ -443,7 +443,7 @@ function Shop() {
                 </div>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-12 col-md-2">
               <div className="filter-area">
                 <div className="row">
                   <div className="col-12">
