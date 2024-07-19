@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Library from "./pages/Library";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
   const location = useLocation();
@@ -31,6 +32,7 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/p/:id" element={<ProductDetail />} />
         </Routes>
       </main>
 

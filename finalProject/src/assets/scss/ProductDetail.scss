@@ -1,0 +1,522 @@
+#game-name {
+  h1 {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-size: 50px;
+    line-height: 55px;
+    letter-spacing: -1px;
+    color: whitesmoke;
+  }
+}
+
+#game-content {
+  .game-media {
+    width: 98%;
+    .main-media {
+      position: relative;
+      overflow: hidden;
+      &:hover {
+        .controllers {
+          .left-arrow {
+            transform: translateX(0px);
+            opacity: 1;
+            background: linear-gradient(
+              270deg,
+              rgba(11, 11, 11, 0) 0%,
+              rgba(11, 11, 11, 0.4) 100%
+            );
+            transition: transform 0.35s cubic-bezier(1, 0.09, 0.03, 0.93) 0s,
+              opacity 0.35s ease 0s;
+          }
+          .right-arrow {
+            transform: translateX(0px);
+            opacity: 1;
+            background: linear-gradient(
+              270deg,
+              rgba(11, 11, 11, 0.4) 0%,
+              rgba(11, 11, 11, 0) 100%
+            );
+            transition: transform 0.35s cubic-bezier(1, 0.09, 0.03, 0.93) 0s,
+              opacity 0.35s ease 0s;
+          }
+        }
+      }
+      .controllers {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        .left-arrow {
+          transform: translateX(-100%);
+          width: 60px;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          transform: translateX(-100%);
+          opacity: 0;
+          background: linear-gradient(
+            270deg,
+            rgba(11, 11, 11, 0) 0%,
+            rgba(11, 11, 11, 0.4) 100%
+          );
+          button {
+            padding: 10px;
+            background: none;
+            border: none;
+            img {
+              width: 20px;
+              height: 30px;
+              transform: rotate(180deg);
+            }
+          }
+        }
+        .right-arrow {
+          transform: translateX(100%);
+          width: 60px;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          background: linear-gradient(
+            270deg,
+            rgba(11, 11, 11, 0.4) 0%,
+            rgba(11, 11, 11, 0) 100%
+          );
+          button {
+            padding: 10px;
+            background: none;
+            border: none;
+            img {
+              width: 20px;
+              height: 30px;
+            }
+          }
+        }
+      }
+      ul {
+        transition: transform 0.5s ease-in-out;
+        padding: 0;
+        margin: 0;
+        li {
+          border-radius: 4px;
+          overflow: hidden;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
+    .other-medias {
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      ul {
+        padding: 0;
+        margin: 0;
+        max-width: 811px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
+        li:not(:first-child) {
+          margin-left: 15px;
+        }
+        li {
+          max-width: 103px;
+          border-radius: 4px;
+          overflow: hidden;
+          .button-active {
+            &::after {
+              opacity: 0;
+            }
+          }
+          button {
+            position: relative;
+            &:hover::after {
+              opacity: 0;
+              transition: opacity 200ms ease-in-out;
+            }
+            &::after {
+              content: "";
+              width: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: 100%;
+              background-color: black;
+              opacity: 0.4;
+              transition: opacity 200ms ease-in-out;
+            }
+            border: none;
+            background: none;
+            img {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+  .about-game {
+    margin-top: 50px;
+    .game-desc {
+      margin-bottom: 50px;
+      p {
+        margin: 0;
+        font-size: 22px;
+        color: whitesmoke;
+        line-height: 30px;
+        letter-spacing: -0.4px;
+      }
+    }
+    .game-genre {
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 20px;
+      width: fit-content;
+      padding-right: 100px;
+      span {
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 0;
+        color: #f5f5f599;
+      }
+      p {
+        font-size: 16px;
+        line-height: 20px;
+        color: whitesmoke;
+      }
+    }
+  }
+
+  .system-requirements {
+    margin-top: 50px;
+    .requirement-title {
+      margin-bottom: 20px;
+      h2 {
+        font-size: 22px;
+        color: whitesmoke;
+        letter-spacing: -0.4px;
+      }
+    }
+    .requirements-area {
+      margin-bottom: 90px;
+      padding: 35px 60px;
+      border-radius: 4px;
+      background-color: #202020;
+      .tablist {
+        position: relative;
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+        button {
+          padding: 30px 4px;
+          color: rgb(245, 245, 245);
+          background: none;
+          border: none;
+          font-size: 14px;
+          text-transform: uppercase;
+          font-weight: 700;
+          letter-spacing: 1px;
+          position: relative;
+
+          &:hover::after {
+            background-color: #f5f5f599;
+          }
+        }
+        .button-active {
+          &::after {
+            content: "";
+            background-color: whitesmoke;
+            transition: background-color 125ms ease-in-out;
+            position: absolute;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            height: 3px;
+          }
+        }
+        .windows {
+          margin-right: 40px;
+        }
+      }
+      .tabpanel {
+        p {
+          margin: 0;
+          font-size: 16px;
+          color: whitesmoke;
+        }
+        .min {
+          min-width: 50%;
+        }
+        .rec {
+          min-width: 50%;
+        }
+        span {
+          font-size: 16px;
+          color: #f5f5f599;
+          font-weight: bold;
+        }
+        padding-top: 40px;
+        .minmax {
+          display: flex;
+          margin-bottom: 30px;
+        }
+        .os {
+          display: flex;
+          margin-bottom: 20px;
+        }
+        .cpu {
+          display: flex;
+          margin-bottom: 20px;
+        }
+        .memory {
+          display: flex;
+          margin-bottom: 20px;
+        }
+        .gpu {
+          display: flex;
+        }
+        .line {
+          margin-top: 40px;
+          margin-bottom: 40px;
+          width: 100%;
+          height: 1px;
+          max-height: 1px;
+          min-height: 1px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+        .author {
+          span {
+            font-size: 14px;
+            font-weight: 100;
+          }
+        }
+      }
+    }
+  }
+
+  .game-operations {
+    position: sticky;
+    top: 0;
+    padding-bottom: 90px;
+    .game-logo {
+      padding: 20px;
+      img {
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+    .type {
+      margin: 5px 0px;
+      span {
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: whitesmoke;
+        background-color: #ffffff1a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+    }
+    .price {
+      margin-top: 10px;
+      span {
+        font-size: 16px;
+        line-height: 20px;
+        color: whitesmoke;
+      }
+    }
+    .buy-wish {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      .add-cart {
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background-color: transparent;
+        color: rgb(245, 245, 245);
+        border: 1px solid rgba(245, 245, 245, 0.6);
+        height: 50px;
+        border-radius: 4px;
+        position: relative;
+        &:hover::after {
+          opacity: 0.16;
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          transition: opacity 200ms ease;
+          border-radius: 4px;
+          background-color: rgb(255, 255, 255);
+          opacity: 0;
+        }
+      }
+      .add-wishlist {
+        position: relative;
+        &:hover::after {
+          opacity: 0.16;
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          transition: opacity 200ms ease;
+          border-radius: 4px;
+          background-color: rgb(255, 255, 255);
+          opacity: 0;
+        }
+        font-size: 12px;
+        text-transform: uppercase;
+        border-radius: 4px;
+        margin-top: 10px;
+        height: 34px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        color: rgb(245, 245, 245);
+        border: 1px solid rgba(245, 245, 245, 0.6);
+        .to-wishlist {
+          margin-right: 6px;
+          .add-to-wishlist {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            border: none;
+            .wishlist-circle {
+              align-items: center;
+              background: rgb(18, 18, 18);
+              border-radius: 50%;
+              border: 2px solid rgb(245, 245, 245);
+              display: flex;
+              flex: 0 0 auto;
+              height: 18px;
+              justify-content: center;
+              position: relative;
+              width: 18px;
+              .plus-item {
+                width: 12px;
+                height: 12px;
+                &::before {
+                  background: rgb(245, 245, 245);
+                  bottom: 0;
+                  content: "";
+                  left: 0;
+                  margin: auto;
+                  position: absolute;
+                  right: 0;
+                  top: 0;
+                  height: 8px;
+                  width: 2px;
+                }
+                &::after {
+                  background: rgb(245, 245, 245);
+                  bottom: 0;
+                  content: "";
+                  left: 0;
+                  margin: auto;
+                  position: absolute;
+                  right: 0;
+                  top: 0;
+                  height: 2px;
+                  width: 8px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .creator-detail {
+      margin-top: 10px;
+      ul {
+        width: 100%;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          span {
+            font-size: 16px;
+            color: #f5f5f599;
+          }
+          p {
+            font-size: 16px;
+            color: whitesmoke;
+            margin: 0;
+            img {
+              width: 20px;
+              height: 20px;
+              object-fit: cover;
+            }
+          }
+        }
+      }
+    }
+    .copy-to-clipboard {
+      margin-top: 20px;
+      button {
+        position: relative;
+        &:hover::after {
+          opacity: 0.16;
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          transition: opacity 200ms ease 0s;
+          background-color: rgb(255, 255, 255);
+          opacity: 0;
+        }
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background-color: transparent;
+        color: rgb(245, 245, 245);
+        border: 1px solid rgba(245, 245, 245, 0.6);
+        height: 34px;
+        img {
+          width: 14px;
+          height: 14px;
+          margin-right: 7px;
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../assets/scss/Header.scss";
 import icon from "../../assets/icons/icon.svg";
 import iconBorder from "../../assets/icons/iconBorder.svg";
@@ -12,6 +12,10 @@ import chevronDownIcon from "../../assets/icons/chevron-down.svg";
 import { Link, NavLink } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 function Header() {
+  useEffect(() => {
+    document.title =
+      "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
+  }, []);
   const [isOpen, setIsOpen] = useState(false);
   const [buttonText, setButtonText] = useState("Discover");
 

@@ -4,8 +4,7 @@ import icon from "../assets/icons/icon.svg";
 import { useFormik } from "formik";
 import { basicSchema } from "../schemas/index";
 import { Link } from "react-router-dom";
-import { Input, InputLabel, TextField } from "@mui/material";
-import InputAdornment from "@mui/material/InputAdornment";
+import { TextField } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 
 import Visibility from "@mui/icons-material/Visibility";
