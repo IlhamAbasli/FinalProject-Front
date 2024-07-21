@@ -42,7 +42,7 @@ function RedeemCode() {
       <section id="redeem-area">
         <div className="container-redeem">
           <div className="row">
-            <div className="col-4">
+            <div className="col-12 col-md-4">
               <div className="game-content">
                 <div className="game-image">
                   {/* <img src={gameimg} alt="" /> */}
@@ -54,7 +54,7 @@ function RedeemCode() {
                 </p>
               </div>
             </div>
-            <div className="col-8">
+            <div className="col-12 col-md-8">
               <div className="redeem-side">
                 <div className="title">
                   <h2>Redeem your product</h2>

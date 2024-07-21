@@ -8,6 +8,7 @@ import crosshair from "../assets/images/crosshair.avif";
 import genreImg from "../assets/images/genre-img.avif";
 import search from "../assets/icons/search.svg";
 import checked from "../assets/icons/checked.svg";
+import Pagination from "@mui/material/Pagination";
 import "../assets/scss/Shop.scss";
 
 function Shop() {
@@ -308,7 +309,7 @@ function Shop() {
       <section id="games-area">
         <div className="container-main">
           <div className="row">
-            <div className="col-12 col-md-10">
+            <div className="col-12 col-lg-8 col-xl-9">
               <div className="sort-area">
                 <span className="text">Show:</span>
                 <div className="sort-dropdown">
@@ -359,7 +360,7 @@ function Shop() {
                 </div>
               </div>
               <div className="row">
-                <div className="col">
+                <div className="col-6 col-md-3">
                   <div className="offer-card">
                     <Link>
                       <div className="card-body">
@@ -384,7 +385,7 @@ function Shop() {
                     </div>
                   </div>
                 </div>
-                <div className="col">
+                <div className="col-6 col-md-3">
                   <div className="offer-card">
                     <Link>
                       <div className="card-body">
@@ -409,7 +410,7 @@ function Shop() {
                     </div>
                   </div>
                 </div>
-                <div className="col">
+                <div className="col-6 col-md-3">
                   <div className="offer-card">
                     <Link>
                       <div className="card-body">
@@ -434,7 +435,7 @@ function Shop() {
                     </div>
                   </div>
                 </div>
-                <div className="col">
+                <div className="col-6 col-md-3">
                   <div className="offer-card">
                     <Link>
                       <div className="card-body">
@@ -459,7 +460,7 @@ function Shop() {
                     </div>
                   </div>
                 </div>
-                <div className="col">
+                <div className="col-6 col-md-3">
                   <div className="offer-card">
                     <Link>
                       <div className="card-body">
@@ -482,11 +483,16 @@ function Shop() {
                         </div>
                       </button>
                     </div>
+                  </div>
+                </div>
+                <div className="col-12 d-flex justify-content-center">
+                  <div className="pagination">
+                    <Pagination count={10} />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-2">
+            <div className="col-12 col-lg-4 col-xl-3">
               <div className="filter-area">
                 <div className="row">
                   <div className="col-12">

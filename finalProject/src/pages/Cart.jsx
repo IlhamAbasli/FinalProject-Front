@@ -36,12 +36,12 @@ function Cart() {
       <section id="cart-title">
         <div className="container-main">
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-lg-6">
               <div className="title-text">
                 <h2>My Cart</h2>
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-lg-6">
               <div className="wallet-balance">
                 <Link>
                   <span className="wallet-title">
@@ -58,7 +58,7 @@ function Cart() {
       <section id="cart-area">
         <div className="container-main">
           <div className="row">
-            <div className="col-9">
+            <div className="col-12 col-lg-7 col-xl-9">
               <div className="wishlisted-game">
                 <div className="top">
                   <div className="game-image">
@@ -91,7 +91,7 @@ function Cart() {
                 </div>
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-12 col-lg-5 col-xl-3">
               <div className="checkout-area">
                 <div className="checkout-title">
                   <span>Games and Apps Summary</span>
@@ -118,7 +118,7 @@ function Cart() {
           <div className="payment-container">
             <div className="payment-area">
               <div className="row">
-                <div className="col-8">
+                <div className="col-12 col-md-8">
                   <div className="payment-content">
                     <div className="payment-title">
                       <h1>Checkout</h1>
@@ -170,7 +170,7 @@ function Cart() {
                     </div>
                   </div>
                 </div>
-                <div className="col-4">
+                <div className="col-12  col-md-4">
                   <div className="payment-summaries">
                     <div className="summaries-content">
                       <div className="summary-title">
@@ -178,6 +178,97 @@ function Cart() {
                         <button onClick={handleCloseClick}>
                           <img src={xicon} alt="" />
                         </button>
+                      </div>{" "}
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="payment-games">
+                        <div className="payment-item">
+                          <div className="payment-thumbnail">
+                            <img src={wishlistgame} alt="" />
+                          </div>
+                          <div className="payment-content">
+                            <span className="game-name">
+                              Tom Clancy's Rainbow Six® Siege
+                            </span>
+                            <span className="price">$19.90</span>
+                          </div>
+                        </div>
                       </div>
                       <div className="payment-games">
                         <div className="payment-item">
@@ -203,7 +294,6 @@ function Cart() {
                         </div>
                       </div>
                     </div>
-
                     <div className="place-order">
                       <button disabled={!isPaymentMethodSelected}>
                         Place order

@@ -251,3 +251,62 @@
     }
   }
 }
+
+@media only screen and (max-width: 768px) {
+  #wishlist-title {
+    .title-text {
+      h2 {
+        font-size: 30px;
+      }
+    }
+    .wallet-balance {
+      justify-content: flex-start;
+    }
+  }
+  #wishlist-area {
+    .wishlisted-game {
+      .top {
+        .about-game {
+          .game {
+            .name {
+              a {
+                font-size: 18px;
+              }
+            }
+          }
+        }
+      }
+      .operations {
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  #wishlist-title {
+    .title-text {
+      h2 {
+        font-size: 30px;
+      }
+    }
+  }
+  #wishlist-area {
+    .wishlisted-game {
+      .top {
+        .about-game {
+          .game {
+            .name {
+              a {
+                font-size: 18px;
+              }
+            }
+          }
+        }
+      }
+      .operations {
+        margin-top: 20px;
+      }
+    }
+  }
+}

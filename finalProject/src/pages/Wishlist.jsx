@@ -25,12 +25,12 @@ function Wishlist() {
       <section id="wishlist-title">
         <div className="container-main">
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-lg-6">
               <div className="title-text">
                 <h2>My Wishlist</h2>
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-lg-6">
               <div className="wallet-balance">
                 <Link>
                   <span className="wallet-title">

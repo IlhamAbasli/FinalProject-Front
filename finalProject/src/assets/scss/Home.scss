@@ -390,6 +390,91 @@
   }
 }
 
+@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+  #slider {
+    .carousel {
+      .carousel-main-item {
+        .image-link {
+          .slider-image {
+          }
+          .image-shadow {
+          }
+        }
+        .game-detail {
+          width: 320px;
+          left: 32px;
+          bottom: 32px;
+          .game-description {
+            .game-logo {
+              width: 150px;
+              height: 55px;
+              margin-bottom: 20px;
+            }
+            .about-game {
+              font-size: 12px;
+              p {
+                font-size: 14px;
+                margin: 0;
+              }
+            }
+          }
+          .game-operations {
+            .price {
+              p {
+                margin-top: 10px;
+                margin-bottom: 0;
+              }
+            }
+            .buy-wishlist {
+              margin-top: 10px;
+              a {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+    .carousel-mini-item {
+      ul {
+        li {
+          a {
+            .mini-item-thumb {
+              padding: 0;
+              margin-left: 47px;
+              height: 74px;
+              .item-image {
+                margin: 0;
+                margin-left: 4px;
+                width: 40px;
+                height: 53px;
+                img {
+                  width: 40px;
+                  height: 53 px;
+                }
+              }
+              .game-name {
+                padding-left: 10px;
+                span {
+                  font-size: 14px;
+                  letter-spacing: 0.17px;
+                  line-height: 1.5;
+                }
+              }
+              .cover {
+                .cover-item {
+                }
+                .cover-progress {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 #top-new-releases {
   margin-top: 50px;
   .top-title {
@@ -682,7 +767,7 @@
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1024px) {
   #discover-page-list {
     .list-title {
       margin-left: 16px;
@@ -696,8 +781,46 @@
           padding: 16px;
           a {
             .left-side {
-              width: 48px;
-              height: 64px;
+              width: 80px;
+              height: 63px;
+              margin-right: 15px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
+            }
+            .right-side {
+              max-width: 183px;
+              p {
+                font-size: 14px;
+              }
+              span {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+  #discover-page-list {
+    .list-title {
+      margin-left: 16px;
+      h2 {
+        font-size: 18px;
+      }
+    }
+    ul {
+      li {
+        .item {
+          padding: 16px;
+          a {
+            .left-side {
+              width: 72px;
+              height: 89px;
               margin-right: 15px;
               img {
                 width: 100%;
@@ -845,6 +968,42 @@
   }
 }
 
+@media only screen and (max-width: 425px) {
+  #discover-banner {
+    .banner-item {
+      margin-top: 30px;
+    }
+  }
+  #discover-ad {
+    .ad-item {
+      margin-top: 40px;
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  #discover-banner {
+    .banner-item {
+      .banner-desc {
+        .banner-name {
+          a {
+            font-size: 18px;
+          }
+        }
+        .price {
+          a {
+            font-size: 18px;
+          }
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
 #discover-ad {
   padding-bottom: 50px;
   .ad-item {
@@ -901,6 +1060,28 @@
           font-size: 22px;
           line-height: 30px;
           color: whitesmoke;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  #discover-ad {
+    .ad-item {
+      .ad-desc {
+        .ad-name {
+          a {
+            font-size: 18px;
+          }
+        }
+        p {
+          font-size: 14px;
+        }
+        .browse-btn {
+          a {
+            font-size: 18px;
+          }
         }
       }
     }

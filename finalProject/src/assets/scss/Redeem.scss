@@ -97,3 +97,74 @@
     }
   }
 }
+
+@media only screen and (max-width: 768px) {
+  #redeem-area {
+    .container-redeem {
+      width: 89%;
+    }
+    .game-content {
+      height: fit-content;
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      .game-image {
+        max-width: 177px;
+        height: 230px;
+      }
+      p {
+        display: none;
+      }
+    }
+
+    .redeem-side {
+      margin-top: 34px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title {
+        h2 {
+          text-align: center;
+          font-size: 18px;
+        }
+      }
+      .desc {
+        p {
+          margin: 0;
+          text-align: center;
+          font-size: 14px;
+        }
+      }
+      .redeem-input {
+        input {
+          font-size: 20px;
+        }
+      }
+    }
+    .redeem-button {
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  #redeem-area {
+    .container-redeem {
+      width: 85%;
+    }
+    .redeem-side {
+      padding-left: 43px;
+    }
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  #redeem-area {
+    .container-redeem {
+      width: 85%;
+    }
+  }
+}

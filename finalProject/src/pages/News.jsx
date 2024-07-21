@@ -3,6 +3,8 @@ import "../assets/scss/News.scss";
 import summersale from "../assets/images/summer-sale.avif";
 import article from "../assets/images/article.avif";
 import { Link } from "react-router-dom";
+import Pagination from "@mui/material/Pagination";
+
 function News() {
   useEffect(() => {
     document.title =
@@ -77,177 +79,43 @@ function News() {
           <div className="row">
             <div className="col-12">
               <ul>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
+                <li className="list-item">
+                  <div className="row">
+                    <div className="col-12 col-md-4 col-lg-4 col-xl-2">
+                      <div className="article-image">
+                        <Link>
+                          <img src={article} alt="" />
+                        </Link>
+                      </div>
                     </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
+                    <div className="col-12 col-md-8 col-lg-8 col-xl-10">
+                      <div className="article-details">
+                        <div className="article-date">
+                          <p>7h ago</p>
+                        </div>
+                        <div className="article-title">
+                          <Link>
+                            JDM: Rise of the Scorpion pulls from manga-fueled
+                            street racing
+                          </Link>
+                        </div>
+                        <div className="article-desc">
+                          <p>
+                            We talk to the developers about the manga
+                            inspirations behind its open-world street racer
+                            Japanese Drift Master and the upcoming free prologue
+                            JDM: Rise of the Scorpion.
+                          </p>
+                        </div>
+                        <div className="read-more">
+                          <Link>Read More</Link>
+                        </div>
+                      </div>
                     </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
-                    </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
-                    </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
-                    </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
-                    </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
-                    </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
-                    </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>{" "}
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
-                    </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
-                    </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div className="article-image">
-                    <Link>
-                      <img src={article} alt="" />
-                    </Link>
-                  </div>
-                  <div className="article-details">
-                    <div className="article-date">
-                      <p>7h ago</p>
-                    </div>
-                    <div className="article-title">
-                      <Link>
-                        JDM: Rise of the Scorpion pulls from manga-fueled street
-                        racing
-                      </Link>
-                    </div>
-                    <div className="article-desc">
-                      <p>
-                        We talk to the developers about the manga inspirations
-                        behind its open-world street racer Japanese Drift Master
-                        and the upcoming free prologue JDM: Rise of the
-                        Scorpion.
-                      </p>
-                    </div>
-                    <div className="read-more">
-                      <Link>Read More</Link>
+                    <div className="col-12 d-flex justify-content-center">
+                      <div className="pagination">
+                        <Pagination count={10} />
+                      </div>
                     </div>
                   </div>
                 </li>
