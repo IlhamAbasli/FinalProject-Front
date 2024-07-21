@@ -414,9 +414,12 @@
           list-style: none;
           padding: 0;
           margin: 0;
+
           li {
             button {
+              text-transform: capitalize;
               padding: 12px;
+              font-size: 14px;
               color: whitesmoke;
               opacity: 0.6;
               border-radius: 3px;

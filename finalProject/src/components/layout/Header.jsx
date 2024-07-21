@@ -15,7 +15,7 @@ function Header() {
   useEffect(() => {
     document.title =
       "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
-  }, []);
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [buttonText, setButtonText] = useState("Discover");
 
@@ -41,6 +41,24 @@ function Header() {
   const closeSearch = () => {
     setIsSearchOpen(false);
   };
+
+  const [isSticky, setIsSticky] = useState(false);
+
+  const handleScroll = () => {
+    if (window.scrollY > 100) {
+      // Adjust the value as needed
+      setIsSticky(true);
+    } else {
+      setIsSticky(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   return (
     <>
       <section id="header">
@@ -65,12 +83,28 @@ function Header() {
           <div className="col-lg-3 col-4 right-side">
             <div className="">
               <ul>
-                <li>
-                  <Link to="/login">
+                <li className="account-nav">
+                  <Link to="/login" title="IlhamXIII">
                     <div className="account">
                       <img src={avataricon} alt="" />
                     </div>
                   </Link>
+                  <div className="nav-account-menu">
+                    <ul>
+                      <li>
+                        <Link to="/account">Account</Link>
+                      </li>
+                      <li>
+                        <Link to="/redeem">Redeem Code</Link>
+                      </li>
+                      <li>
+                        <Link to="/wishlist">Wishlist</Link>
+                      </li>
+                      <li>
+                        <button>Log out</button>
+                      </li>
+                    </ul>
+                  </div>
                 </li>
                 <li>
                   <Link to="/library">Library</Link>
@@ -80,7 +114,7 @@ function Header() {
           </div>
         </div>
       </section>
-      <section id="header-bottom">
+      <section id="header-bottom" className={isSticky ? "sticky" : ""}>
         <div className="container-main">
           <div className="row">
             <div className="col-4 col-lg-4 col-xl-2 search-input">

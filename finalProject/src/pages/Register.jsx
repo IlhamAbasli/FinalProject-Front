@@ -158,7 +158,7 @@ function Register() {
                     </div>
                     <div className="submit-area">
                       <button disabled={isSubmitting} type="submit">
-                        Sign In
+                        Sign Up
                       </button>
                       <span>
                         Already have an account?

@@ -23,3 +23,5 @@ export const advancedSchema = yup.object().shape({
   lastname: yup.string().required("Required"),
   isAccepted: yup.boolean().oneOf([true], "You must accept terms & conditions"),
 });
+
+export const gameCreateSchema = yup.object().shape({});

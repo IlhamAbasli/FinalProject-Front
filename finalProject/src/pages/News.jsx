@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../assets/scss/News.scss";
 import summersale from "../assets/images/summer-sale.avif";
 import article from "../assets/images/article.avif";
 import { Link } from "react-router-dom";
 function News() {
+  useEffect(() => {
+    document.title =
+      "Epic Games Store News | The Latest Blog Articles About PC Gaming - Epic Games Store";
+  });
   return (
     <>
       <section id="latest-news">
@@ -182,7 +186,7 @@ function News() {
                         behind its open-world street racer Japanese Drift Master
                         and the upcoming free prologue JDM: Rise of the
                         Scorpion.
-                      </p>
+                      </p>{" "}
                     </div>
                     <div className="read-more">
                       <Link>Read More</Link>

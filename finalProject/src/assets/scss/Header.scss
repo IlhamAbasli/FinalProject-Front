@@ -71,6 +71,73 @@
           }
         }
       }
+      .account-nav {
+        position: relative;
+        &:hover {
+          .nav-account-menu {
+            display: block;
+          }
+        }
+        .nav-account-menu {
+          display: none;
+          position: absolute;
+          min-width: 160px;
+          border-radius: 8px;
+          padding-block: 24px;
+          padding-inline: 16px;
+          background-color: #202020;
+          z-index: 1;
+          right: -90px;
+          top: 100%;
+          ul {
+            display: flex;
+            flex-direction: column;
+            li {
+              width: 100%;
+              text-align: left;
+              a {
+                font-size: 14px;
+                display: block;
+                width: 100%;
+                color: #aaaaae;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 4px 16px;
+                border-radius: 0.5rem;
+                transition: color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+                  background-color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+                &:hover {
+                  color: #e6e6ea;
+                  background-color: #404044;
+                }
+              }
+              button {
+                font-size: 14px;
+                display: block;
+                width: 100%;
+                color: #aaaaae;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 4px 16px;
+                border-radius: 0.5rem;
+                transition: color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+                  background-color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+                border: none;
+                background: transparent;
+                text-align: left;
+                &:hover {
+                  color: #e6e6ea;
+                  background-color: #404044;
+                }
+              }
+            }
+          }
+        }
+      }
     }
     .account {
       cursor: pointer;
@@ -87,11 +154,17 @@
   }
 }
 
+.sticky {
+  top: 0;
+  width: 100%;
+  position: fixed;
+  background-color: #121212;
+  z-index: 10000;
+}
+
 #header-bottom {
   background-color: #121212;
   height: 100px;
-  position: sticky;
-  top: 0;
   .search-input {
     height: 100px;
     display: flex;
@@ -145,6 +218,7 @@
       li {
         padding: 10px;
         a {
+          font-size: 16px;
           text-decoration: none;
           color: #aaaaae;
           transition: 0.5s;
@@ -261,6 +335,7 @@
           height: 15px;
         }
         a {
+          font-size: 16px;
           text-decoration: none;
           padding: 10px;
           color: #aaaaae;
@@ -353,7 +428,6 @@
     }
     .cart-wishlist {
       height: 80px;
-
       .MuiBadge-root {
         padding-right: 5px;
       }

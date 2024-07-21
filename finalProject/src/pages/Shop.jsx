@@ -39,21 +39,64 @@ function Shop() {
     setIsDropdownOpen(false);
   };
 
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
+  const [checkedFilters, setCheckedFilters] = useState({
+    price: [],
+    genre: [],
+    types: [],
+    platform: [],
+  });
 
-  const toggleFilterDropdown = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
+  const toggleFilterDropdown = (filterName) => {
+    setFilterDropdownOpen((prev) => ({
+      ...prev,
+      [filterName]: !prev[filterName],
+    }));
   };
 
-  const toggleChecked = () => {
-    setIsChecked(!isChecked);
+  const toggleChecked = (filterName, value) => {
+    setCheckedFilters((prev) => {
+      const currentFilters = prev[filterName];
+      const isAlreadyChecked = currentFilters.includes(value);
+      const newFilters = isAlreadyChecked
+        ? currentFilters.filter((item) => item !== value)
+        : [...currentFilters, value];
+      return {
+        ...prev,
+        [filterName]: newFilters,
+      };
+    });
   };
 
   const resetFilters = () => {
-    setIsFilterDropdownOpen(false);
-    setIsChecked(false);
+    setCheckedFilters({
+      price: [],
+      genre: [],
+      types: [],
+      platform: [],
+    });
   };
+
+  const renderFilterItem = (filterName, value) => (
+    <li key={value}>
+      <button onClick={() => toggleChecked(filterName, value)}>
+        {value}
+        <img
+          src={checked}
+          alt="Checked"
+          className={checkedFilters[filterName].includes(value) ? "" : "d-none"}
+        />
+      </button>
+    </li>
+  );
+
+  const countSelectedFilters = () => {
+    return Object.values(checkedFilters).reduce(
+      (acc, filters) => acc + filters.length,
+      0
+    );
+  };
+
   return (
     <>
       <section id="genres-carousel">
@@ -448,9 +491,20 @@ function Shop() {
                 <div className="row">
                   <div className="col-12">
                     <div className="filter-title">
-                      <span>Filters</span>
+                      <span>
+                        Filters{" "}
+                        {countSelectedFilters() === 0
+                          ? ""
+                          : `(${countSelectedFilters()})`}
+                      </span>
                       <button
-                        className={`reset-filters ${isChecked ? "" : "d-none"}`}
+                        className={`reset-filters ${
+                          Object.values(checkedFilters).some(
+                            (arr) => arr.length
+                          )
+                            ? ""
+                            : "d-none"
+                        }`}
                         onClick={resetFilters}
                       >
                         Reset
@@ -467,305 +521,84 @@ function Shop() {
                   </div>
                   <div className="col-12">
                     <div className="filter">
-                      <button onClick={toggleFilterDropdown}>
+                      <button onClick={() => toggleFilterDropdown("price")}>
                         Price
                         <img
                           src={chevronDownIcon}
                           alt="Chevron Down"
-                          className={isFilterDropdownOpen ? "rotate" : ""}
+                          className={filterDropdownOpen.price ? "rotate" : ""}
                         />
                       </button>
-                      {isFilterDropdownOpen && (
+                      {filterDropdownOpen.price && (
                         <div className="filter-dropdown">
                           <ul>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Free{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $5.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $10.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $20.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $30.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                $14.00 and above{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
+                            {[
+                              "Free",
+                              "Under $5.00",
+                              "Under $10.00",
+                              "Under $20.00",
+                              "Under $30.00",
+                              "$14.00 and above",
+                            ].map((item) => renderFilterItem("price", item))}
                           </ul>
                         </div>
                       )}
                     </div>
                     <div className="filter">
-                      <button onClick={toggleFilterDropdown}>
+                      <button onClick={() => toggleFilterDropdown("genre")}>
                         Genre
                         <img
                           src={chevronDownIcon}
                           alt="Chevron Down"
-                          className={isFilterDropdownOpen ? "rotate" : ""}
+                          className={filterDropdownOpen.genre ? "rotate" : ""}
                         />
                       </button>
-                      {isFilterDropdownOpen && (
+                      {filterDropdownOpen.genre && (
                         <div className="filter-dropdown">
                           <ul>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Free{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $5.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $10.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $20.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $30.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                $14.00 and above{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
+                            {["Action", "Casual", "Comedy"].map((item) =>
+                              renderFilterItem("genre", item)
+                            )}
                           </ul>
                         </div>
                       )}
                     </div>
                     <div className="filter">
-                      <button onClick={toggleFilterDropdown}>
+                      <button onClick={() => toggleFilterDropdown("types")}>
                         Types
                         <img
                           src={chevronDownIcon}
                           alt="Chevron Down"
-                          className={isFilterDropdownOpen ? "rotate" : ""}
+                          className={filterDropdownOpen.types ? "rotate" : ""}
                         />
                       </button>
-                      {isFilterDropdownOpen && (
+                      {filterDropdownOpen.types && (
                         <div className="filter-dropdown">
                           <ul>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Free{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $5.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $10.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $20.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $30.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                $14.00 and above{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
+                            {["App", "Game"].map((item) =>
+                              renderFilterItem("types", item)
+                            )}
                           </ul>
                         </div>
                       )}
                     </div>
                     <div className="filter">
-                      <button onClick={toggleFilterDropdown}>
+                      <button onClick={() => toggleFilterDropdown("platform")}>
                         Platform
                         <img
                           src={chevronDownIcon}
                           alt="Chevron Down"
-                          className={isFilterDropdownOpen ? "rotate" : ""}
+                          className={
+                            filterDropdownOpen.platform ? "rotate" : ""
+                          }
                         />
                       </button>
-                      {isFilterDropdownOpen && (
+                      {filterDropdownOpen.platform && (
                         <div className="filter-dropdown">
                           <ul>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Free{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $5.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $10.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $20.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                Under $30.00{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
-                            <li>
-                              <button onClick={toggleChecked}>
-                                $14.00 and above{" "}
-                                <img
-                                  src={checked}
-                                  alt="Checked"
-                                  className={isChecked ? " " : "d-none"}
-                                />
-                              </button>
-                            </li>
+                            {["Windows", "Mac OS"].map((item) =>
+                              renderFilterItem("platform", item)
+                            )}
                           </ul>
                         </div>
                       )}
