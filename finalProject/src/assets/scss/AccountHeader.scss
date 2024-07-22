@@ -1,0 +1,155 @@
+#header {
+  background-color: #18181c;
+  height: 72px;
+  padding: 20px 24px;
+  .left-side {
+    width: 78px;
+    .icon {
+      filter: invert(1);
+      padding-right: 15px;
+    }
+  }
+  .middle {
+    margin-left: 10px;
+    ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+
+      .store {
+        width: 54px;
+        height: 32px;
+        margin-right: 20px;
+      }
+      li:not(:first-child) {
+        a {
+          color: #aaaaae;
+          text-decoration: none;
+          font-size: 14px;
+          padding: 4px 16px;
+          border-radius: 0.5rem;
+          transition: color var(--easing-duration, 0.2s)
+              var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+            background-color var(--easing-duration, 0.2s)
+              var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+          &:hover {
+            color: #e6e6ea;
+            background-color: #404044;
+          }
+        }
+      }
+    }
+  }
+  .right-side {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    ul {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      li:not(:first-child) {
+        a {
+          color: #aaaaae;
+          text-decoration: none;
+          font-size: 14px;
+          padding: 4px 16px;
+          border-radius: 0.5rem;
+          transition: color var(--easing-duration, 0.2s)
+              var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+            background-color var(--easing-duration, 0.2s)
+              var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+          &:hover {
+            color: #e6e6ea;
+            background-color: #404044;
+          }
+        }
+      }
+      .account-nav {
+        position: relative;
+        &:hover {
+          .nav-account-menu {
+            display: block;
+          }
+        }
+        .nav-account-menu {
+          display: none;
+          position: absolute;
+          min-width: 160px;
+          border-radius: 8px;
+          padding-block: 24px;
+          padding-inline: 16px;
+          background-color: #202020;
+          z-index: 1;
+          right: -90px;
+          top: 100%;
+          ul {
+            display: flex;
+            flex-direction: column;
+            li {
+              width: 100%;
+              text-align: left;
+              a {
+                font-size: 14px;
+                display: block;
+                width: 100%;
+                color: #aaaaae;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 4px 16px;
+                border-radius: 0.5rem;
+                transition: color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+                  background-color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+                &:hover {
+                  color: #e6e6ea;
+                  background-color: #404044;
+                }
+              }
+              button {
+                font-size: 14px;
+                display: block;
+                width: 100%;
+                color: #aaaaae;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 4px 16px;
+                border-radius: 0.5rem;
+                transition: color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1)),
+                  background-color var(--easing-duration, 0.2s)
+                    var(--easing, cubic-bezier(0.65, 0, 0.35, 1));
+                border: none;
+                background: transparent;
+                text-align: left;
+                &:hover {
+                  color: #e6e6ea;
+                  background-color: #404044;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .account {
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      background-color: #404044;
+      border-radius: 50%;
+      img {
+        width: 32px;
+        height: 32px;
+        filter: invert(1);
+      }
+    }
+  }
+}

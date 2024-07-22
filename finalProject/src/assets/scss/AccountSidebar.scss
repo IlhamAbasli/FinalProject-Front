@@ -1,0 +1,43 @@
+.sidebar {
+  padding-left: 20px;
+  margin: 0;
+  li {
+    background-color: white;
+
+    .active {
+      background: #f2f2f2;
+      p {
+        color: #141414;
+      }
+      img {
+        opacity: 1;
+      }
+    }
+    a {
+      padding: 5px 20px;
+      transition: background-color 150ms;
+      display: flex;
+      &:hover {
+        background: #f2f2f2;
+        p {
+          color: #141414;
+        }
+        img {
+          opacity: 1;
+        }
+      }
+      img {
+        opacity: 0.7;
+        margin-right: 10px;
+      }
+      p {
+        margin: 0;
+        padding: 10px;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: #141414b8;
+        font-weight: bold;
+      }
+    }
+  }
+}

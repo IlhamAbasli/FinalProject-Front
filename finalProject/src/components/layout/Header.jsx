@@ -92,7 +92,7 @@ function Header() {
                   <div className="nav-account-menu">
                     <ul>
                       <li>
-                        <Link to="/account">Account</Link>
+                        <Link to="/account/*">Account</Link>
                       </li>
                       <li>
                         <Link to="/redeem">Redeem Code</Link>

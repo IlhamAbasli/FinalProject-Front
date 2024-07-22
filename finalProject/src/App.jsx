@@ -23,13 +23,17 @@ import Types from "./pages/Admin/pages/Types";
 import Ads from "./pages/Admin/pages/Ads";
 import NewsAdmin from "./pages/Admin/pages/NewsAdmin";
 import GamesCreate from "./pages/Admin/pages/GamesCreate";
+import EmailPreferences from "./pages/EmailPreferences";
+import Security from "./pages/Security";
 
 function App() {
   const location = useLocation();
   const noHeaderFooterPaths = [
     "/login",
     "/register",
-    "/account",
+    "/account/*",
+    "/account/email",
+    "/account/security",
     "/admin",
     "/admin/games",
     "/admin/genres",
@@ -54,7 +58,9 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/account" element={<Account />} />
+          <Route path="/account/*" element={<Account />} />
+          <Route path="/account/email" element={<EmailPreferences />} />
+          <Route path="/account/security" element={<Security />} />
           <Route path="/p/:id" element={<ProductDetail />} />
           <Route path="/redeem" element={<RedeemCode />} />
           <Route path="/admin" element={<Admin />} />
