@@ -162,16 +162,16 @@
           }
         }
       }
-      .pagination {
-        margin-top: 40px;
-        margin-bottom: 60px;
-        .MuiPaginationItem-root {
-          color: white;
-          font-family: Inter;
-        }
-        .Mui-selected {
-          background-color: #ffffff42;
-        }
+    }
+    .pagination {
+      margin-top: 40px;
+      margin-bottom: 60px;
+      .MuiPaginationItem-root {
+        color: white;
+        font-family: Inter;
+      }
+      .Mui-selected {
+        background-color: #ffffff42;
       }
     }
   }

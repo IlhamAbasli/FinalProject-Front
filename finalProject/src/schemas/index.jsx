@@ -24,4 +24,58 @@ export const advancedSchema = yup.object().shape({
   isAccepted: yup.boolean().oneOf([true], "You must accept terms & conditions"),
 });
 
-export const gameCreateSchema = yup.object().shape({});
+const validFileExtensions = {
+  image: ["jpg", "gif", "png", "jpeg", "svg", "webp", "avif"],
+};
+
+function isValidFileType(fileName, fileType) {
+  return (
+    fileName &&
+    validFileExtensions[fileType].indexOf(fileName.split(".").pop()) > -1
+  );
+}
+
+function getAllowedExt(type) {
+  return validFileExtensions[type].map((e) => `.${e}`).toString();
+}
+
+const MAX_FILE_SIZE = 1024 * 3000;
+
+export const newsCreateSchema = yup.object().shape({
+  title: yup.string().required("This field is required"),
+  images: yup
+    .mixed()
+    .required("Required")
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value || !value.length) return false;
+      return Array.from(value).every((file) =>
+        isValidFileType(file.name.toLowerCase(), "image")
+      );
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+      if (!value || !value.length) return false;
+      return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
+    }),
+  content1: yup.string().required("This field is required"),
+  content2: yup.string(),
+  content3: yup.string(),
+});
+
+export const newsEditSchema = yup.object().shape({
+  title: yup.string().required("This field is required"),
+  images: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value || value.length === 0) return true;
+      return Array.from(value).every((file) =>
+        isValidFileType(file.name.toLowerCase(), "image")
+      );
+    })
+    .test("is-valid-size", "Max allowed size is 3MB per file", (value) => {
+      if (!value || value.length === 0) return true;
+      return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
+    }),
+  content1: yup.string().required("This field is required"),
+  content2: yup.string(),
+  content3: yup.string(),
+});

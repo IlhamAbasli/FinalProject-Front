@@ -25,9 +25,13 @@ import NewsAdmin from "./pages/Admin/pages/NewsAdmin";
 import GamesCreate from "./pages/Admin/pages/GamesCreate";
 import EmailPreferences from "./pages/EmailPreferences";
 import Security from "./pages/Security";
+import NewsCreate from "./pages/Admin/pages/NewsCreate";
+import NewsAdminDetail from "./pages/Admin/pages/NewsAdminDetail";
+import NewsEdit from "./pages/Admin/pages/NewsEdit";
 
 function App() {
   const location = useLocation();
+
   const noHeaderFooterPaths = [
     "/login",
     "/register",
@@ -41,12 +45,22 @@ function App() {
     "/admin/ads",
     "/admin/news",
     "/admin/games/create",
+    "/admin/news/create",
+    /^\/admin\/news\/detail\/[^\/]+$/,
+    /^\/admin\/news\/edit\/[^\/]+$/,
   ];
+
+  const shouldHideHeaderFooter = noHeaderFooterPaths.some((path) =>
+    typeof path === "string"
+      ? location.pathname === path
+      : path instanceof RegExp
+      ? path.test(location.pathname)
+      : false
+  );
+
   return (
     <>
-      <header>
-        {!noHeaderFooterPaths.includes(location.pathname) && <Header />}
-      </header>
+      <header>{!shouldHideHeaderFooter && <Header />}</header>
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -70,12 +84,13 @@ function App() {
           <Route path="/admin/types" element={<Types />} />
           <Route path="/admin/ads" element={<Ads />} />
           <Route path="/admin/news" element={<NewsAdmin />} />
+          <Route path="/admin/news/create" element={<NewsCreate />} />
+          <Route path="/admin/news/detail/:id" element={<NewsAdminDetail />} />
+          <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
         </Routes>
       </main>
 
-      <footer>
-        {!noHeaderFooterPaths.includes(location.pathname) && <Footer />}
-      </footer>
+      <footer>{!shouldHideHeaderFooter && <Footer />}</footer>
     </>
   );
 }
