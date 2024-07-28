@@ -122,6 +122,9 @@ function NewsAdminDetail() {
                         News not found
                       </div>
                     )}
+                    <Link className="btn btn-danger mt-5" to="/admin/news">
+                      Back
+                    </Link>
                   </div>
                 </div>
               </div>

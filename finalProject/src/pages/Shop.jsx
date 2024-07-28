@@ -10,8 +10,26 @@ import search from "../assets/icons/search.svg";
 import checked from "../assets/icons/checked.svg";
 import Pagination from "@mui/material/Pagination";
 import "../assets/scss/Shop.scss";
+import axios from "axios";
 
 function Shop() {
+  const [genres, setGenres] = useState([]);
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Genre/GetAll"
+        );
+        setGenres(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -562,8 +580,8 @@ function Shop() {
                       {filterDropdownOpen.genre && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["Action", "Casual", "Comedy"].map((item) =>
-                              renderFilterItem("genre", item)
+                            {genres.map((item) =>
+                              renderFilterItem("genre", item.genreName)
                             )}
                           </ul>
                         </div>

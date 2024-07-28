@@ -18,7 +18,7 @@ function NewsAdmin() {
     };
 
     fetchNews();
-  }, [news]);
+  }, []);
 
   const handleDelete = async (id) => {
     try {
