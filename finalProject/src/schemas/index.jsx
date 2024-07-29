@@ -83,3 +83,7 @@ export const newsEditSchema = yup.object().shape({
 export const genreCreateSchema = yup.object().shape({
   name: yup.string().required("This field is required"),
 });
+
+export const typeCreateSchema = yup.object().shape({
+  name: yup.string().required("This field is required"),
+});

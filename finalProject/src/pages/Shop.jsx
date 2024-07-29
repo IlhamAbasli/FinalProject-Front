@@ -14,6 +14,7 @@ import axios from "axios";
 
 function Shop() {
   const [genres, setGenres] = useState([]);
+  const [types, setTypes] = useState([]);
   useEffect(() => {
     const fetchGenres = async () => {
       try {
@@ -26,7 +27,19 @@ function Shop() {
         console.error("Error fetching news:", error);
       }
     };
+    const fetchTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Type/GetAll"
+        );
+        setTypes(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
 
+    fetchTypes();
     fetchGenres();
   }, []);
 
@@ -599,8 +612,8 @@ function Shop() {
                       {filterDropdownOpen.types && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["App", "Game"].map((item) =>
-                              renderFilterItem("types", item)
+                            {types.map((item) =>
+                              renderFilterItem("types", item.typeName)
                             )}
                           </ul>
                         </div>

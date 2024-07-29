@@ -30,6 +30,8 @@ import NewsAdminDetail from "./pages/Admin/pages/NewsAdminDetail";
 import NewsEdit from "./pages/Admin/pages/NewsEdit";
 import GenresCreate from "./pages/Admin/pages/GenresCreate";
 import GenresEdit from "./pages/Admin/pages/GenresEdit";
+import TypeCreate from "./pages/Admin/pages/TypeCreate";
+import TypeEdit from "./pages/Admin/pages/TypeEdit";
 
 function App() {
   const location = useLocation();
@@ -46,6 +48,9 @@ function App() {
     "/admin/genres/create",
     /^\/admin\/genres\/edit\/[^\/]+$/,
     "/admin/types",
+    "/admin/types/create",
+    /^\/admin\/types\/edit\/[^\/]+$/,
+
     "/admin/ads",
     "/admin/news",
     "/admin/games/create",
@@ -88,6 +93,8 @@ function App() {
           <Route path="/admin/genres/create" element={<GenresCreate />} />
           <Route path="/admin/genres/edit/:id" element={<GenresEdit />} />
           <Route path="/admin/types" element={<Types />} />
+          <Route path="/admin/types/create" element={<TypeCreate />} />
+          <Route path="/admin/types/edit/:id" element={<TypeEdit />} />
           <Route path="/admin/ads" element={<Ads />} />
           <Route path="/admin/news" element={<NewsAdmin />} />
           <Route path="/admin/news/create" element={<NewsCreate />} />

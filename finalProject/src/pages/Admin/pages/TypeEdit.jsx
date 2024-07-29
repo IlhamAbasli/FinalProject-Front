@@ -2,20 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import Sidebar from "../components/layout/Sidebar";
 import axios from "axios";
-import { genreCreateSchema } from "../../../schemas";
+import { typeCreateSchema } from "../../../schemas";
 import { useNavigate, useParams, Link } from "react-router-dom";
-function GenresEdit() {
+
+function TypeEdit() {
   const navigate = useNavigate();
-  const [genre, setGenre] = useState(null);
+  const [type, setType] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:44300/api/Genre/GetById/${id}`
+          `https://localhost:44300/api/Type/GetById/${id}`
         );
-        setGenre(response.data);
+        setType(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -28,11 +29,11 @@ function GenresEdit() {
     console.log(values);
 
     const formData = new FormData();
-    formData.append("GenreName", values.name);
+    formData.append("TypeName", values.name);
 
     try {
       const res = await axios.put(
-        `https://localhost:44300/api/Genre/Edit/${id}`,
+        `https://localhost:44300/api/Type/Edit/${id}`,
         formData,
         {
           headers: {
@@ -42,7 +43,7 @@ function GenresEdit() {
       );
       actions.resetForm();
       console.log(res);
-      navigate("/admin/genres");
+      navigate("/admin/types");
     } catch (error) {
       console.error("Error submitting the form", error);
     }
@@ -51,10 +52,10 @@ function GenresEdit() {
   const { values, errors, isSubmitting, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
-        name: genre?.genreName || "",
+        name: type?.typeName || "",
       },
       enableReinitialize: true,
-      validationSchema: genreCreateSchema,
+      validationSchema: typeCreateSchema,
       onSubmit,
     });
   return (
@@ -92,7 +93,7 @@ function GenresEdit() {
                   >
                     Update
                   </button>
-                  <Link className="btn btn-danger mx-3" to="/admin/genres">
+                  <Link className="btn btn-danger mx-3" to="/admin/types">
                     Back
                   </Link>
                 </form>
@@ -105,4 +106,4 @@ function GenresEdit() {
   );
 }
 
-export default GenresEdit;
+export default TypeEdit;

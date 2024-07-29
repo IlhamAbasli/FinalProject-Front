@@ -1,38 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
+import React from "react";
 import Sidebar from "../components/layout/Sidebar";
+import { useFormik } from "formik";
+import { typeCreateSchema } from "../../../schemas";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { genreCreateSchema } from "../../../schemas";
-import { useNavigate, useParams, Link } from "react-router-dom";
-function GenresEdit() {
+function TypeCreate() {
   const navigate = useNavigate();
-  const [genre, setGenre] = useState(null);
-  const { id } = useParams();
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const response = await axios.get(
-          `https://localhost:44300/api/Genre/GetById/${id}`
-        );
-        setGenre(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-
-    fetchNews();
-  }, [id]);
-
   const onSubmit = async (values, actions) => {
     console.log(values);
 
     const formData = new FormData();
-    formData.append("GenreName", values.name);
+    formData.append("TypeName", values.name);
 
     try {
-      const res = await axios.put(
-        `https://localhost:44300/api/Genre/Edit/${id}`,
+      const res = await axios.post(
+        "https://localhost:44300/api/Type/Create",
         formData,
         {
           headers: {
@@ -42,7 +24,7 @@ function GenresEdit() {
       );
       actions.resetForm();
       console.log(res);
-      navigate("/admin/genres");
+      navigate("/admin/types");
     } catch (error) {
       console.error("Error submitting the form", error);
     }
@@ -51,10 +33,9 @@ function GenresEdit() {
   const { values, errors, isSubmitting, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
-        name: genre?.genreName || "",
+        name: "",
       },
-      enableReinitialize: true,
-      validationSchema: genreCreateSchema,
+      validationSchema: typeCreateSchema,
       onSubmit,
     });
   return (
@@ -71,7 +52,7 @@ function GenresEdit() {
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">
-                      Change genre name
+                      Enter type name
                     </label>
                     <input
                       type="text"
@@ -90,9 +71,9 @@ function GenresEdit() {
                     className="btn btn-success"
                     disabled={isSubmitting}
                   >
-                    Update
+                    Create
                   </button>
-                  <Link className="btn btn-danger mx-3" to="/admin/genres">
+                  <Link className="btn btn-danger mx-3" to="/admin/types">
                     Back
                   </Link>
                 </form>
@@ -105,4 +86,4 @@ function GenresEdit() {
   );
 }
 
-export default GenresEdit;
+export default TypeCreate;
