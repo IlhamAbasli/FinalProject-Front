@@ -15,6 +15,7 @@ import axios from "axios";
 function Shop() {
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
+  const [platforms, setPlatforms] = useState([]);
   useEffect(() => {
     const fetchGenres = async () => {
       try {
@@ -38,14 +39,24 @@ function Shop() {
         console.error("Error fetching news:", error);
       }
     };
+    const fetchPlatforms = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Platform/GetAll"
+        );
+        setPlatforms(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
 
     fetchTypes();
     fetchGenres();
+    fetchPlatforms();
   }, []);
 
   const swiperRef = useRef(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
 
   const handlePrev = () => {
     if (swiperRef.current) {
@@ -633,8 +644,8 @@ function Shop() {
                       {filterDropdownOpen.platform && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["Windows", "Mac OS"].map((item) =>
-                              renderFilterItem("platform", item)
+                            {platforms.map((item) =>
+                              renderFilterItem("platform", item.platformName)
                             )}
                           </ul>
                         </div>

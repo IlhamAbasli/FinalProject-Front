@@ -64,6 +64,18 @@ function Sidebar() {
           <li className="sidebar-item">
             <Link
               className="sidebar-link"
+              to="/admin/platforms"
+              aria-expanded="false"
+            >
+              <span>
+                <i className="ti ti-file-description"></i>
+              </span>
+              <span className="hide-menu">Platforms</span>
+            </Link>
+          </li>
+          <li className="sidebar-item">
+            <Link
+              className="sidebar-link"
               to="/admin/ads"
               aria-expanded="false"
             >

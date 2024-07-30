@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
 import axios from "axios";
-function Ads() {
-  const [ads, setAds] = useState([]);
+function Platform() {
+  const [platforms, setPlatforms] = useState([]);
   useEffect(() => {
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
-          "https://localhost:44300/api/Ad/GetAll"
+          "https://localhost:44300/api/Platform/GetAll"
         );
-        setAds(response.data);
+        setPlatforms(response.data);
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -23,9 +23,9 @@ function Ads() {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `https://localhost:44300/api/Ad/Delete/${id}`
+        `https://localhost:44300/api/Platform/Delete/${id}`
       );
-      setAds(response.data);
+      setPlatforms(response.data);
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -33,6 +33,7 @@ function Ads() {
   };
   return (
     <div>
+      {" "}
       <section id="admin-area" style={{ background: "white" }}>
         <div className="admin-container">
           <div className="row">
@@ -45,12 +46,12 @@ function Ads() {
                   <div className="card-body p-4">
                     <h5 className="card-title fw-semibold mb-4">Ads</h5>
                     <Link
-                      to="/admin/ads/create"
+                      to="/admin/platforms/create"
                       className="btn btn-success mx-2"
                     >
                       Create
                     </Link>
-                    {ads.length != 0 ? (
+                    {platforms.length != 0 ? (
                       <div className="table-responsive mt-3">
                         <table className="table text-nowrap mb-0 align-middle">
                           <thead v="text-dark fs-4">
@@ -64,18 +65,18 @@ function Ads() {
                             </tr>
                           </thead>
                           <tbody>
-                            {ads.length != 0 &&
-                              ads.map((data, index) => {
+                            {platforms.length != 0 &&
+                              platforms.map((data, index) => {
                                 return (
                                   <tr key={index}>
                                     <td className="border-bottom-0">
                                       <h6 className="fw-semibold mb-1">
-                                        {data.adTitle}
+                                        {data.platformName}
                                       </h6>
                                     </td>
                                     <td className="border-bottom-0 d-flex gap-2">
                                       <Link
-                                        to={`/admin/ads/edit/${data.id}`}
+                                        to={`/admin/platforms/edit/${data.id}`}
                                         className="btn btn-secondary"
                                       >
                                         Edit
@@ -95,7 +96,7 @@ function Ads() {
                       </div>
                     ) : (
                       <div className="alert alert-danger mt-5" role="alert">
-                        Genres not added yet
+                        Platforms not added yet
                       </div>
                     )}
                   </div>
@@ -109,4 +110,4 @@ function Ads() {
   );
 }
 
-export default Ads;
+export default Platform;

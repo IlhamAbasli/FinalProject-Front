@@ -32,6 +32,12 @@ import GenresCreate from "./pages/Admin/pages/GenresCreate";
 import GenresEdit from "./pages/Admin/pages/GenresEdit";
 import TypeCreate from "./pages/Admin/pages/TypeCreate";
 import TypeEdit from "./pages/Admin/pages/TypeEdit";
+import AdsCreate from "./pages/Admin/pages/AdsCreate";
+import AdsDetail from "./pages/Admin/pages/AdsDetail";
+import AdsEdit from "./pages/Admin/pages/AdsEdit";
+import Platform from "./pages/Admin/pages/Platform";
+import PlatformCreate from "./pages/Admin/pages/PlatformCreate";
+import PlatformEdit from "./pages/Admin/pages/PlatformEdit";
 
 function App() {
   const location = useLocation();
@@ -43,20 +49,31 @@ function App() {
     "/account/email",
     "/account/security",
     "/admin",
+
     "/admin/games",
+    "/admin/games/create",
+
     "/admin/genres",
     "/admin/genres/create",
     /^\/admin\/genres\/edit\/[^\/]+$/,
+
     "/admin/types",
     "/admin/types/create",
     /^\/admin\/types\/edit\/[^\/]+$/,
 
     "/admin/ads",
+    "/admin/ads/create",
+    /^\/admin\/ads\/detail\/[^\/]+$/,
+    /^\/admin\/ads\/edit\/[^\/]+$/,
+
     "/admin/news",
-    "/admin/games/create",
     "/admin/news/create",
     /^\/admin\/news\/detail\/[^\/]+$/,
     /^\/admin\/news\/edit\/[^\/]+$/,
+
+    "/admin/platforms",
+    "/admin/platforms/create",
+    /^\/admin\/platforms\/edit\/[^\/]+$/,
   ];
 
   const shouldHideHeaderFooter = noHeaderFooterPaths.some((path) =>
@@ -96,10 +113,16 @@ function App() {
           <Route path="/admin/types/create" element={<TypeCreate />} />
           <Route path="/admin/types/edit/:id" element={<TypeEdit />} />
           <Route path="/admin/ads" element={<Ads />} />
+          <Route path="/admin/ads/create" element={<AdsCreate />} />
+          <Route path="/admin/ads/detail/:id" element={<AdsDetail />} />
+          <Route path="/admin/ads/edit/:id" element={<AdsEdit />} />
           <Route path="/admin/news" element={<NewsAdmin />} />
           <Route path="/admin/news/create" element={<NewsCreate />} />
           <Route path="/admin/news/detail/:id" element={<NewsAdminDetail />} />
           <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+          <Route path="/admin/platforms" element={<Platform />} />
+          <Route path="/admin/platforms/create" element={<PlatformCreate />} />
+          <Route path="/admin/platforms/edit/:id" element={<PlatformEdit />} />
         </Routes>
       </main>
 

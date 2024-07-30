@@ -87,3 +87,62 @@ export const genreCreateSchema = yup.object().shape({
 export const typeCreateSchema = yup.object().shape({
   name: yup.string().required("This field is required"),
 });
+
+export const adCreateSchema = yup.object().shape({
+  title: yup.string().required("This field is required"),
+  description: yup.string().required("This field is required"),
+  image: yup
+    .mixed()
+    .required("Required")
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return false;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return false;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+});
+export const adEditSchema = yup.object().shape({
+  title: yup.string().required("This field is required"),
+  description: yup.string().required("This field is required"),
+  image: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return true;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return true;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+});
+
+export const platformCreateSchema = yup.object().shape({
+  name: yup.string().required("This field is required"),
+  image: yup
+    .mixed()
+    .required("Required")
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return false;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return false;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+});
+
+export const platformEditSchema = yup.object().shape({
+  name: yup.string().required("This field is required"),
+  image: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return true;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return true;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+});

@@ -13,6 +13,7 @@ import ad1 from "../assets/images/ad1.avif";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
+import axios from "axios";
 import "swiper/css";
 import "swiper/css/pagination";
 function Home() {
@@ -52,6 +53,25 @@ function Home() {
       setIsEnd(swiperInstance.isEnd);
     }
   };
+
+  const baseURL = "https://localhost:44300/assets/images/";
+
+  const [ads, setAds] = useState([]);
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Ad/GetAll"
+        );
+        setAds(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchAds();
+  }, []);
   return (
     <>
       <section id="slider">
@@ -1230,69 +1250,28 @@ function Home() {
       <section id="discover-ad">
         <div className="container-main">
           <div className="row">
-            <div className="col-12 col-md-4">
-              <div className="ad-item">
-                <div className="ad-image">
-                  <Link>
-                    <img src={ad1} alt="" />
-                  </Link>
-                </div>
-                <div className="ad-desc">
-                  <div className="ad-name">
-                    <Link>Sales & Specials</Link>
-                  </div>
-                  <p>
-                    Save big on hit titles and hidden gems. There's always
-                    something on sale at the Epic Games Store!
-                  </p>
-                  <div className="browse-btn">
-                    <Link>Browse</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-12 col-md-4">
-              <div className="ad-item">
-                <div className="ad-image">
-                  <Link>
-                    <img src={ad1} alt="" />
-                  </Link>
-                </div>
-                <div className="ad-desc">
-                  <div className="ad-name">
-                    <Link>Sales & Specials</Link>
-                  </div>
-                  <p>
-                    Save big on hit titles and hidden gems. There's always
-                    something on sale at the Epic Games Store!
-                  </p>
-                  <div className="browse-btn">
-                    <Link>Browse</Link>
+            {ads.map((data, index) => {
+              return (
+                <div className="col-12 col-md-4" key={index}>
+                  <div className="ad-item">
+                    <div className="ad-image">
+                      <Link to="/shop">
+                        <img src={`${baseURL}${data.adImage}`} alt="" />
+                      </Link>
+                    </div>
+                    <div className="ad-desc">
+                      <div className="ad-name">
+                        <Link to="/shop">{data.adTitle}</Link>
+                      </div>
+                      <p>{data.adDescription}</p>
+                      <div className="browse-btn">
+                        <Link to="/shop">Browse</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-12 col-md-4">
-              <div className="ad-item">
-                <div className="ad-image">
-                  <Link>
-                    <img src={ad1} alt="" />
-                  </Link>
-                </div>
-                <div className="ad-desc">
-                  <div className="ad-name">
-                    <Link>Sales & Specials</Link>
-                  </div>
-                  <p>
-                    Save big on hit titles and hidden gems. There's always
-                    something on sale at the Epic Games Store!
-                  </p>
-                  <div className="browse-btn">
-                    <Link>Browse</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
