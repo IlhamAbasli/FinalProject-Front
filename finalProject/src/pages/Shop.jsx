@@ -16,6 +16,7 @@ function Shop() {
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
   const [platforms, setPlatforms] = useState([]);
+  const [games, setGames] = useState([]);
   useEffect(() => {
     const fetchGenres = async () => {
       try {
@@ -50,11 +51,25 @@ function Shop() {
         console.error("Error fetching news:", error);
       }
     };
+    const fetchGames = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetAll"
+        );
+        setGames(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
 
     fetchTypes();
     fetchGenres();
     fetchPlatforms();
+    fetchGames();
   }, []);
+
+  const baseURL = "https://localhost:44300/assets/images/";
 
   const swiperRef = useRef(null);
 
@@ -402,131 +417,45 @@ function Shop() {
                 </div>
               </div>
               <div className="row">
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
+                {games.map((game, index) => {
+                  const mainImage = game.productImages.filter(
+                    (image) => image.isMain
+                  )[0];
+                  return (
+                    <div className="col-6 col-md-3" key={index}>
+                      <div className="offer-card">
+                        <Link to={`/p/${game.id}`}>
+                          <div className="card-body">
+                            <div className="card-image">
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </div>
+                            <div className="card-desc">
+                              <span className="game-type">
+                                {game.productType.typeName}
+                              </span>
+                              <p className="name">{game.productName}</p>
+                              <div className="price">
+                                <span>${game.productPrice}</span>
+                              </div>
+                            </div>
                           </div>
+                        </Link>
+                        <div className="to-wishlist">
+                          <button className="add-to-wishlist">
+                            <div className="wishlist-circle">
+                              <div className="plus-item"></div>
+                            </div>
+                          </button>
                         </div>
                       </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
                     </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
                 <div className="col-12 d-flex justify-content-center">
                   <div className="pagination">
                     <Pagination count={10} />

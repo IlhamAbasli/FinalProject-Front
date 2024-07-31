@@ -1,18 +1,35 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/layout/Sidebar";
+import { gameEditSchema } from "../../../schemas";
 import { useFormik } from "formik";
-import { gameCreateSchema } from "../../../schemas";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { MenuItem, Select, InputLabel } from "@mui/material";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import AnchorIcon from "@mui/icons-material/Anchor";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { InputLabel, NativeSelect } from "@mui/material";
 
-function GamesCreate() {
+function GameEdit() {
   const navigate = useNavigate();
+  const [game, setGame] = useState(null);
+  const { id } = useParams();
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
   const [platforms, setPlatforms] = useState([]);
 
+  const baseURL = "https://localhost:44300/assets/images/";
+
   useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:44300/api/Product/GetById/${id}`
+        );
+        setGame(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
@@ -50,7 +67,8 @@ function GamesCreate() {
     fetchTypes();
     fetchGenres();
     fetchPlatforms();
-  }, []);
+    fetchGame();
+  }, [id]);
 
   const onSubmit = async (values, actions) => {
     console.log(values);
@@ -61,7 +79,7 @@ function GamesCreate() {
     formData.append("ProductPrice", values.price);
     formData.append("DeveloperName", values.developerName);
     formData.append("PublisherName", values.publisherName);
-    formData.append("ProductLogo", values.logo);
+    formData.append("NewProductLogo", values.logo);
     formData.append("Count", values.count);
     formData.append("GenreId", values.genreId);
     formData.append("TypeId", values.typeId);
@@ -75,12 +93,12 @@ function GamesCreate() {
     formData.append("RecomMemory", values.recomMemory);
     formData.append("RecomGpu", values.recomGpu);
     for (let i = 0; i < values.images.length; i++) {
-      formData.append("ProductImages", values.images[i]);
+      formData.append("NewProductImages", values.images[i]);
     }
 
     try {
-      const res = await axios.post(
-        "https://localhost:44300/api/Product/Create",
+      const res = await axios.put(
+        `https://localhost:44300/api/Product/Edit/${id}`,
         formData,
         {
           headers: {
@@ -105,31 +123,67 @@ function GamesCreate() {
     setFieldValue,
   } = useFormik({
     initialValues: {
-      name: "",
+      name: game?.productName || "",
       images: [],
       logo: "",
-      description: "",
-      developerName: "",
-      publisherName: "",
-      price: 0,
-      count: 0,
-      genreId: 0,
-      typeId: 0,
-      platformId: 0,
-      minOsVersion: "",
-      minCpuName: "",
-      minMemory: "",
-      minGpu: "",
-      recomOsVersion: "",
-      recomCpuName: "",
-      recomMemory: "",
-      recomGpu: "",
+      description: game?.productDescription || "",
+      developerName: game?.developerName || "",
+      publisherName: game?.publisherName || "",
+      price: game?.productPrice || "",
+      count: game?.count || "",
+      genreId: game?.genre.id || "",
+      typeId: game?.productType.id || "",
+      platformId: game?.platformProducts[0].platformId || "",
+      minOsVersion: game?.systemRequirements[0].minOsVersion || "",
+      minCpuName: game?.systemRequirements[0].minCpuName || "",
+      minMemory: game?.systemRequirements[0].minMemory || "",
+      minGpu: game?.systemRequirements[0].minGpu || "",
+      recomOsVersion: game?.systemRequirements[0].recomOsVersion || "",
+      recomCpuName: game?.systemRequirements[0].recomCpuName || "",
+      recomMemory: game?.systemRequirements[0].recomMemory || "",
+      recomGpu: game?.systemRequirements[0].recomGpu || "",
     },
-    validationSchema: gameCreateSchema,
+    enableReinitialize: true,
+    validationSchema: gameEditSchema,
     onSubmit,
   });
+
+  const handleDelete = async (gameId, imageId) => {
+    try {
+      const response = await axios.delete(
+        `https://localhost:44300/api/Product/DeleteImage?imageId=${imageId}&productId=${gameId}`
+      );
+      // Update the news data after deleting the image
+      setGame((prevGame) => ({
+        ...prevGame,
+        productImages: prevGame.productImages.filter(
+          (image) => image.id !== imageId
+        ),
+      }));
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+
+  const handleChangeMain = async (gameId, imageId) => {
+    try {
+      const response = await axios.put(
+        `https://localhost:44300/api/Product/ChangeMainImage?imageId=${imageId}&productId=${gameId}`
+      );
+      // Update the news data after deleting the image
+      setGame((prevGame) => ({
+        ...prevGame,
+        productImages: prevGame.productImages.filter(
+          (image) => image.id !== imageId
+        ),
+      }));
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
   return (
     <div>
+      {" "}
       <section id="admin-area" style={{ background: "white" }}>
         <div className="admin-container">
           <div className="row">
@@ -242,8 +296,7 @@ function GamesCreate() {
                     >
                       Genre
                     </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
+                    <NativeSelect
                       id="genre-select"
                       name="genreId"
                       value={values.genreId}
@@ -252,11 +305,11 @@ function GamesCreate() {
                       sx={{ width: "250px", height: "50px" }}
                     >
                       {genres.map((genre) => (
-                        <MenuItem key={genre.id} value={genre.id}>
+                        <option key={genre.id} value={genre.id}>
                           {genre.genreName}
-                        </MenuItem>
+                        </option>
                       ))}
-                    </Select>
+                    </NativeSelect>
                     {errors.genreId && (
                       <p style={{ color: "red" }}>{errors.genreId}</p>
                     )}
@@ -268,8 +321,7 @@ function GamesCreate() {
                     >
                       Type
                     </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
+                    <NativeSelect
                       id="type-select"
                       name="typeId"
                       value={values.typeId}
@@ -278,11 +330,11 @@ function GamesCreate() {
                       sx={{ width: "250px", height: "50px" }}
                     >
                       {types.map((type) => (
-                        <MenuItem key={type.id} value={type.id}>
+                        <option key={type.id} value={type.id}>
                           {type.typeName}
-                        </MenuItem>
+                        </option>
                       ))}
-                    </Select>
+                    </NativeSelect>
                     {errors.typeId && (
                       <p style={{ color: "red" }}>{errors.typeId}</p>
                     )}
@@ -294,8 +346,7 @@ function GamesCreate() {
                     >
                       Platform
                     </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
+                    <NativeSelect
                       id="platform-select"
                       name="platformId"
                       value={values.platformId}
@@ -304,11 +355,11 @@ function GamesCreate() {
                       sx={{ width: "250px", height: "50px" }}
                     >
                       {platforms.map((platform) => (
-                        <MenuItem key={platform.id} value={platform.id}>
+                        <option key={platform.id} value={platform.id}>
                           {platform.platformName}
-                        </MenuItem>
+                        </option>
                       ))}
-                    </Select>
+                    </NativeSelect>
                     {errors.platformId && (
                       <p style={{ color: "red" }}>{errors.platformId}</p>
                     )}
@@ -476,12 +527,103 @@ function GamesCreate() {
                       <p style={{ color: "red" }}>{errors.images}</p>
                     )}
                   </div>
+                  <div className="mb-3">
+                    <div className="col-12">
+                      <div className="row">
+                        <div className="col-3">
+                          <h4>Logo</h4>
+                          <div
+                            className="game-logo"
+                            style={{
+                              backgroundColor: "black",
+                              borderRadius: "8px",
+                            }}
+                          >
+                            <img
+                              src={`${baseURL}${game?.productLogo}`}
+                              alt=""
+                              style={{
+                                width: "100%",
+                                height: "200px",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <div className="col-12">
+                      <div className="row">
+                        <h4>Game images</h4>
+                        {game?.productImages &&
+                          game?.productImages.map((image, index) => {
+                            return (
+                              <div
+                                className="col-3 news-image"
+                                key={index}
+                                style={{ overflow: "hidden" }}
+                              >
+                                <img
+                                  src={`${baseURL}${image.imageName}`}
+                                  alt=""
+                                  style={{
+                                    width: "100%",
+                                    height: "200px",
+                                    borderRadius: "8px",
+                                    objectFit: image.isMain
+                                      ? "contain"
+                                      : "cover",
+                                    border: image.isMain
+                                      ? "4px double green"
+                                      : undefined,
+                                  }}
+                                />
+                                {!image.isMain && (
+                                  <div className="product-action">
+                                    <ul>
+                                      <li>
+                                        <button
+                                          className="make-main"
+                                          onClick={() =>
+                                            handleChangeMain(game.id, image.id)
+                                          }
+                                        >
+                                          <AnchorIcon color="success" />
+                                          <span className="tooltip-text">
+                                            Make main image
+                                          </span>
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button
+                                          className="remove-image"
+                                          onClick={() =>
+                                            handleDelete(game.id, image.id)
+                                          }
+                                        >
+                                          <DeleteIcon color="error" />
+                                          <span className="tooltip-text">
+                                            Remove image
+                                          </span>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </div>
                   <button
                     type="submit"
                     className="btn btn-success"
                     disabled={isSubmitting}
                   >
-                    Create
+                    Update
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/games">
                     Back
@@ -496,4 +638,4 @@ function GamesCreate() {
   );
 }
 
-export default GamesCreate;
+export default GameEdit;

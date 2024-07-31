@@ -146,3 +146,89 @@ export const platformEditSchema = yup.object().shape({
       return value.size <= MAX_FILE_SIZE;
     }),
 });
+
+export const gameCreateSchema = yup.object().shape({
+  name: yup.string().required("This field is required"),
+  description: yup.string().required("This field is required"),
+  developerName: yup.string().required("This field is required"),
+  publisherName: yup.string().required("This field is required"),
+  price: yup.number().required("This field is required"),
+  count: yup.number().required("This field is required"),
+  genreId: yup.number().required("This field is required"),
+  typeId: yup.number().required("This field is required"),
+  platformId: yup.number().required("This field is required"),
+  minOsVersion: yup.string().required("This field is required"),
+  minCpuName: yup.string().required("This field is required"),
+  minMemory: yup.string().required("This field is required"),
+  minGpu: yup.string().required("This field is required"),
+  recomOsVersion: yup.string().required("This field is required"),
+  recomCpuName: yup.string().required("This field is required"),
+  recomMemory: yup.string().required("This field is required"),
+  recomGpu: yup.string().required("This field is required"),
+  logo: yup
+    .mixed()
+    .required("Required")
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return false;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return false;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+  images: yup
+    .mixed()
+    .required("Required")
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value || !value.length) return false;
+      return Array.from(value).every((file) =>
+        isValidFileType(file.name.toLowerCase(), "image")
+      );
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+      if (!value || !value.length) return false;
+      return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
+    }),
+});
+
+export const gameEditSchema = yup.object().shape({
+  name: yup.string().required("This field is required"),
+  description: yup.string().required("This field is required"),
+  developerName: yup.string().required("This field is required"),
+  publisherName: yup.string().required("This field is required"),
+  price: yup.number().required("This field is required"),
+  count: yup.number().required("This field is required"),
+  genreId: yup.number().required("This field is required"),
+  typeId: yup.number().required("This field is required"),
+  platformId: yup.number().required("This field is required"),
+  minOsVersion: yup.string().required("This field is required"),
+  minCpuName: yup.string().required("This field is required"),
+  minMemory: yup.string().required("This field is required"),
+  minGpu: yup.string().required("This field is required"),
+  recomOsVersion: yup.string().required("This field is required"),
+  recomCpuName: yup.string().required("This field is required"),
+  recomMemory: yup.string().required("This field is required"),
+  recomGpu: yup.string().required("This field is required"),
+  logo: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value) return true;
+      return isValidFileType(value.name.toLowerCase(), "image");
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+      if (!value) return true;
+      return value.size <= MAX_FILE_SIZE;
+    }),
+  images: yup
+    .mixed()
+    .test("is-valid-type", "Not a valid image type", (value) => {
+      if (!value || !value.length) return true;
+      return Array.from(value).every((file) =>
+        isValidFileType(file.name.toLowerCase(), "image")
+      );
+    })
+    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+      if (!value || !value.length) return true;
+      return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
+    }),
+});

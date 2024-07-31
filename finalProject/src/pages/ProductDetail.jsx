@@ -1,23 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../assets/scss/ProductDetail.scss";
-import touch from "../assets/images/touch-the-color.png";
-import touchLogo from "../assets/images/touch-the-color-logo.avif";
-import touchmini1 from "../assets/images/touch-the-color-mini1.png";
-import touchmini2 from "../assets/images/touch-the-color-mini2.avif";
 import chevron from "../assets/icons/chevron-down.svg";
-import windows from "../assets/icons/Windows.svg";
 import share from "../assets/icons/share.svg";
 import { Snackbar, Alert } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import moment from "moment";
+
 function ProductDetail() {
-  const images = [touch, touchmini2]; // Add all your image sources here
+  const [game, setGame] = useState(null);
+  const { id } = useParams();
+
+  const baseURL = "https://localhost:44300/assets/images/";
+
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:44300/api/Product/GetById/${id}`
+        );
+        setGame(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching game:", error);
+      }
+    };
+
+    fetchGame();
+  }, [id]);
+
+  const images = game?.productImages?.filter((image) => !image.isMain) || [];
+  console.log(images);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleLeftArrowClick = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex - 1 + images.length > images.length - 1
-        ? 0
-        : (prevIndex - 1 + images.length) % images.length
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
     );
   };
 
@@ -48,7 +67,7 @@ function ProductDetail() {
       });
   };
 
-  const [activeTab, setActiveTab] = useState("windows");
+  const [activeTab, setActiveTab] = useState("Windows");
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -60,7 +79,7 @@ function ProductDetail() {
         <div className="container-main">
           <div className="row">
             <div className="col-12">
-              <h1>Touch the Color</h1>
+              <h1>{game?.productName}</h1>
             </div>
           </div>
         </div>
@@ -74,7 +93,7 @@ function ProductDetail() {
                   <div className="controllers">
                     <div className="left-arrow" onClick={handleLeftArrowClick}>
                       <button>
-                        <img src={chevron} alt="" />
+                        <img src={chevron} alt="Left arrow" />
                       </button>
                     </div>
                     <div
@@ -82,14 +101,19 @@ function ProductDetail() {
                       onClick={handleRightArrowClick}
                     >
                       <button>
-                        <img src={chevron} alt="" />
+                        <img src={chevron} alt="Right arrow" />
                       </button>
                     </div>
                   </div>
                   <ul>
-                    <li>
-                      <img src={images[currentIndex]} alt="" />
-                    </li>
+                    {images.length > 0 && (
+                      <li>
+                        <img
+                          src={`${baseURL}${images[currentIndex].imageName}`}
+                          alt={`Main image ${currentIndex + 1}`}
+                        />
+                      </li>
+                    )}
                   </ul>
                 </div>
                 <div className="other-medias">
@@ -102,7 +126,10 @@ function ProductDetail() {
                           }
                           onClick={() => setCurrentIndex(index)}
                         >
-                          <img src={image} alt={`thumbnail ${index + 1}`} />
+                          <img
+                            src={`${baseURL}${image.imageName}`}
+                            alt={`thumbnail ${index + 1}`}
+                          />
                         </button>
                       </li>
                     ))}
@@ -111,157 +138,142 @@ function ProductDetail() {
               </div>
               <div className="about-game">
                 <div className="game-desc">
-                  <p>
-                    Take your reflexes and aim to the next level with Touch the
-                    Color, the arcade-style reaction and accuracy game that’s
-                    easy to pick up but hard to put down.
-                  </p>
+                  <p>{game?.productDescription}</p>
                 </div>
                 <div className="game-genre">
                   <span>Genre</span>
-                  <p>Casual</p>
+                  <p>{game?.genre?.genreName}</p>
                 </div>
               </div>
               <div className="system-requirements">
                 <div className="requirement-title">
-                  <h2>Touch The Color System Requirements</h2>
+                  <h2>{`${game?.productName} System Requirements`}</h2>
                 </div>
                 <div className="requirements-area">
                   <div className="tablist">
-                    <button
-                      className={`windows ${
-                        activeTab === "windows" ? "button-active" : ""
-                      }`}
-                      onClick={() => handleTabClick("windows")}
-                    >
-                      Windows
-                    </button>
-                    <button
-                      className={`macos ${
-                        activeTab === "macos" ? "button-active" : ""
-                      }`}
-                      onClick={() => handleTabClick("macos")}
-                    >
-                      MacOS
-                    </button>
+                    {game?.platformProducts.map((item, index) => {
+                      return (
+                        <button
+                          key={index}
+                          className={`${item.platform.platformName} ${
+                            activeTab === item.platform.platformName
+                              ? "button-active"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleTabClick(`${item.platform.platformName}`)
+                          }
+                        >
+                          {item.platform.platformName}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="tabpanel">
-                    {activeTab === "windows" && (
-                      <div className="row">
-                        <div className="col-12">
-                          <div className="minmax">
-                            <div className="min">
-                              <span>Minimum</span>
+                    {game?.platformProducts
+                      .filter(
+                        (item) => activeTab === item.platform.platformName
+                      )
+                      .map((item, index) => (
+                        <div className="row" key={index}>
+                          <div className="col-12">
+                            <div className="minmax">
+                              <div className="min">
+                                <span>Minimum</span>
+                              </div>
+                              <div className="rec">
+                                <span>Recommended</span>
+                              </div>
                             </div>
-                            <div className="rec">
-                              <span>Recommended</span>
+                            <div className="os">
+                              <div className="min">
+                                <span>OS Version</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.minOsVersion
+                                  }
+                                </p>
+                              </div>
+                              <div className="rec">
+                                <span>OS Version</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.recomOsVersion
+                                  }
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="os">
-                            <div className="min">
-                              <span>OS Version</span>
-                              <p>Windows 7</p>
+                            <div className="cpu">
+                              <div className="min">
+                                <span>CPU</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.minCpuName
+                                  }
+                                </p>
+                              </div>
+                              <div className="rec">
+                                <span>CPU</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.recomCpuName
+                                  }
+                                </p>
+                              </div>
                             </div>
-                            <div className="rec">
-                              <span>OS Version</span>
-                              <p>Windows 11</p>
+                            <div className="memory">
+                              <div className="min">
+                                <span>Memory</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.minMemory
+                                  }
+                                </p>
+                              </div>
+                              <div className="rec">
+                                <span>Memory</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.recomMemory
+                                  }
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="cpu">
-                            <div className="min">
-                              <span>CPU</span>
-                              <p>X64 Dual Core CPU, 2+ GHz</p>
+                            <div className="gpu">
+                              <div className="min">
+                                <span>GPU</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.minGpu
+                                  }
+                                </p>
+                              </div>
+                              <div className="rec">
+                                <span>GPU</span>
+                                <p>
+                                  {
+                                    item.platform.platformSystemRequirements[0]
+                                      .systemRequirement.recomGpu
+                                  }
+                                </p>
+                              </div>
                             </div>
-                            <div className="rec">
-                              <span>CPU</span>
-                              <p>X64 Quad Core CPU, 3+ GHz</p>
+                            <div className="line"></div>
+                            <div className="author">
+                              <span>{`©${moment(game.createdDate).format(
+                                "yyyy"
+                              )} ${game.developerName}`}</span>
                             </div>
-                          </div>
-                          <div className="memory">
-                            <div className="min">
-                              <span>Memory</span>
-                              <p>4 GB RAM</p>
-                            </div>
-                            <div className="rec">
-                              <span>Memory</span>
-                              <p>8 GB RAM</p>
-                            </div>
-                          </div>
-                          <div className="gpu">
-                            <div className="min">
-                              <span>GPU</span>
-                              <p>Discrete GPU with 1 GB RAM</p>
-                            </div>
-                            <div className="rec">
-                              <span>GPU</span>
-                              <p>NVIDIA RTX 3070</p>
-                            </div>
-                          </div>
-                          <div className="line"></div>
-                          <div className="author">
-                            <span>©2024, Patrick Hart</span>
                           </div>
                         </div>
-                      </div>
-                    )}
-                    {activeTab === "macos" && (
-                      <div className="row">
-                        <div className="col-12">
-                          <div className="minmax">
-                            <div className="min">
-                              <span>Minimum</span>
-                            </div>
-                            <div className="rec">
-                              <span>Recommended</span>
-                            </div>
-                          </div>
-                          <div className="os">
-                            <div className="min">
-                              <span>OS Version</span>
-                              <p>Mac OSX 12+</p>
-                            </div>
-                            <div className="rec">
-                              <span>OS Version</span>
-                              <p>Mac OSX 14+</p>
-                            </div>
-                          </div>
-                          <div className="cpu">
-                            <div className="min">
-                              <span>CPU</span>
-                              <p>M1</p>
-                            </div>
-                            <div className="rec">
-                              <span>CPU</span>
-                              <p>M2 Pro</p>
-                            </div>
-                          </div>
-                          <div className="memory">
-                            <div className="min">
-                              <span>Memory</span>
-                              <p>8GB</p>
-                            </div>
-                            <div className="rec">
-                              <span>Memory</span>
-                              <p>16GB</p>
-                            </div>
-                          </div>
-                          <div className="gpu">
-                            <div className="min">
-                              <span>GPU</span>
-                              <p>M1</p>
-                            </div>
-                            <div className="rec">
-                              <span>GPU</span>
-                              <p>M2 Pro</p>
-                            </div>
-                          </div>
-                          <div className="line"></div>
-                          <div className="author">
-                            <span>©2024, Patrick Hart</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                      ))}
                   </div>
                 </div>
               </div>
@@ -269,13 +281,13 @@ function ProductDetail() {
             <div className="col-12 col-md-5 col-xl-3">
               <div className="game-operations">
                 <div className="game-logo">
-                  <img src={touchLogo} alt="" />
+                  {game && <img src={`${baseURL}${game.productLogo}`} alt="" />}
                 </div>
                 <div className="type">
-                  <span>Base game</span>
+                  <span>{game?.productType.typeName}</span>
                 </div>
                 <div className="price">
-                  <span>$0.49</span>
+                  <span>${game?.productPrice}</span>
                 </div>
                 <div className="buy-wish">
                   <button className="add-cart">Add to cart</button>
@@ -294,20 +306,23 @@ function ProductDetail() {
                   <ul>
                     <li className="developer">
                       <span>Developer</span>
-                      <p>CenterPoint Gaming</p>
+                      <p>{game?.developerName}</p>
                     </li>
                     <li className="publisher">
                       <span>Publisher</span>
-                      <p>CenterPoint Gaming</p>
+                      <p>{game?.publisherName}</p>
                     </li>
                     <li className="release">
                       <span>Release Date</span>
-                      <p>02/23/24</p>
+                      <p>{moment(game?.createdDate).format("DD/MM/YYYY")}</p>
                     </li>
                     <li className="platform">
                       <span>Platform</span>
                       <p>
-                        <img src={windows} alt="" />
+                        <img
+                          src={`${baseURL}${game?.platformProducts[0].platform.platformLogo}`}
+                          alt=""
+                        />
                       </p>
                     </li>
                   </ul>
@@ -315,7 +330,7 @@ function ProductDetail() {
                 <div className="copy-to-clipboard">
                   <div className="copy-to-clipboard">
                     <button onClick={handleCopyToClipboard}>
-                      <img src={share} alt="" />
+                      <img src={share} alt="Share icon" />
                       Share
                     </button>
                     <Snackbar
