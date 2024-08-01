@@ -456,10 +456,10 @@ function Shop() {
                     </div>
                   );
                 })}
-                <div className="col-12 d-flex justify-content-center">
-                  <div className="pagination">
-                    <Pagination count={10} />
-                  </div>
+              </div>
+              <div className="col-12 d-flex justify-content-center">
+                <div className="pagination">
+                  <Pagination count={10} />
                 </div>
               </div>
             </div>

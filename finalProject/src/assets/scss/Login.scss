@@ -107,12 +107,19 @@
           font-weight: bold;
           border: none;
           align-items: center;
+          &:disabled {
+            color: rgb(255, 255, 255);
+            background-color: rgb(0, 116, 228);
+            opacity: 0.5;
+          }
         }
         a {
+          text-decoration: underline;
           font-size: 14px;
           text-align: center;
           margin-top: 40px;
           color: whitesmoke;
+
           &:hover {
             text-decoration: none;
           }

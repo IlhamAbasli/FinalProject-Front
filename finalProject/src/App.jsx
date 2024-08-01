@@ -40,6 +40,7 @@ import PlatformCreate from "./pages/Admin/pages/PlatformCreate";
 import PlatformEdit from "./pages/Admin/pages/PlatformEdit";
 import GamesDetail from "./pages/Admin/pages/GamesDetail";
 import GameEdit from "./pages/Admin/pages/GameEdit";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const location = useLocation();
@@ -47,6 +48,7 @@ function App() {
   const noHeaderFooterPaths = [
     "/login",
     "/register",
+    "/forgotpassword",
     "/account/*",
     "/account/email",
     "/account/security",
@@ -99,6 +101,7 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/library" element={<Library />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
@@ -107,6 +110,7 @@ function App() {
           <Route path="/account/security" element={<Security />} />
           <Route path="/p/:id" element={<ProductDetail />} />
           <Route path="/redeem" element={<RedeemCode />} />
+
           <Route path="/admin" element={<Admin />} />
 
           <Route path="/admin/games" element={<Games />} />

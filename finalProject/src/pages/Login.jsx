@@ -2,35 +2,60 @@ import React, { useState, useEffect } from "react";
 import "../assets/scss/Login.scss";
 import icon from "../assets/icons/icon.svg";
 import { useFormik } from "formik";
-import { basicSchema } from "../schemas/index";
-import { Link } from "react-router-dom";
+import { logInSchema } from "../schemas/index";
+import { Link, useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-const onSubmit = async (values, actions) => {
-  console.log(values);
-  console.log(actions);
-
-  await new Promise((resolve) => {
-    setTimeout(resolve, 1000);
-  });
-  actions.resetForm();
-};
 
 function Login() {
   useEffect(() => {
     document.title = "Sign in to your Epic Games account | Epic Games";
   }, []);
+  const navigate = useNavigate();
+
+  const [signInErrors, setSignInErrors] = useState(null);
+
+  const onSubmit = async (values, actions) => {
+    console.log(values);
+
+    const formData = new FormData();
+    formData.append("EmailOrUsername", values.email);
+    formData.append("Password", values.password);
+
+    try {
+      const res = await axios.post(
+        "https://localhost:44300/api/Account/signin",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(res);
+      setSignInErrors(res.data.message);
+      if (res.data.success) {
+        actions.resetForm();
+        localStorage.setItem("user-info", JSON.stringify(res.data.token));
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error submitting the form", error);
+      setSignInErrors(["An error occurred while submitting the form."]);
+    }
+  };
+
   const { values, errors, isSubmitting, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
         email: "",
         password: "",
       },
-      validationSchema: basicSchema,
+      validationSchema: logInSchema,
       onSubmit,
     });
 
@@ -95,6 +120,7 @@ function Login() {
                       <button disabled={isSubmitting} type="submit">
                         Sign In
                       </button>
+                      <Link to="/forgotpassword">I can`t sign in</Link>
                       <Link to="/register">Create account</Link>
                     </div>
                   </form>

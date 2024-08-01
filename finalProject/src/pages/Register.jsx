@@ -3,28 +3,55 @@ import "../assets/scss/Register.scss";
 import icon from "../assets/icons/icon.svg";
 import { useFormik } from "formik";
 import { advancedSchema } from "../schemas/index";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TextField, Tooltip, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
+import axios from "axios";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-const onSubmit = async (values, actions) => {
-  console.log(values);
-  console.log(actions);
-
-  await new Promise((resolve) => {
-    setTimeout(resolve, 1000);
-  });
-  actions.resetForm();
-};
 
 function Register() {
   useEffect(() => {
     document.title = "Register for an Epic Games account | Epic Games";
   }, []);
+
+  const navigate = useNavigate();
+
+  const [signUpErrors, setSignUpErrors] = useState(null);
+
+  const onSubmit = async (values, actions) => {
+    console.log(values);
+
+    const formData = new FormData();
+    formData.append("Email", values.email);
+    formData.append("Username", values.username);
+    formData.append("Firstname", values.firstname);
+    formData.append("Lastname", values.lastname);
+    formData.append("Password", values.password);
+
+    try {
+      const res = await axios.post(
+        "https://localhost:44300/api/Account/signup",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(res);
+      setSignUpErrors(res.data.errors);
+      if (!res.data.errors || res.data.errors.length === 0) {
+        actions.resetForm();
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error submitting the form", error);
+      setSignUpErrors(["An error occurred while submitting the form."]);
+    }
+  };
+
   const { values, errors, isSubmitting, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
@@ -44,6 +71,7 @@ function Register() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
   return (
     <>
       <section id="login-area">
@@ -59,6 +87,16 @@ function Register() {
                 <div className="title">
                   <h2>Create Account</h2>
                 </div>
+                {signUpErrors && (
+                  <div className="errors">
+                    <ul style={{ color: "#e97780", listStyle: "circle" }}>
+                      {signUpErrors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 <div className="form">
                   <form onSubmit={handleSubmit}>
                     <div className="inputDiv">
@@ -146,7 +184,7 @@ function Register() {
                       </IconButton>
                       <IconButton>
                         <Tooltip
-                          title="Passwords must have 7+ characters, at least 1 number, at least 1 letter, and no whitespace."
+                          title="Passwords must have 7+ characters, at least one digit, at least one uppercase letter, at least one lowercase letter, at least one non-alphanumeric character."
                           placement="top"
                         >
                           <InfoOutlinedIcon />

@@ -11,17 +11,34 @@ export const advancedSchema = yup.object().shape({
     .string()
     .min(3, "Too short")
     .max(16)
+    .matches(
+      /^[a-zA-Z0-9]+([._ -]?[a-zA-Z0-9])*$/,
+      "Username may contain letters, numbers, and non-consecutive dashes, periods, underscores, and spaces"
+    )
     .required("Username is required"),
   password: yup
     .string()
-    .min(7, "Too short")
-    .matches(passwordRules, {
-      message: "Invalid format",
-    })
-    .required("Required"),
+    .min(7, "Password must be at least 7 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/\d/, "Password must contain at least one digit")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one non-alphanumeric character"
+    )
+    .required("Password is required"),
   firstname: yup.string().required("Required"),
   lastname: yup.string().required("Required"),
   isAccepted: yup.boolean().oneOf([true], "You must accept terms & conditions"),
+});
+
+export const logInSchema = yup.object().shape({
+  email: yup.string().email("Email format is wrong").required("Required"),
+  password: yup.string().required("Required"),
+});
+
+export const forgotPasswordSchema = yup.object().shape({
+  email: yup.string().email("Email format is wrong").required("Required"),
 });
 
 const validFileExtensions = {
