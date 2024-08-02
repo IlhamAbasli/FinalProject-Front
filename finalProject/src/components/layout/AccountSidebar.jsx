@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import person from "../../assets/icons/person.svg";
 import security from "../../assets/icons/security.svg";
 import email from "../../assets/icons/email.svg";
+import payment from "../../assets/icons/payment.svg";
 function AccountSidebar() {
   return (
     <>
@@ -25,6 +26,12 @@ function AccountSidebar() {
           <NavLink to="/account/security">
             <img src={security} alt="" />
             <p>Password & security</p>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/account/payment">
+            <img src={payment} alt="" />
+            <p>Payment Management</p>
           </NavLink>
         </li>
       </ul>

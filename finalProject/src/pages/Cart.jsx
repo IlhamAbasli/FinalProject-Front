@@ -6,11 +6,47 @@ import wishlistgame from "../assets/images/wishlistgame.avif";
 import PersonIcon from "@mui/icons-material/Person";
 import icon from "../assets/icons/icon.svg";
 import xicon from "../assets/icons/closeIcon.svg";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 function Cart() {
   useEffect(() => {
     document.title = "Cart";
   }, []);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [token, setToken] = useState(null);
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
+  const fetchBalance = async () => {
+    try {
+      const res = await axios.get(
+        `https://localhost:44300/api/Wallet/GetBalance?userId=${decodedToken.sid}`
+      );
+      setBalance(res.data.balance);
+    } catch (error) {
+      console.error("Error fetching the balance", error);
+    }
+  };
+
+  useEffect(() => {
+    if (decodedToken) {
+      fetchBalance();
+    }
+  }, [decodedToken]);
 
   const [isPaymentAreaVisible, setIsPaymentAreaVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -43,11 +79,11 @@ function Cart() {
             </div>
             <div className="col-12 col-lg-6">
               <div className="wallet-balance">
-                <Link>
+                <Link to="/account/payment">
                   <span className="wallet-title">
                     Epic Wallet <img src={navigate} alt="" />
                   </span>
-                  <span className="wallet-counter">$0.00</span>
+                  <span className="wallet-counter">${balance}.00</span>
                 </Link>
               </div>
             </div>
@@ -150,7 +186,9 @@ function Cart() {
                             </div>
                             <div className="payment-method-name">
                               Wallet{" "}
-                              <span className="wallet-balance">$0.00</span>
+                              <span className="wallet-balance">
+                                ${balance}.00
+                              </span>
                             </div>
                           </div>
                         </div>

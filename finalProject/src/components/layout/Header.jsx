@@ -9,13 +9,33 @@ import wishlistIcon from "../../assets/icons/wishlist.svg";
 import cartIcon from "../../assets/icons/cart.svg";
 import closeIcon from "../../assets/icons/closeIcon.svg";
 import chevronDownIcon from "../../assets/icons/chevron-down.svg";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
+import { jwtDecode } from "jwt-decode";
 function Header() {
   useEffect(() => {
     document.title =
       "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
   });
+
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [buttonText, setButtonText] = useState("Discover");
 
@@ -59,6 +79,12 @@ function Header() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <>
       <section id="header">
@@ -84,31 +110,38 @@ function Header() {
             <div className="">
               <ul>
                 <li className="account-nav">
-                  <Link to="/login" title="IlhamXIII">
+                  <Link
+                    to={token ? "" : "/login"}
+                    title={decodedToken && decodedToken.sub}
+                  >
                     <div className="account">
                       <img src={avataricon} alt="" />
                     </div>
                   </Link>
-                  <div className="nav-account-menu">
-                    <ul>
-                      <li>
-                        <Link to="/account/*">Account</Link>
-                      </li>
-                      <li>
-                        <Link to="/redeem">Redeem Code</Link>
-                      </li>
-                      <li>
-                        <Link to="/wishlist">Wishlist</Link>
-                      </li>
-                      <li>
-                        <button>Log out</button>
-                      </li>
-                    </ul>
-                  </div>
+                  {token && decodedToken && (
+                    <div className="nav-account-menu">
+                      <ul>
+                        <li>
+                          <Link to="/account/*">Account</Link>
+                        </li>
+                        <li>
+                          <Link to="/redeem">Redeem Code</Link>
+                        </li>
+                        <li>
+                          <Link to="/wishlist">Wishlist</Link>
+                        </li>
+                        <li>
+                          <button onClick={logout}>Log out</button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </li>
-                <li>
-                  <Link to="/library">Library</Link>
-                </li>
+                {token && (
+                  <li>
+                    <Link to="/library">Library</Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -201,33 +234,35 @@ function Header() {
                 ></div>
               </div>
             </div>
-            <div className="col-4 col-lg-2 col-xl-3 cart-wishlist">
-              <div className="cart-wishlist">
-                <ul className="d-none d-lg-flex">
-                  <li>
-                    <NavLink to="/wishlist">Wishlist</NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/cart">Cart</NavLink>
-                    <span className="basket-count">2</span>
-                  </li>
-                </ul>
-                <ul className="d-lg-none d-flex">
-                  <li>
-                    <NavLink to="/wishlist">
-                      <img src={wishlistIcon} alt="" />
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/cart">
-                      <Badge badgeContent={2} color="secondary">
-                        <img src={cartIcon} alt="" />
-                      </Badge>
-                    </NavLink>
-                  </li>
-                </ul>
+            {token && (
+              <div className="col-4 col-lg-2 col-xl-3 cart-wishlist">
+                <div className="cart-wishlist">
+                  <ul className="d-none d-lg-flex">
+                    <li>
+                      <NavLink to="/wishlist">Wishlist</NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/cart">Cart</NavLink>
+                      <span className="basket-count">2</span>
+                    </li>
+                  </ul>
+                  <ul className="d-lg-none d-flex">
+                    <li>
+                      <NavLink to="/wishlist">
+                        <img src={wishlistIcon} alt="" />
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink to="/cart">
+                        <Badge badgeContent={2} color="secondary">
+                          <img src={cartIcon} alt="" />
+                        </Badge>
+                      </NavLink>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

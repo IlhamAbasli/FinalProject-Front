@@ -41,10 +41,14 @@ import PlatformEdit from "./pages/Admin/pages/PlatformEdit";
 import GamesDetail from "./pages/Admin/pages/GamesDetail";
 import GameEdit from "./pages/Admin/pages/GameEdit";
 import ForgotPassword from "./pages/ForgotPassword";
+import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PaymentManagement from "./pages/PaymentManagement";
 
 function App() {
   const location = useLocation();
-
+  var token = JSON.parse(localStorage.getItem("user-info"));
   const noHeaderFooterPaths = [
     "/login",
     "/register",
@@ -52,6 +56,7 @@ function App() {
     "/account/*",
     "/account/email",
     "/account/security",
+    "/account/payment",
     "/admin",
 
     "/admin/games",
@@ -98,47 +103,280 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:id" element={<NewsDetail />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgotpassword" element={<ForgotPassword />} />
-          <Route path="/library" element={<Library />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/account/*" element={<Account />} />
-          <Route path="/account/email" element={<EmailPreferences />} />
-          <Route path="/account/security" element={<Security />} />
           <Route path="/p/:id" element={<ProductDetail />} />
-          <Route path="/redeem" element={<RedeemCode />} />
 
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/forgotpassword"
+            element={
+              <PublicRoute>
+                <ForgotPassword />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/library"
+            element={
+              <ProtectedRoute>
+                <Library />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/*"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/email"
+            element={
+              <ProtectedRoute>
+                <EmailPreferences />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/security"
+            element={
+              <ProtectedRoute>
+                <Security />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/payment"
+            element={
+              <ProtectedRoute>
+                <PaymentManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/redeem"
+            element={
+              <ProtectedRoute>
+                <RedeemCode />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/admin/games" element={<Games />} />
-          <Route path="/admin/games/create" element={<GamesCreate />} />
-          <Route path="/admin/games/detail/:id" element={<GamesDetail />} />
-          <Route path="/admin/games/edit/:id" element={<GameEdit />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
 
-          <Route path="/admin/genres" element={<Genres />} />
-          <Route path="/admin/genres/create" element={<GenresCreate />} />
-          <Route path="/admin/genres/edit/:id" element={<GenresEdit />} />
+          <Route
+            path="/admin/games"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Games />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/games/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <GamesCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/games/detail/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <GamesDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/games/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <GameEdit />
+              </PrivateRoute>
+            }
+          />
 
-          <Route path="/admin/types" element={<Types />} />
-          <Route path="/admin/types/create" element={<TypeCreate />} />
-          <Route path="/admin/types/edit/:id" element={<TypeEdit />} />
+          <Route
+            path="/admin/genres"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Genres />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/genres/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <GenresCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/genres/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <GenresEdit />
+              </PrivateRoute>
+            }
+          />
 
-          <Route path="/admin/ads" element={<Ads />} />
-          <Route path="/admin/ads/create" element={<AdsCreate />} />
-          <Route path="/admin/ads/detail/:id" element={<AdsDetail />} />
-          <Route path="/admin/ads/edit/:id" element={<AdsEdit />} />
+          <Route
+            path="/admin/types"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Types />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/types/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <TypeCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/types/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <TypeEdit />
+              </PrivateRoute>
+            }
+          />
 
-          <Route path="/admin/news" element={<NewsAdmin />} />
-          <Route path="/admin/news/create" element={<NewsCreate />} />
-          <Route path="/admin/news/detail/:id" element={<NewsAdminDetail />} />
-          <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+          <Route
+            path="/admin/ads"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Ads />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/ads/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <AdsCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/ads/detail/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <AdsDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/ads/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <AdsEdit />
+              </PrivateRoute>
+            }
+          />
 
-          <Route path="/admin/platforms" element={<Platform />} />
-          <Route path="/admin/platforms/create" element={<PlatformCreate />} />
-          <Route path="/admin/platforms/edit/:id" element={<PlatformEdit />} />
+          <Route
+            path="/admin/news"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <NewsAdmin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/news/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <NewsCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/news/detail/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <NewsAdminDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/news/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <NewsEdit />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/platforms"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Platform />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/platforms/create"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <PlatformCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/platforms/edit/:id"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <PlatformEdit />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </main>
 

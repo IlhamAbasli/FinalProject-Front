@@ -1,12 +1,31 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icons/icon.svg";
 import iconBorder from "../../assets/icons/iconBorder.svg";
 import Store from "../../assets/icons/Store.svg";
 import avataricon from "../../assets/icons/avataricon.svg";
 import "../../assets/scss/AccountHeader.scss";
+import { jwtDecode } from "jwt-decode";
 function AccountHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -18,6 +37,11 @@ function AccountHeader() {
   const handleItemClick = (text) => {
     setButtonText(text);
     setIsOpen(false); // Close the dropdown after selecting an item
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
   };
   return (
     <div>
@@ -44,27 +68,32 @@ function AccountHeader() {
             <div className="">
               <ul>
                 <li className="account-nav">
-                  <Link to="/login" title="IlhamXIII">
+                  <Link
+                    to={token ? "" : "/login"}
+                    title={decodedToken && decodedToken.sub}
+                  >
                     <div className="account">
                       <img src={avataricon} alt="" />
                     </div>
                   </Link>
-                  <div className="nav-account-menu">
-                    <ul>
-                      <li>
-                        <Link to="/account">Account</Link>
-                      </li>
-                      <li>
-                        <Link to="/redeem">Redeem Code</Link>
-                      </li>
-                      <li>
-                        <Link to="/wishlist">Wishlist</Link>
-                      </li>
-                      <li>
-                        <button>Log out</button>
-                      </li>
-                    </ul>
-                  </div>
+                  {token && decodedToken && (
+                    <div className="nav-account-menu">
+                      <ul>
+                        <li>
+                          <Link to="/account/*">Account</Link>
+                        </li>
+                        <li>
+                          <Link to="/redeem">Redeem Code</Link>
+                        </li>
+                        <li>
+                          <Link to="/wishlist">Wishlist</Link>
+                        </li>
+                        <li>
+                          <button onClick={logout}>Log out</button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </li>
                 <li>
                   <Link to="/library">Library</Link>
