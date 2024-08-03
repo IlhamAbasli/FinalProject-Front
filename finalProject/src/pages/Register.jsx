@@ -115,7 +115,7 @@ function Register() {
                       <div className="inputDiv">
                         <TextField
                           id="firstname"
-                          label="First Name"
+                          label="First Name(optional)"
                           variant="filled"
                           onChange={handleChange}
                           value={values.firstname}
@@ -129,7 +129,7 @@ function Register() {
                       <div className="inputDiv">
                         <TextField
                           id="lastname"
-                          label="Last Name"
+                          label="Last Name(optional)"
                           variant="filled"
                           onChange={handleChange}
                           value={values.lastname}

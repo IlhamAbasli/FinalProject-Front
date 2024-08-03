@@ -63,6 +63,7 @@
     }
     ul {
       display: flex;
+      flex-wrap: wrap;
       li {
         .selected {
           background-color: #09aff1;

@@ -128,3 +128,39 @@
     }
   }
 }
+
+@media only screen and (max-width: 425px) {
+  #login-area {
+    padding: 15px;
+    .login-container {
+      width: 100%;
+      .login-side {
+        padding: 30px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+  #login-area {
+    .login-container {
+      width: 70%;
+    }
+  }
+}
+
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  #login-area {
+    .login-container {
+      width: 50%;
+    }
+  }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+  #login-area {
+    .login-container {
+      width: 40%;
+    }
+  }
+}

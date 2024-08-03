@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AccountHeader from "../components/layout/AccountHeader";
 import AccountSidebar from "../components/layout/AccountSidebar";
 import { Switch } from "@mui/material";
 import "../assets/scss/EmailPreferences.scss";
 function EmailPreferences() {
+  useEffect(() => {
+    document.title = "Email Preferences";
+  });
   return (
     <div>
       <AccountHeader />

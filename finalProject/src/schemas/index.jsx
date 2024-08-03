@@ -27,14 +27,33 @@ export const advancedSchema = yup.object().shape({
       "Password must contain at least one non-alphanumeric character"
     )
     .required("Password is required"),
-  firstname: yup.string().required("Required"),
-  lastname: yup.string().required("Required"),
-  isAccepted: yup.boolean().oneOf([true], "You must accept terms & conditions"),
+  firstname: yup.string(),
+  lastname: yup.string(),
+});
+
+export const accountSchema = yup.object().shape({
+  email: yup.string().email("Email format is wrong").required("Required"),
+  username: yup
+    .string()
+    .min(3, "Too short")
+    .max(16)
+    .matches(
+      /^[a-zA-Z0-9]+([._ -]?[a-zA-Z0-9])*$/,
+      "Username may contain letters, numbers, and non-consecutive dashes, periods, underscores, and spaces"
+    )
+    .required("Username is required"),
+  firstname: yup.string(),
+  lastname: yup.string(),
 });
 
 export const logInSchema = yup.object().shape({
   email: yup.string().email("Email format is wrong").required("Required"),
   password: yup.string().required("Required"),
+});
+
+export const changePasswordSchema = yup.object().shape({
+  oldPassword: yup.string().required("Required"),
+  newPassword: yup.string().required("Required"),
 });
 
 export const forgotPasswordSchema = yup.object().shape({

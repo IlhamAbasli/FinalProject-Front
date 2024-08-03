@@ -45,6 +45,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentManagement from "./pages/PaymentManagement";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const location = useLocation();
@@ -377,6 +378,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </main>
 

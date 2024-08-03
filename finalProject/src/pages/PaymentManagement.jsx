@@ -12,6 +12,9 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 function PaymentManagement() {
+  useEffect(() => {
+    document.title = "Payment Management";
+  });
   const [isActive, setIsActive] = useState(false);
   const [isPaymentMethodSelected, setIsPaymentMethodSelected] = useState(false);
   const [token, setToken] = useState(null);
