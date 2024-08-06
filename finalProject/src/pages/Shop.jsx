@@ -17,7 +17,10 @@ function Shop() {
   const [types, setTypes] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [games, setGames] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
+    console.log(loading);
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
@@ -67,6 +70,8 @@ function Shop() {
     fetchGenres();
     fetchPlatforms();
     fetchGames();
+    console.log(loading);
+    setLoading(false);
   }, []);
 
   const baseURL = "https://localhost:44300/assets/images/";
@@ -199,166 +204,43 @@ function Shop() {
               },
             }}
           >
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
+            {genres.map((genre, index) => {
+              return (
+                <SwiperSlide key={index}>
+                  <div className="genre-item">
+                    <Link>
+                      <div className="item">
+                        {genre.products
+                          .slice(0, 3)
+                          .flatMap((product) =>
+                            product.productImages.filter(
+                              (image) => image.isMain
+                            )
+                          )
+                          .map((image, idx) => (
+                            <div className="genre-image" key={idx}>
+                              <img
+                                src={`${baseURL}${image.imageName}`}
+                                alt="Genre"
+                              />
+                            </div>
+                          ))}
+                        {/* 
+                        <div className="genre-image">
+                          <img src={genreImg} alt="" />
+                        </div>
+                        <div className="genre-image">
+                          <img src={genreImg} alt="" />
+                        </div> */}
+                      </div>
+                      <div className="genre-name">
+                        <h2>{genre.genreName} Games</h2>
+                      </div>
+                    </Link>
                   </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="genre-item">
-                <Link>
-                  <div className="item">
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                    <div className="genre-image">
-                      <img src={genreImg} alt="" />
-                    </div>
-                  </div>
-                  <div className="genre-name">
-                    <h2>Action Games</h2>
-                  </div>
-                </Link>
-              </div>
-            </SwiperSlide>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
       </section>

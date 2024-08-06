@@ -75,7 +75,7 @@ function getAllowedExt(type) {
   return validFileExtensions[type].map((e) => `.${e}`).toString();
 }
 
-const MAX_FILE_SIZE = 1024 * 3000;
+const MAX_FILE_SIZE = 1024 * 5000;
 
 export const newsCreateSchema = yup.object().shape({
   title: yup.string().required("This field is required"),
@@ -88,7 +88,7 @@ export const newsCreateSchema = yup.object().shape({
         isValidFileType(file.name.toLowerCase(), "image")
       );
     })
-    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb per file", (value) => {
       if (!value || !value.length) return false;
       return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
     }),
@@ -107,7 +107,7 @@ export const newsEditSchema = yup.object().shape({
         isValidFileType(file.name.toLowerCase(), "image")
       );
     })
-    .test("is-valid-size", "Max allowed size is 3MB per file", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb per file", (value) => {
       if (!value || value.length === 0) return true;
       return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
     }),
@@ -134,7 +134,7 @@ export const adCreateSchema = yup.object().shape({
       if (!value) return false;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return false;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -148,7 +148,7 @@ export const adEditSchema = yup.object().shape({
       if (!value) return true;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return true;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -163,7 +163,7 @@ export const platformCreateSchema = yup.object().shape({
       if (!value) return false;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return false;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -177,7 +177,7 @@ export const platformEditSchema = yup.object().shape({
       if (!value) return true;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return true;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -208,7 +208,7 @@ export const gameCreateSchema = yup.object().shape({
       if (!value) return false;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return false;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -221,7 +221,7 @@ export const gameCreateSchema = yup.object().shape({
         isValidFileType(file.name.toLowerCase(), "image")
       );
     })
-    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb per file", (value) => {
       if (!value || !value.length) return false;
       return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
     }),
@@ -251,7 +251,7 @@ export const gameEditSchema = yup.object().shape({
       if (!value) return true;
       return isValidFileType(value.name.toLowerCase(), "image");
     })
-    .test("is-valid-size", "Max allowed size is 3Mb", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb", (value) => {
       if (!value) return true;
       return value.size <= MAX_FILE_SIZE;
     }),
@@ -263,7 +263,7 @@ export const gameEditSchema = yup.object().shape({
         isValidFileType(file.name.toLowerCase(), "image")
       );
     })
-    .test("is-valid-size", "Max allowed size is 3Mb per file", (value) => {
+    .test("is-valid-size", "Max allowed size is 5Mb per file", (value) => {
       if (!value || !value.length) return true;
       return Array.from(value).every((file) => file.size <= MAX_FILE_SIZE);
     }),

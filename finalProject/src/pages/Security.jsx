@@ -126,10 +126,10 @@ function Security() {
         </Snackbar>
         <div className="container-account">
           <div className="row">
-            <div className="col-3">
+            <div className="col-12 col-md-4 col-lg-3">
               <AccountSidebar />
             </div>
-            <div className="col-9">
+            <div className="col-12 col-md-8 col-lg-9">
               <div className="account-side">
                 <div className="password-change">
                   <div className="title">
@@ -142,7 +142,7 @@ function Security() {
                   </div>
                   <form onSubmit={handleSubmit}>
                     <div className="row">
-                      <div className="col-5">
+                      <div className="col-12 col-md-8 col-lg-5">
                         <h1>New Password</h1>
                         <div className="inputDiv">
                           <TextField

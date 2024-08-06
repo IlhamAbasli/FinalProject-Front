@@ -4,7 +4,7 @@ import AccountHeader from "../components/layout/AccountHeader";
 import { accountSchema } from "../schemas";
 import "../assets/scss/Account.scss";
 import { jwtDecode } from "jwt-decode";
-import { Snackbar, Alert, TextField } from "@mui/material";
+import { Snackbar, Alert, TextField, CircularProgress } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
 import { useFormik } from "formik";
@@ -21,6 +21,7 @@ function Account() {
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -54,6 +55,7 @@ function Account() {
     formData.append("Lastname", values.lastname);
 
     try {
+      setLoading(true);
       const res = await axios.put(
         `https://localhost:44300/api/Account/UpdateUser?userId=${id}`,
         formData,
@@ -63,19 +65,25 @@ function Account() {
           },
         }
       );
-      setSnackbarMessage(
-        "Changes saved successfully,sign in again to see changes"
-      );
-      setSeverity("success");
-      setOpen(true);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          "Changes saved successfully, sign in again to see changes"
+        );
+        setSeverity("success");
+        setOpen(true);
+      }, 2000);
     } catch (error) {
-      setSnackbarMessage(
-        error.response.data.Message
-          ? error.response.data.Message
-          : "Something went wrong!"
-      );
-      setSeverity("error");
-      setOpen(true);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -140,7 +148,7 @@ function Account() {
                             variant="filled"
                             onChange={handleChange}
                             value={values.username}
-                            color={errors.username && "error"}
+                            color={errors.username ? "error" : "primary"}
                             autoComplete="off"
                           />
                           {errors.username && (
@@ -156,7 +164,7 @@ function Account() {
                             variant="filled"
                             onChange={handleChange}
                             value={values.email}
-                            color={errors.email && "error"}
+                            color={errors.email ? "error" : "primary"}
                             autoComplete="off"
                           />
                           {errors.email && (
@@ -172,7 +180,7 @@ function Account() {
                             variant="filled"
                             onChange={handleChange}
                             value={values.firstname}
-                            color={errors.firstname && "error"}
+                            color={errors.firstname ? "error" : "primary"}
                             autoComplete="off"
                           />
                           {errors.firstname && (
@@ -188,7 +196,7 @@ function Account() {
                             variant="filled"
                             onChange={handleChange}
                             value={values.lastname}
-                            color={errors.lastname && "error"}
+                            color={errors.lastname ? "error" : "primary"}
                             autoComplete="off"
                           />
                           {errors.lastname && (
@@ -198,7 +206,16 @@ function Account() {
                       </div>
                       <div className="col-3">
                         <div className="save-changes">
-                          <button>Save Changes</button>
+                          <button
+                            disabled={isSubmitting || loading}
+                            type="submit"
+                          >
+                            {loading ? (
+                              <CircularProgress size={24} color="secondary" />
+                            ) : (
+                              "Save Changes"
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>

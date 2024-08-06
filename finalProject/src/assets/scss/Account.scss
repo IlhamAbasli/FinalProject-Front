@@ -88,6 +88,13 @@
       .save-changes {
         margin-top: 40px;
         button {
+          span {
+            color: white;
+          }
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-width: 160px;
           min-height: 60px;
           font-size: 0.75rem;
           padding: 15px 30px;
@@ -106,5 +113,22 @@
 @media only screen and (max-width: 768px) {
   .container-account {
     width: 95%;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .container-account {
+    width: 80%;
+  }
+  #account-area {
+    .account-info {
+      form {
+        .inputDiv {
+          input {
+            padding-right: 20px;
+          }
+        }
+      }
+    }
   }
 }

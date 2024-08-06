@@ -114,10 +114,10 @@ function PaymentManagement() {
       <section id="account-area">
         <div className="container-account">
           <div className="row">
-            <div className="col-3">
+            <div className="col-12 col-md-4 col-lg-3">
               <AccountSidebar />
             </div>
-            <div className="col-9">
+            <div className="col-12 col-md-8 col-lg-9">
               <div className="payment-side">
                 <div className="title">
                   <h1>Payment Management</h1>

@@ -213,3 +213,26 @@
     }
   }
 }
+
+@media only screen and (max-width: 768px) {
+  #account-area {
+    .balance {
+      p {
+        font-size: 23px;
+      }
+      button {
+        padding: 15px 7px;
+      }
+    }
+
+    .top-up {
+      ul {
+        li {
+          button {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}

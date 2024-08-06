@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import "../assets/scss/Redeem.scss";
 import icon from "../assets/icons/icon.svg";
 import gameimg from "../assets/images/gtav.avif";
+import axios from "axios";
 function RedeemCode() {
   useEffect(() => {
     document.title = "Redeem Code";
   });
   const [inputValue, setInputValue] = useState("");
+  const [game, setGame] = useState(null);
+
+  const baseURL = "https://localhost:44300/assets/images/";
 
   const formatInput = (value) => {
     // Remove all non-alphanumeric characters
@@ -37,6 +41,23 @@ function RedeemCode() {
     const formattedValue = formatInput(event.target.value);
     setInputValue(formattedValue);
   };
+
+  const handleFind = () => {
+    const fetchGame = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:44300/api/Product/GetByRedeem?redeemCode=${inputValue}`
+        );
+        console.log(response.data);
+        setGame(response.data);
+      } catch (error) {
+        setGame(null);
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchGame();
+  };
   return (
     <>
       <section id="redeem-area">
@@ -45,8 +66,20 @@ function RedeemCode() {
             <div className="col-12 col-md-4">
               <div className="game-content">
                 <div className="game-image">
-                  {/* <img src={gameimg} alt="" /> */}
-                  <img src={icon} alt="" className="icon" />
+                  {game ? (
+                    game.productImages.map(
+                      (image, index) =>
+                        image.isMain && (
+                          <img
+                            key={index}
+                            src={`${baseURL}${image.imageName}`}
+                            alt=""
+                          />
+                        )
+                    )
+                  ) : (
+                    <img src={icon} alt="" className="icon" />
+                  )}
                 </div>
                 <p>
                   The content will be bound to your Epic Games account forever,
@@ -72,12 +105,17 @@ function RedeemCode() {
                       placeholder="00000-00000-00000-00000"
                       value={inputValue}
                       onChange={handleChange}
-                    />
+                      onKeyUp={handleFind}
+                    />{" "}
+                    <div className="redeem-button">
+                      <button className={!game ? "button-disabled" : "button"}>
+                        Redeem
+                      </button>
+                    </div>
                   </form>
-                  <p className="not-exist d-none">Code does not exist.</p>
-                </div>
-                <div className="redeem-button">
-                  <button className="button-disabled">Redeem</button>
+                  {!game && (
+                    <p className="not-exist mt-3">Code does not exist.</p>
+                  )}
                 </div>
               </div>
             </div>

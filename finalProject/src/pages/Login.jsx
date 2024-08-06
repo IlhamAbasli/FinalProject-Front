@@ -10,6 +10,7 @@ import axios from "axios";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Login() {
   useEffect(() => {
@@ -17,7 +18,8 @@ function Login() {
   }, []);
   const navigate = useNavigate();
 
-  const [signInErrors, setSignInErrors] = useState(null);
+  const [signInError, setSignInError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values, actions) => {
     console.log(values);
@@ -27,6 +29,7 @@ function Login() {
     formData.append("Password", values.password);
 
     try {
+      setLoading(true);
       const res = await axios.post(
         "https://localhost:44300/api/Account/signin",
         formData,
@@ -37,15 +40,21 @@ function Login() {
         }
       );
       console.log(res);
-      setSignInErrors(res.data.message);
+      setSignInError(res.data);
       if (res.data.success) {
         actions.resetForm();
         localStorage.setItem("user-info", JSON.stringify(res.data.token));
-        navigate("/");
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/");
+        }, 2000);
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error submitting the form", error);
-      setSignInErrors(["An error occurred while submitting the form."]);
+      setSignInError("An error occurred while submitting the form.");
+      setLoading(false);
     }
   };
 
@@ -65,6 +74,7 @@ function Login() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
   return (
     <>
       <section id="login-area">
@@ -80,6 +90,18 @@ function Login() {
                 <div className="title">
                   <h2>Sign In</h2>
                 </div>
+                {signInError && (
+                  <div className="errors">
+                    <ul
+                      style={{
+                        color: signInError.success ? "green" : "#e97780",
+                        listStyle: "circle",
+                      }}
+                    >
+                      <li>{signInError.message}</li>
+                    </ul>
+                  </div>
+                )}
                 <div className="form">
                   <form onSubmit={handleSubmit}>
                     <div className="inputDiv">
@@ -89,7 +111,7 @@ function Login() {
                         variant="filled"
                         onChange={handleChange}
                         value={values.email}
-                        color={errors.email && "error"}
+                        color={errors.email ? "error" : "primary"}
                         autoComplete="off"
                       />
                       {errors.email && <p className="error">{errors.email}</p>}
@@ -101,7 +123,7 @@ function Login() {
                         variant="filled"
                         onChange={handleChange}
                         value={values.password}
-                        color={errors.password && "error"}
+                        color={errors.password ? "error" : "primary"}
                         autoComplete="off"
                         type={showPassword ? "text" : "password"}
                       />
@@ -117,8 +139,8 @@ function Login() {
                       )}
                     </div>
                     <div className="submit-area">
-                      <button disabled={isSubmitting} type="submit">
-                        Sign In
+                      <button disabled={isSubmitting || loading} type="submit">
+                        {loading ? <CircularProgress size={24} /> : "Sign In"}
                       </button>
                       <Link to="/forgotpassword">I can`t sign in</Link>
                       <Link to="/register">Create account</Link>
