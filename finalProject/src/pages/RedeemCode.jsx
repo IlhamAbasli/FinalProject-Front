@@ -3,12 +3,49 @@ import "../assets/scss/Redeem.scss";
 import icon from "../assets/icons/icon.svg";
 import gameimg from "../assets/images/gtav.avif";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 function RedeemCode() {
   useEffect(() => {
     document.title = "Redeem Code";
   });
   const [inputValue, setInputValue] = useState("");
   const [game, setGame] = useState(null);
+
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+        setId(decoded.sid);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
+  const handleRedeem = (e) => {
+    e.preventDefault();
+    const redeemGame = async () => {
+      try {
+        const response = await axios.post(
+          `https://localhost:44300/api/Library/AddLibrary?userId=${id}&productId=${game?.productId}`
+        );
+        console.log(response);
+        setGame(null);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    redeemGame();
+  };
 
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -108,7 +145,10 @@ function RedeemCode() {
                       onKeyUp={handleFind}
                     />{" "}
                     <div className="redeem-button">
-                      <button className={!game ? "button-disabled" : "button"}>
+                      <button
+                        onClick={handleRedeem}
+                        className={!game ? "button-disabled" : "button"}
+                      >
                         Redeem
                       </button>
                     </div>

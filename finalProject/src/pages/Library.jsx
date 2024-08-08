@@ -6,9 +6,95 @@ import search from "../assets/icons/search.svg";
 import checked from "../assets/icons/checked.svg";
 import Pagination from "@mui/material/Pagination";
 import "../assets/scss/Library.scss";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 function Library() {
+  const baseURL = "https://localhost:44300/assets/images/";
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Recently Purchased");
+  const [genres, setGenres] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [platforms, setPlatforms] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+  const [games, setGames] = useState([]);
+
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+        setId(decoded.sid);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Genre/GetAll"
+        );
+        setGenres(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchTypes = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Type/GetAll"
+        );
+        setTypes(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchPlatforms = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Platform/GetAll"
+        );
+        setPlatforms(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchGames = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&page=${currentPage}`
+        );
+        setGames(response.data.libraryProducts);
+        setPageCount(response.data.pageCount);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchTypes();
+    fetchGenres();
+    fetchPlatforms();
+    fetchGames();
+  }, [id, currentPage]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -137,136 +223,47 @@ function Library() {
                 </div>
               </div>
               <div className="row">
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
+                {games.map((game, index) => {
+                  const mainImage = game.product.productImages.filter(
+                    (image) => image.isMain
+                  )[0];
+                  console.log(mainImage.imageName);
+                  return (
+                    <div className="col-6 col-md-3" key={index}>
+                      <div className="offer-card">
+                        <Link>
+                          <div className="card-body">
+                            <div className="card-image">
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </div>
+                            <div className="card-desc py-2">
+                              <p className="name">{game.product.productName}</p>
+                            </div>
                           </div>
-                        </div>
+                        </Link>
                       </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
+                    </div>
+                  );
+                })}
+
+                {pageCount > 1 ? (
+                  <div className="col-12 d-flex justify-content-center">
+                    <div className="pagination">
+                      <Pagination
+                        count={pageCount}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                      />
                     </div>
                   </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-6 col-md-3">
-                  <div className="offer-card">
-                    <Link>
-                      <div className="card-body">
-                        <div className="card-image">
-                          <img src={crosshair} alt="" />
-                        </div>
-                        <div className="card-desc">
-                          <span className="game-type">BASE GAME</span>
-                          <p className="name">Crosshair X</p>
-                          <div className="price">
-                            <span>$3.59</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="to-wishlist">
-                      <button className="add-to-wishlist">
-                        <div className="wishlist-circle">
-                          <div className="plus-item"></div>
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 d-flex justify-content-center">
-                  <div className="pagination">
-                    <Pagination count={10} />
-                  </div>
-                </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <div className="col-12 col-lg-4 col-xl-3">
@@ -339,8 +336,8 @@ function Library() {
                       {filterDropdownOpen.genre && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["Action", "Casual", "Comedy"].map((item) =>
-                              renderFilterItem("genre", item)
+                            {genres.map((item) =>
+                              renderFilterItem("genre", item.genreName)
                             )}
                           </ul>
                         </div>
@@ -358,8 +355,8 @@ function Library() {
                       {filterDropdownOpen.types && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["App", "Game"].map((item) =>
-                              renderFilterItem("types", item)
+                            {types.map((item) =>
+                              renderFilterItem("types", item.typeName)
                             )}
                           </ul>
                         </div>
@@ -379,8 +376,8 @@ function Library() {
                       {filterDropdownOpen.platform && (
                         <div className="filter-dropdown">
                           <ul>
-                            {["Windows", "Mac OS"].map((item) =>
-                              renderFilterItem("platform", item)
+                            {platforms.map((item) =>
+                              renderFilterItem("platform", item.platformName)
                             )}
                           </ul>
                         </div>
