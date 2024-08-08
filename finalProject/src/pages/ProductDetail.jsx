@@ -73,6 +73,12 @@ function ProductDetail() {
     setActiveTab(tab);
   };
 
+  useEffect(() => {
+    if (game?.productName) {
+      document.title = `${game.productName} | Buy Today - Epic Games Store`;
+    }
+  }, [game]);
+
   return (
     <>
       <section id="game-name">

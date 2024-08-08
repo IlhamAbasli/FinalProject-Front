@@ -18,6 +18,18 @@ function Shop() {
   const [platforms, setPlatforms] = useState([]);
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  useEffect(() => {
+    document.title =
+      "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
+  });
+
   useEffect(() => {
     setLoading(true);
     console.log(loading);
@@ -57,9 +69,10 @@ function Shop() {
     const fetchGames = async () => {
       try {
         const response = await axios.get(
-          "https://localhost:44300/api/Product/GetAll"
+          `https://localhost:44300/api/Product/GetAllPaginated?page=${currentPage}`
         );
         setGames(response.data);
+        setPageCount(response.data.pageCount);
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -72,7 +85,7 @@ function Shop() {
     fetchGames();
     console.log(loading);
     setLoading(false);
-  }, []);
+  }, [currentPage]);
 
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -299,7 +312,7 @@ function Shop() {
                 </div>
               </div>
               <div className="row">
-                {games.map((game, index) => {
+                {games.products?.map((game, index) => {
                   const mainImage = game.productImages.filter(
                     (image) => image.isMain
                   )[0];
@@ -339,11 +352,19 @@ function Shop() {
                   );
                 })}
               </div>
-              <div className="col-12 d-flex justify-content-center">
-                <div className="pagination">
-                  <Pagination count={10} />
+              {pageCount > 1 ? (
+                <div className="col-12 d-flex justify-content-center">
+                  <div className="pagination">
+                    <Pagination
+                      count={pageCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                ""
+              )}
             </div>
             <div className="col-12 col-lg-4 col-xl-3">
               <div className="filter-area">

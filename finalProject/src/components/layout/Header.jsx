@@ -13,11 +13,6 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import { jwtDecode } from "jwt-decode";
 function Header() {
-  useEffect(() => {
-    document.title =
-      "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
-  });
-
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
 

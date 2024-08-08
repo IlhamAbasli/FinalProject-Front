@@ -72,6 +72,9 @@ function Home() {
 
     fetchAds();
   }, []);
+  useEffect(() => {
+    document.title = `Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games`;
+  }, []);
   return (
     <>
       <section id="slider">
