@@ -18,6 +18,8 @@ function News() {
   const baseURL = "https://localhost:44300/assets/images/";
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const fetchNews = async () => {
       try {
         const response = await axios.get(

@@ -4,88 +4,128 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
-import crosshair from "../assets/images/crosshair.avif";
-import genreImg from "../assets/images/genre-img.avif";
 import search from "../assets/icons/search.svg";
 import checked from "../assets/icons/checked.svg";
 import Pagination from "@mui/material/Pagination";
 import "../assets/scss/Shop.scss";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { Tooltip } from "@mui/material";
 
 function Shop() {
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+  const [wishlist, setWishlist] = useState([]);
+
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [id, setId] = useState("");
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
   useEffect(() => {
-    document.title =
-      "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
-  });
+    window.scrollTo(0, 0);
+
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+        setId(decoded.sid);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    setLoading(true);
-    console.log(loading);
-    const fetchGenres = async () => {
-      try {
-        const response = await axios.get(
-          "https://localhost:44300/api/Genre/GetAll"
-        );
-        setGenres(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-    const fetchTypes = async () => {
-      try {
-        const response = await axios.get(
-          "https://localhost:44300/api/Type/GetAll"
-        );
-        setTypes(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-    const fetchPlatforms = async () => {
-      try {
-        const response = await axios.get(
-          "https://localhost:44300/api/Platform/GetAll"
-        );
-        setPlatforms(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(
-          `https://localhost:44300/api/Product/GetAllPaginated?page=${currentPage}`
-        );
-        setGames(response.data);
-        setPageCount(response.data.pageCount);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
+    document.title =
+      "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
 
+    fetchWishlist();
     fetchTypes();
     fetchGenres();
     fetchPlatforms();
     fetchGames();
-    console.log(loading);
-    setLoading(false);
   }, [currentPage]);
+
+  const fetchWishlist = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Wishlist/GetUserWishlistIds?userId=${id}`
+        );
+        setWishlist(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+  fetchWishlist();
+
+  const fetchGenres = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:44300/api/Genre/GetAll"
+      );
+      setGenres(response.data);
+    } catch (error) {
+      console.error("Error fetching genres:", error);
+    }
+  };
+
+  const fetchTypes = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:44300/api/Type/GetAll"
+      );
+      setTypes(response.data);
+    } catch (error) {
+      console.error("Error fetching types:", error);
+    }
+  };
+
+  const fetchPlatforms = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:44300/api/Platform/GetAll"
+      );
+      setPlatforms(response.data);
+    } catch (error) {
+      console.error("Error fetching platforms:", error);
+    }
+  };
+
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:44300/api/Product/GetAllPaginated?page=${currentPage}`
+      );
+      setGames(response.data);
+      setPageCount(response.data.pageCount);
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  };
+
+  const addToWishlist = async (productId) => {
+    try {
+      const response = await axios.post(
+        `https://localhost:44300/api/Wishlist/AddWishlist?userId=${id}&productId=${productId}`
+      );
+      setWishlist([...wishlist, productId]);
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
 
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -173,6 +213,16 @@ function Shop() {
     );
   };
 
+  const removeFromWishlist = async (productId) => {
+    try {
+      const response = await axios.delete(
+        `https://localhost:44300/api/Wishlist/RemoveFromWishlist?userId=${id}&productId=${productId}`
+      );
+      setWishlist(wishlist.filter((item) => item.product.id !== productId));
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
   return (
     <>
       <section id="genres-carousel">
@@ -340,13 +390,65 @@ function Shop() {
                             </div>
                           </div>
                         </Link>
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
+                        {wishlist.includes(game.id) ? (
+                          <div className="to-wishlist">
+                            <Tooltip
+                              title="Remove from wishlist"
+                              arrow
+                              placement="top"
+                              slotProps={{
+                                popper: {
+                                  modifiers: [
+                                    {
+                                      name: "offset",
+                                      options: {
+                                        offset: [0, -20],
+                                      },
+                                    },
+                                  ],
+                                },
+                              }}
+                            >
+                              <button
+                                className="add-to-wishlist"
+                                onClick={() => removeFromWishlist(game.id)}
+                              >
+                                <div className="wishlist-circle">
+                                  <img src={checked} alt="" />
+                                </div>
+                              </button>
+                            </Tooltip>
+                          </div>
+                        ) : (
+                          <div className="to-wishlist">
+                            <Tooltip
+                              title="Add to wishlist"
+                              arrow
+                              placement="top"
+                              slotProps={{
+                                popper: {
+                                  modifiers: [
+                                    {
+                                      name: "offset",
+                                      options: {
+                                        offset: [0, -20],
+                                      },
+                                    },
+                                  ],
+                                },
+                              }}
+                            >
+                              <button
+                                className="add-to-wishlist"
+                                onClick={() => addToWishlist(game.id)}
+                              >
+                                <div className="wishlist-circle">
+                                  <div className="plus-item"></div>
+                                </div>
+                              </button>
+                            </Tooltip>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

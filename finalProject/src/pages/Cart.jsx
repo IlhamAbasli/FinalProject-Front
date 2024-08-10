@@ -18,6 +18,8 @@ function Cart() {
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedToken = localStorage.getItem("user-info");
     if (storedToken) {
       try {
@@ -199,7 +201,7 @@ function Cart() {
                               make Epic Games purchases. An Epic Games Wallet
                               can be funded using a registered payment method.
                             </span>
-                            <Link to="/add-funds">
+                            <Link to="/account/payment">
                               <button>Add funds to wallet</button>
                             </Link>
                           </div>

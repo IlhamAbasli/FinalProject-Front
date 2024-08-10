@@ -21,6 +21,8 @@ function ForgotPassword() {
     actions.resetForm();
   };
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     document.title = "Reset your Epic Games account password | Epic Games";
   }, []);
   const { values, errors, isSubmitting, handleChange, handleSubmit } =

@@ -25,6 +25,8 @@ function PaymentManagement() {
   const amounts = [5, 10, 20, 50, 100];
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedToken = localStorage.getItem("user-info");
     if (storedToken) {
       try {
@@ -99,7 +101,7 @@ function PaymentManagement() {
   const handleAddFunds = async () => {
     try {
       const res = await axios.post(
-        `https://localhost:44300/api/Wallet/AddFunds?Balance=${selectedAmount}&UserId=${decodedToken.sid}`
+        `https://localhost:44300/api/Wallet/AddFunds?balance=${selectedAmount}&userId=${decodedToken.sid}`
       );
       console.log(res);
       await fetchBalance(); // Update balance after adding funds

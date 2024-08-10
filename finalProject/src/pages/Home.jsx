@@ -58,6 +58,8 @@ function Home() {
 
   const [ads, setAds] = useState([]);
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const fetchAds = async () => {
       try {
         const response = await axios.get(

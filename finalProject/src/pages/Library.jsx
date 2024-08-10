@@ -25,6 +25,8 @@ function Library() {
   const [id, setId] = useState("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedToken = localStorage.getItem("user-info");
     if (storedToken) {
       try {

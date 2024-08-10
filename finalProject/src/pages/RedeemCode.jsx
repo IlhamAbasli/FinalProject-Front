@@ -16,6 +16,8 @@ function RedeemCode() {
   const [id, setId] = useState("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedToken = localStorage.getItem("user-info");
     if (storedToken) {
       try {
@@ -35,7 +37,7 @@ function RedeemCode() {
     const redeemGame = async () => {
       try {
         const response = await axios.post(
-          `https://localhost:44300/api/Library/AddLibrary?userId=${id}&productId=${game?.productId}`
+          `https://localhost:44300/api/Library/AddLibraryByRedeem?userId=${id}&productId=${game?.productId}`
         );
         console.log(response);
         setGame(null);

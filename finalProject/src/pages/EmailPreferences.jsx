@@ -5,6 +5,8 @@ import { Switch } from "@mui/material";
 import "../assets/scss/EmailPreferences.scss";
 function EmailPreferences() {
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     document.title = "Email Preferences";
   });
   return (
