@@ -352,6 +352,53 @@
       margin-top: 10px;
       display: flex;
       flex-direction: column;
+      .in-library {
+        font-size: 14px;
+        color: black;
+        background-color: white;
+        opacity: 0.5;
+        border: none;
+        height: 50px;
+        border-radius: 10px;
+        font-weight: bold;
+        img {
+          filter: invert(1);
+          width: 25px;
+          height: 25px;
+          padding-right: 5px;
+        }
+      }
+      .in-cart {
+        font-size: 14px;
+        letter-spacing: 1px;
+        background-color: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: rgb(245, 245, 245);
+        border: 1px solid rgba(245, 245, 245, 0.6);
+        height: 50px;
+        border-radius: 4px;
+        position: relative;
+        cursor: pointer;
+        &:hover::after {
+          opacity: 0.16;
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          transition: opacity 200ms ease;
+          border-radius: 4px;
+          background-color: rgb(255, 255, 255);
+          opacity: 0;
+          z-index: 0;
+        }
+      }
       .add-cart {
         font-size: 14px;
         letter-spacing: 1px;
@@ -380,6 +427,9 @@
       }
       .add-wishlist {
         position: relative;
+        span {
+          color: white;
+        }
         &:hover::after {
           opacity: 0.16;
         }

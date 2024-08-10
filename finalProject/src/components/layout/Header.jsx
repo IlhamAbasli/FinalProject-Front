@@ -11,10 +11,30 @@ import closeIcon from "../../assets/icons/closeIcon.svg";
 import chevronDownIcon from "../../assets/icons/chevron-down.svg";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 function Header() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
+  const [id, setId] = useState("");
+
+  const fetchCart = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Basket/GetUserBasket?userId=${id}`
+        );
+        setCartCount(response.data.userBasket.length);
+        console.log(cartCount);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCart();
+  });
 
   useEffect(() => {
     const storedToken = localStorage.getItem("user-info");
@@ -24,6 +44,7 @@ function Header() {
         const decoded = jwtDecode(parsedToken);
         setToken(parsedToken);
         setDecodedToken(decoded);
+        setId(decoded.sid);
       } catch (error) {
         console.error("Invalid token:", error);
       }
@@ -238,7 +259,11 @@ function Header() {
                     </li>
                     <li>
                       <NavLink to="/cart">Cart</NavLink>
-                      <span className="basket-count">2</span>
+                      {cartCount === 0 ? (
+                        ""
+                      ) : (
+                        <span className="basket-count">{cartCount}</span>
+                      )}
                     </li>
                   </ul>
                   <ul className="d-lg-none d-flex">

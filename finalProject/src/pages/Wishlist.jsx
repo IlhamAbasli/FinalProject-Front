@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import "../assets/scss/Wishlist.scss";
 import navigate from "../assets/icons/navigate.svg";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
-import wishlistgame from "../assets/images/wishlistgame.avif";
 import "../assets/scss/NotFound.scss";
 import { jwtDecode } from "jwt-decode";
 import icon from "../assets/icons/notfoundicon.svg";
@@ -21,10 +20,6 @@ function Wishlist() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [id, setId] = useState("");
-
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -116,7 +111,7 @@ function Wishlist() {
                   <span className="wallet-title">
                     Epic Wallet <img src={navigate} alt="" />
                   </span>
-                  <span className="wallet-counter">${balance}.00</span>
+                  <span className="wallet-counter">${balance.toFixed(2)}</span>
                 </Link>
               </div>
             </div>

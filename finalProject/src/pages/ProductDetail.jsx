@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../assets/scss/ProductDetail.scss";
 import chevron from "../assets/icons/chevron-down.svg";
+import inlibrary from "../assets/icons/inlibrary.svg";
 import share from "../assets/icons/share.svg";
 import { Snackbar, Alert } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
@@ -8,13 +9,39 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import Loading from "../components/layout/Loading";
-
+import { jwtDecode } from "jwt-decode";
+import { Tooltip, CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 function ProductDetail() {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
   const { id } = useParams();
-
+  const [wishlist, setWishlist] = useState([]);
+  const [library, setLibrary] = useState([]);
+  const [basket, setBasket] = useState([]);
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [userId, setUserId] = useState("");
   const baseURL = "https://localhost:44300/assets/images/";
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+        setUserId(decoded.sid);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,7 +53,6 @@ function ProductDetail() {
         );
         setGame(response.data);
         setLoading(false);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching game:", error);
       }
@@ -36,7 +62,6 @@ function ProductDetail() {
   }, [id]);
 
   const images = game?.productImages?.filter((image) => !image.isMain) || [];
-  console.log(images);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleLeftArrowClick = () => {
@@ -64,7 +89,6 @@ function ProductDetail() {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        console.log("URL copied to clipboard!");
         setOpen(true);
       })
       .catch((err) => {
@@ -82,8 +106,98 @@ function ProductDetail() {
     if (game?.productName) {
       document.title = `${game.productName} | Buy Today - Epic Games Store`;
     }
+    fetchWishlist();
+    fetchLibrary();
+    fetchBasket();
   }, [game]);
 
+  const addToWishlist = async (productId) => {
+    try {
+      setWishlistLoading(true);
+      const response = await axios.post(
+        `https://localhost:44300/api/Wishlist/AddWishlist?userId=${userId}&productId=${productId}`
+      );
+      setTimeout(() => {
+        setWishlistLoading(false);
+      }, 2000);
+      setWishlist([...wishlist, productId]);
+      fetchWishlist();
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
+  const addToCart = async (productId) => {
+    try {
+      setCartLoading(true);
+      const response = await axios.post(
+        `https://localhost:44300/api/Basket/AddBasket?userId=${userId}&productId=${productId}`
+      );
+      setTimeout(() => {
+        setCartLoading(false);
+      }, 2000);
+      setBasket([...wishlist, productId]);
+      fetchWishlist();
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
+  const removeFromWishlist = async (productId) => {
+    setWishlistLoading(true);
+
+    try {
+      const response = await axios.delete(
+        `https://localhost:44300/api/Wishlist/RemoveFromWishlist?userId=${userId}&productId=${productId}`
+      );
+      setTimeout(() => {
+        setWishlistLoading(false);
+      }, 2000);
+      setWishlist(wishlist.filter((item) => item !== productId));
+      fetchWishlist();
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      if (userId) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Wishlist/GetUserWishlistIds?userId=${userId}`
+        );
+        setWishlist(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+
+  const fetchLibrary = async () => {
+    try {
+      if (userId) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Library/GetUserLibraryIds?userId=${userId}`
+        );
+        setLibrary(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+
+  const fetchBasket = async () => {
+    try {
+      if (userId) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Basket/GetUserBasketIds?userId=${userId}`
+        );
+        setBasket(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
   return (
     <>
       {loading ? (
@@ -318,19 +432,84 @@ function ProductDetail() {
                     <div className="price">
                       <span>${game?.productPrice}</span>
                     </div>
-                    <div className="buy-wish">
-                      <button className="add-cart">Add to cart</button>
-                      <button className="add-wishlist">
-                        <div className="to-wishlist">
-                          <span className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </span>
-                        </div>
-                        Add to wishlist
-                      </button>
-                    </div>
+                    {library.includes(game?.id) ? (
+                      <div className="buy-wish">
+                        <button
+                          className="in-library"
+                          disabled
+                          style={{ cursor: "not-allowed" }}
+                        >
+                          <img src={inlibrary} alt="" />
+                          In Library
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="buy-wish">
+                        {basket.includes(game?.id) ? (
+                          <Link to="/cart" className="in-cart">
+                            View in cart
+                          </Link>
+                        ) : (
+                          <button
+                            className="add-cart"
+                            onClick={() => addToCart(game?.id)}
+                          >
+                            Add to cart
+                          </button>
+                        )}
+
+                        {wishlist.includes(game?.id) ? (
+                          <Tooltip
+                            title="Remove from wishlist"
+                            placement="bottom"
+                            slotProps={{
+                              popper: {
+                                modifiers: [
+                                  {
+                                    name: "offset",
+                                    options: {
+                                      offset: [0, -5],
+                                    },
+                                  },
+                                ],
+                              },
+                            }}
+                          >
+                            <button
+                              className="add-wishlist"
+                              onClick={() => removeFromWishlist(game?.id)}
+                            >
+                              {wishlistLoading ? (
+                                <CircularProgress size={24} color="secondary" />
+                              ) : (
+                                "In wishlist"
+                              )}
+                            </button>
+                          </Tooltip>
+                        ) : (
+                          <button
+                            className="add-wishlist"
+                            onClick={() => addToWishlist(game?.id)}
+                          >
+                            {wishlistLoading ? (
+                              <CircularProgress size={24} color="secondary" />
+                            ) : (
+                              <>
+                                <div className="to-wishlist">
+                                  <span className="add-to-wishlist">
+                                    <div className="wishlist-circle">
+                                      <div className="plus-item"></div>
+                                    </div>
+                                  </span>
+                                </div>
+                                Add to wishlist
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+
                     <div className="creator-detail">
                       <ul>
                         <li className="developer">

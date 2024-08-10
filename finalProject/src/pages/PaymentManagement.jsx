@@ -20,7 +20,7 @@ function PaymentManagement() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [selectedAmount, setSelectedAmount] = useState(0); // Default selected amount is $10
+  const [selectedAmount, setSelectedAmount] = useState(0);
 
   const amounts = [5, 10, 20, 50, 100];
 
@@ -133,7 +133,7 @@ function PaymentManagement() {
                 </div>
                 <hr />
                 <div className="balance">
-                  <p>${balance}.00</p>
+                  <p>${balance.toFixed(2)}</p>
                   <button
                     onClick={handleAddFunds}
                     disabled={

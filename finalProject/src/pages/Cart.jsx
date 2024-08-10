@@ -1,21 +1,41 @@
 import React, { useEffect, useState } from "react";
 import "../assets/scss/Cart.scss";
-import navigate from "../assets/icons/navigate.svg";
-import { Link } from "react-router-dom";
+import navigateWallet from "../assets/icons/navigate.svg";
+import { Link, useNavigate } from "react-router-dom";
 import wishlistgame from "../assets/images/wishlistgame.avif";
 import PersonIcon from "@mui/icons-material/Person";
 import icon from "../assets/icons/icon.svg";
+import notFoundIcon from "../assets/icons/notfoundicon.svg";
+
 import xicon from "../assets/icons/closeIcon.svg";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 function Cart() {
+  const navigate = useNavigate();
   useEffect(() => {
     document.title = "Cart";
   }, []);
   const [decodedToken, setDecodedToken] = useState(null);
   const [token, setToken] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [id, setId] = useState("");
+  const [cart, setCart] = useState({});
+
+  const baseURL = "https://localhost:44300/assets/images/";
+
+  const fetchCart = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Basket/GetUserBasket?userId=${id}`
+        );
+        setCart(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,6 +47,7 @@ function Cart() {
         const decoded = jwtDecode(parsedToken);
         setToken(parsedToken);
         setDecodedToken(decoded);
+        setId(decoded.sid);
       } catch (error) {
         console.error("Invalid token:", error);
       }
@@ -47,6 +68,7 @@ function Cart() {
   useEffect(() => {
     if (decodedToken) {
       fetchBalance();
+      fetchCart();
     }
   }, [decodedToken]);
 
@@ -69,6 +91,58 @@ function Cart() {
     setIsPaymentMethodSelected(false);
   };
 
+  const removeFromCart = async (productId) => {
+    try {
+      const response = await axios.delete(
+        `https://localhost:44300/api/Basket/RemoveFromBasket?userId=${id}&productId=${productId}`
+      );
+      const updatedBasket = cart.userBasket.filter(
+        (item) => item.product.id !== productId
+      );
+
+      const updatedTotal = updatedBasket.reduce(
+        (total, item) => total + item.product.productPrice,
+        0
+      );
+
+      setCart({
+        ...cart,
+        userBasket: updatedBasket,
+        basketTotal: updatedTotal,
+      });
+      navigate("/cart");
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
+  const addToWishlist = async (productId) => {
+    try {
+      const response = await axios.post(
+        `https://localhost:44300/api/Wishlist/AddWishlist?userId=${id}&productId=${productId}`
+      );
+      removeFromCart(productId);
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
+  const buyProducts = async () => {
+    try {
+      const response = await axios.delete(
+        `https://localhost:44300/api/Basket/BuyProducts`,
+        {
+          data: {
+            userId: id,
+            totalPrice: cart.basketTotal,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error processing the purchase:", error);
+    }
+  };
+
   return (
     <>
       <section id="cart-title">
@@ -83,9 +157,9 @@ function Cart() {
               <div className="wallet-balance">
                 <Link to="/account/payment">
                   <span className="wallet-title">
-                    Epic Wallet <img src={navigate} alt="" />
+                    Epic Wallet <img src={navigateWallet} alt="" />
                   </span>
-                  <span className="wallet-counter">${balance}.00</span>
+                  <span className="wallet-counter">${balance.toFixed(2)}</span>
                 </Link>
               </div>
             </div>
@@ -96,57 +170,100 @@ function Cart() {
       <section id="cart-area">
         <div className="container-main">
           <div className="row">
-            <div className="col-12 col-lg-7 col-xl-9">
-              <div className="wishlisted-game">
-                <div className="top">
-                  <div className="game-image">
-                    <Link>
-                      <img src={wishlistgame} alt="" />
-                    </Link>
-                  </div>
-                  <div className="about-game">
-                    <div className="game">
-                      <div className="type">
-                        <span>Base game</span>
-                      </div>
-                      <div className="name">
-                        <Link>Tom Clancy's Rainbow Six® Siege</Link>
-                      </div>
-                    </div>
-                    <div className="price">
-                      <span>$19.99</span>
-                    </div>
-                  </div>
-                </div>
+            {cart.userBasket?.length != 0 ? (
+              <>
+                {" "}
+                <div className="col-12 col-lg-7 col-xl-9">
+                  {cart.userBasket?.map((item, index) => {
+                    const mainImage = item.product?.productImages.filter(
+                      (image) => image.isMain
+                    )[0];
+                    return (
+                      <div className="wishlisted-game mb-3" key={index}>
+                        <div className="top">
+                          <div className="game-image">
+                            <Link to={`/p/${item.product.id}`}>
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </Link>
+                          </div>
+                          <div className="about-game">
+                            <div className="game">
+                              <div className="type">
+                                <span>Base game</span>
+                              </div>
+                              <div className="name">
+                                <Link>{item.product.productName}</Link>
+                              </div>
+                            </div>
+                            <div className="price">
+                              <span>${item.product.productPrice}</span>
+                            </div>
+                          </div>
+                        </div>
 
-                <div className="operations">
-                  <div className="remove-bttn">
-                    <button>Remove</button>
+                        <div className="operations">
+                          <div className="remove-bttn">
+                            <button
+                              onClick={() => removeFromCart(item.product.id)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          <div className="add-wishlist-bttn">
+                            <button
+                              onClick={() => addToWishlist(item.product.id)}
+                            >
+                              MOVE TO WISHLIST
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="col-12 col-lg-5 col-xl-3">
+                  <div className="checkout-area">
+                    <div className="checkout-title">
+                      <span>Games and Apps Summary</span>
+                    </div>
+                    <div className="summary-price">
+                      <span className="tag">Price</span>
+                      <span className="price">${cart.basketTotal}</span>
+                    </div>
+                    <div className="summary-subtotal">
+                      <div className="tag">Subtotal</div>
+                      <div className="total">${cart.basketTotal}</div>
+                    </div>
+                    <div className="checkout-button">
+                      <button onClick={handleCheckoutClick}>Check Out</button>
+                    </div>
                   </div>
-                  <div className="add-wishlist-bttn">
-                    <button>MOVE TO WISHLIST</button>
+                </div>
+              </>
+            ) : (
+              <section id="not-found-area">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="not-found">
+                      <div className="icon">
+                        <img src={notFoundIcon} alt="" />
+                      </div>
+                      <div className="title">
+                        <h1>Your cart is empty.</h1>
+                      </div>
+                      <div className="back-to-store">
+                        <Link to="/">Shop for Games & Apps</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-12 col-lg-5 col-xl-3">
-              <div className="checkout-area">
-                <div className="checkout-title">
-                  <span>Games and Apps Summary</span>
-                </div>
-                <div className="summary-price">
-                  <span className="tag">Price</span>
-                  <span className="price">$19.90</span>
-                </div>
-                <div className="summary-subtotal">
-                  <div className="tag">Subtotal</div>
-                  <div className="total">$19.90</div>
-                </div>
-                <div className="checkout-button">
-                  <button onClick={handleCheckoutClick}>Check Out</button>
-                </div>
-              </div>
-            </div>
+              </section>
+            )}
           </div>
         </div>
       </section>
@@ -161,7 +278,7 @@ function Cart() {
                     <div className="payment-title">
                       <h1>Checkout</h1>
                       <span>
-                        <PersonIcon /> username
+                        <PersonIcon /> {decodedToken.sub}
                       </span>
                     </div>
                     <div className="payment-methods">
@@ -189,7 +306,7 @@ function Cart() {
                             <div className="payment-method-name">
                               Wallet{" "}
                               <span className="wallet-balance">
-                                ${balance}.00
+                                ${balance.toFixed(2)}
                               </span>
                             </div>
                           </div>
@@ -219,123 +336,49 @@ function Cart() {
                           <img src={xicon} alt="" />
                         </button>
                       </div>{" "}
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
+                      {cart.userBasket?.map((item, index) => {
+                        const mainImage = item.product?.productImages.filter(
+                          (image) => image.isMain
+                        )[0];
+                        return (
+                          <div className="payment-games" key={index}>
+                            <div className="payment-item">
+                              <div className="payment-thumbnail">
+                                <img
+                                  src={`${baseURL}${
+                                    mainImage ? mainImage.imageName : ""
+                                  }`}
+                                  alt=""
+                                />
+                              </div>
+                              <div className="payment-content">
+                                <span className="game-name">
+                                  {item.product.productName}
+                                </span>
+                                <span className="price">
+                                  ${item.product.productPrice}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="payment-games">
-                        <div className="payment-item">
-                          <div className="payment-thumbnail">
-                            <img src={wishlistgame} alt="" />
-                          </div>
-                          <div className="payment-content">
-                            <span className="game-name">
-                              Tom Clancy's Rainbow Six® Siege
-                            </span>
-                            <span className="price">$19.90</span>
-                          </div>
-                        </div>
-                      </div>
+                        );
+                      })}
                       <div className="payment-summary">
                         <div className="summary-price">
                           <span className="tag">Price</span>
-                          <span className="price">$19.90</span>
+                          <span className="price">${cart.basketTotal}</span>
                         </div>
                         <div className="summary-subtotal">
                           <div className="tag">Subtotal</div>
-                          <div className="total">$19.90</div>
+                          <div className="total">${cart.basketTotal}</div>
                         </div>
                       </div>
                     </div>
                     <div className="place-order">
-                      <button disabled={!isPaymentMethodSelected}>
+                      <button
+                        disabled={!isPaymentMethodSelected}
+                        onClick={() => buyProducts()}
+                      >
                         Place order
                       </button>
                     </div>

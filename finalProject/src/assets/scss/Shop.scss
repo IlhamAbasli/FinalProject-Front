@@ -238,6 +238,12 @@
             line-height: 20px;
             color: whitesmoke;
             margin: 5px 0px;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            vertical-align: middle;
           }
           .price {
             margin-top: 10px;

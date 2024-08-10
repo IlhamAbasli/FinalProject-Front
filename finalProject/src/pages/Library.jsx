@@ -26,7 +26,7 @@ function Library() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
+    document.title = "My Library";
     const storedToken = localStorage.getItem("user-info");
     if (storedToken) {
       try {
@@ -44,6 +44,23 @@ function Library() {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&page=${currentPage}`
+      );
+      setGames(response.data.libraryProducts);
+      setPageCount(response.data.pageCount);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  };
+  useEffect(() => {
+    if (id) {
+      fetchGames();
+    }
+  }, [id, currentPage]);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -75,18 +92,6 @@ function Library() {
         );
         setPlatforms(response.data);
         console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(
-          `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&page=${currentPage}`
-        );
-        setGames(response.data.libraryProducts);
-        setPageCount(response.data.pageCount);
-        console.log(response);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
