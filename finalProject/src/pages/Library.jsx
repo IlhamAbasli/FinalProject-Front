@@ -47,11 +47,10 @@ function Library() {
   const fetchGames = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&page=${currentPage}`
+        `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&sortType=${selectedOption}&page=${currentPage}`
       );
       setGames(response.data.libraryProducts);
       setPageCount(response.data.pageCount);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -63,13 +62,16 @@ function Library() {
   }, [id, currentPage]);
 
   useEffect(() => {
+    fetchGames();
+  }, [selectedOption]);
+
+  useEffect(() => {
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
           "https://localhost:44300/api/Genre/GetAll"
         );
         setGenres(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -80,7 +82,6 @@ function Library() {
           "https://localhost:44300/api/Type/GetAll"
         );
         setTypes(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -91,7 +92,6 @@ function Library() {
           "https://localhost:44300/api/Platform/GetAll"
         );
         setPlatforms(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -234,7 +234,6 @@ function Library() {
                   const mainImage = game.product.productImages.filter(
                     (image) => image.isMain
                   )[0];
-                  console.log(mainImage.imageName);
                   return (
                     <div className="col-6 col-md-3" key={index}>
                       <div className="offer-card">

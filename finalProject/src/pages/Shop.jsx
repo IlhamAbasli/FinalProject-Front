@@ -20,6 +20,8 @@ function Shop() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [wishlist, setWishlist] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("New Release");
 
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
@@ -107,7 +109,7 @@ function Shop() {
   const fetchGames = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:44300/api/Product/GetAllPaginated?page=${currentPage}`
+        `https://localhost:44300/api/Product/GetAllPaginated?sortType=${selectedOption}&page=${currentPage}`
       );
       setGames(response.data);
       setPageCount(response.data.pageCount);
@@ -115,6 +117,10 @@ function Shop() {
       console.error("Error fetching games:", error);
     }
   };
+
+  useEffect(() => {
+    fetchGames();
+  }, [selectedOption]);
 
   const addToWishlist = async (productId) => {
     try {
@@ -142,9 +148,6 @@ function Shop() {
       swiperRef.current.swiper.slideNext();
     }
   };
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("New Release");
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
