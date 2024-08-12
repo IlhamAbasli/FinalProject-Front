@@ -46,6 +46,7 @@ import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentManagement from "./pages/PaymentManagement";
 import NotFound from "./pages/NotFound";
+import EmailConfirmation from "./pages/EmailConfirmation";
 
 function App() {
   const location = useLocation();
@@ -53,6 +54,7 @@ function App() {
   const noHeaderFooterPaths = [
     "/login",
     "/register",
+    "/emailconfirmation",
     "/forgotpassword",
     "/account/*",
     "/account/email",
@@ -195,6 +197,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/emailconfirmation" element={<EmailConfirmation />} />
 
           <Route
             path="/admin"

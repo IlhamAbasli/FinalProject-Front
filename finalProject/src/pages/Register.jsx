@@ -4,7 +4,7 @@ import icon from "../assets/icons/icon.svg";
 import { useFormik } from "formik";
 import { advancedSchema } from "../schemas/index";
 import { Link, useNavigate } from "react-router-dom";
-import { TextField, Tooltip, Button } from "@mui/material";
+import { TextField, Tooltip, Alert, CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import axios from "axios";
@@ -19,6 +19,8 @@ function Register() {
   const navigate = useNavigate();
 
   const [signUpErrors, setSignUpErrors] = useState(null);
+  const [signUp, setSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values, actions) => {
     console.log(values);
@@ -31,6 +33,8 @@ function Register() {
     formData.append("Password", values.password);
 
     try {
+      setLoading(true);
+
       const res = await axios.post(
         "https://localhost:44300/api/Account/signup",
         formData,
@@ -42,13 +46,19 @@ function Register() {
       );
       console.log(res);
       setSignUpErrors(res.data.errors);
+      setSignUp(res.data.success);
       if (!res.data.errors || res.data.errors.length === 0) {
         actions.resetForm();
-        navigate("/login");
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error submitting the form", error);
       setSignUpErrors(["An error occurred while submitting the form."]);
+      setLoading(false);
     }
   };
 
@@ -95,6 +105,15 @@ function Register() {
                       ))}
                     </ul>
                   </div>
+                )}
+                {!loading && signUp && (
+                  <Alert
+                    variant="outlined"
+                    severity="success"
+                    sx={{ color: "green" }}
+                  >
+                    Register successfull, please check your email
+                  </Alert>
                 )}
 
                 <div className="form">
@@ -195,8 +214,8 @@ function Register() {
                       )}
                     </div>
                     <div className="submit-area">
-                      <button disabled={isSubmitting} type="submit">
-                        Sign Up
+                      <button disabled={isSubmitting || loading} type="submit">
+                        {loading ? <CircularProgress size={24} /> : "Sign Up"}
                       </button>
                       <span>
                         Already have an account?

@@ -422,7 +422,7 @@ function Shop() {
                               </button>
                             </Tooltip>
                           </div>
-                        ) : (
+                        ) : id ? (
                           <div className="to-wishlist">
                             <Tooltip
                               title="Add to wishlist"
@@ -449,6 +449,32 @@ function Shop() {
                                   <div className="plus-item"></div>
                                 </div>
                               </button>
+                            </Tooltip>
+                          </div>
+                        ) : (
+                          <div className="to-wishlist">
+                            <Tooltip
+                              title="Add to wishlist"
+                              arrow
+                              placement="top"
+                              slotProps={{
+                                popper: {
+                                  modifiers: [
+                                    {
+                                      name: "offset",
+                                      options: {
+                                        offset: [0, -20],
+                                      },
+                                    },
+                                  ],
+                                },
+                              }}
+                            >
+                              <Link className="add-to-wishlist" to="/login">
+                                <div className="wishlist-circle">
+                                  <div className="plus-item"></div>
+                                </div>
+                              </Link>
                             </Tooltip>
                           </div>
                         )}

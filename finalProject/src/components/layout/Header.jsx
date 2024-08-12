@@ -127,7 +127,7 @@ function Header() {
               <ul>
                 <li className="account-nav">
                   <Link
-                    to={token ? "" : "/login"}
+                    to={!token && "/login"}
                     title={decodedToken && decodedToken.sub}
                   >
                     <div className="account">

@@ -449,13 +449,21 @@ function ProductDetail() {
                           <Link to="/cart" className="in-cart">
                             View in cart
                           </Link>
-                        ) : (
+                        ) : userId ? (
                           <button
                             className="add-cart"
                             onClick={() => addToCart(game?.id)}
                           >
                             Add to cart
                           </button>
+                        ) : (
+                          <Link
+                            className="in-cart"
+                            style={{ textTransform: "uppercase" }}
+                            to="/login"
+                          >
+                            Add to cart
+                          </Link>
                         )}
 
                         {wishlist.includes(game?.id) ? (
@@ -486,7 +494,7 @@ function ProductDetail() {
                               )}
                             </button>
                           </Tooltip>
-                        ) : (
+                        ) : userId ? (
                           <button
                             className="add-wishlist"
                             onClick={() => addToWishlist(game?.id)}
@@ -506,6 +514,17 @@ function ProductDetail() {
                               </>
                             )}
                           </button>
+                        ) : (
+                          <Link className="add-wishlist" to="/login">
+                            <div className="to-wishlist">
+                              <span className="add-to-wishlist">
+                                <div className="wishlist-circle">
+                                  <div className="plus-item"></div>
+                                </div>
+                              </span>
+                            </div>
+                            Add to wishlist
+                          </Link>
                         )}
                       </div>
                     )}
