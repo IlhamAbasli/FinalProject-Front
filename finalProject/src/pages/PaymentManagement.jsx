@@ -140,7 +140,10 @@ function PaymentManagement() {
                       !isPaymentMethodSelected ||
                       errors.cardNumber ||
                       errors.cvv ||
-                      errors.expiration
+                      errors.expiration ||
+                      values.cardNumber == "" ||
+                      values.cvv == "" ||
+                      values.expiration == ""
                     }
                   >
                     Add funds to wallet

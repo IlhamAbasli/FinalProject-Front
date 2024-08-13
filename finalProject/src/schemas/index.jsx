@@ -56,6 +56,14 @@ export const changePasswordSchema = yup.object().shape({
   newPassword: yup.string().required("Required"),
 });
 
+export const resetPasswordSchema = yup.object().shape({
+  newPassword: yup.string().required("New password is required"),
+  confirmNewPassword: yup
+    .string()
+    .oneOf([yup.ref("newPassword")], "Passwords must match")
+    .required("Confirm new password is required"),
+});
+
 export const forgotPasswordSchema = yup.object().shape({
   email: yup.string().email("Email format is wrong").required("Required"),
 });

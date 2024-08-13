@@ -47,6 +47,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PaymentManagement from "./pages/PaymentManagement";
 import NotFound from "./pages/NotFound";
 import EmailConfirmation from "./pages/EmailConfirmation";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const location = useLocation();
@@ -56,6 +57,7 @@ function App() {
     "/register",
     "/emailconfirmation",
     "/forgotpassword",
+    "/resetpassword",
     "/account/*",
     "/account/email",
     "/account/security",
@@ -130,6 +132,14 @@ function App() {
             element={
               <PublicRoute>
                 <ForgotPassword />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/resetpassword"
+            element={
+              <PublicRoute>
+                <ResetPassword />
               </PublicRoute>
             }
           />

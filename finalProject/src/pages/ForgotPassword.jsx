@@ -1,24 +1,37 @@
 import React, { useState, useEffect } from "react";
 import "../assets/scss/Login.scss";
 import icon from "../assets/icons/icon.svg";
+import axios from "axios";
 import { useFormik } from "formik";
 import { forgotPasswordSchema } from "../schemas/index";
 import { Link } from "react-router-dom";
-import { TextField } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { TextField, Alert, CircularProgress } from "@mui/material";
 
 function ForgotPassword() {
-  const onSubmit = async (values, actions) => {
-    console.log(values);
-    console.log(actions);
+  const [loading, setLoading] = useState(false);
+  const [forgetPassword, setForgetPassword] = useState(false);
+  const [forgetPasswordMessage, setForgetPasswrodMessage] = useState("");
+  const [email, setEmail] = useState("");
 
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
-    actions.resetForm();
+  const onSubmit = async (values, actions) => {
+    setEmail(values.email);
+
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://localhost:44300/api/Account/ForgetPassword?email=${values.email}`
+      );
+      console.log(response.data);
+      setTimeout(
+        () => setLoading(false),
+        setForgetPasswrodMessage(response.data.message),
+        setForgetPassword(response.data.success),
+        actions.resetForm(),
+        5000
+      );
+    } catch (error) {
+      setForgetPasswrodMessage("Failed to reset password. Please try again.");
+    }
   };
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,12 +47,6 @@ function ForgotPassword() {
       onSubmit,
     });
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
   return (
     <div>
       {" "}
@@ -56,6 +63,15 @@ function ForgotPassword() {
                 <div className="title">
                   <h2>Forgot your password?</h2>
                 </div>
+                {!loading && forgetPassword && (
+                  <Alert
+                    variant="outlined"
+                    severity={forgetPassword ? "success" : "error"}
+                    sx={{ color: forgetPassword ? "green" : "red" }}
+                  >
+                    {forgetPasswordMessage}
+                  </Alert>
+                )}
                 <div className="form">
                   <form onSubmit={handleSubmit}>
                     <p style={{ color: "#ffffffb8" }}>
@@ -75,10 +91,19 @@ function ForgotPassword() {
                     </div>
                     <div className="submit-area">
                       <button
-                        disabled={isSubmitting || errors.email}
+                        disabled={
+                          isSubmitting ||
+                          loading ||
+                          errors.email ||
+                          values.email == ""
+                        }
                         type="submit"
                       >
-                        Send Email
+                        {loading ? (
+                          <CircularProgress size={24} />
+                        ) : (
+                          "Send Email"
+                        )}
                       </button>
                       <p style={{ color: "#ffffffb8" }} className="mt-5">
                         Remember your password?
