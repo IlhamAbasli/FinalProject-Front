@@ -33,7 +33,6 @@ import GenresEdit from "./pages/Admin/pages/GenresEdit";
 import TypeCreate from "./pages/Admin/pages/TypeCreate";
 import TypeEdit from "./pages/Admin/pages/TypeEdit";
 import AdsCreate from "./pages/Admin/pages/AdsCreate";
-import AdsDetail from "./pages/Admin/pages/AdsDetail";
 import AdsEdit from "./pages/Admin/pages/AdsEdit";
 import Platform from "./pages/Admin/pages/Platform";
 import PlatformCreate from "./pages/Admin/pages/PlatformCreate";
@@ -48,6 +47,7 @@ import PaymentManagement from "./pages/PaymentManagement";
 import NotFound from "./pages/NotFound";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
+import ProtectedRouteForEmailConfirm from "./components/ProtectedRouteForEmailConfirm";
 
 function App() {
   const location = useLocation();
@@ -79,7 +79,6 @@ function App() {
 
     "/admin/ads",
     "/admin/ads/create",
-    /^\/admin\/ads\/detail\/[^\/]+$/,
     /^\/admin\/ads\/edit\/[^\/]+$/,
 
     "/admin/news",
@@ -138,9 +137,9 @@ function App() {
           <Route
             path="/resetpassword"
             element={
-              <PublicRoute>
+              <ProtectedRouteForEmailConfirm>
                 <ResetPassword />
-              </PublicRoute>
+              </ProtectedRouteForEmailConfirm>
             }
           />
           <Route
@@ -207,7 +206,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/emailconfirmation" element={<EmailConfirmation />} />
+          <Route
+            path="/emailconfirmation"
+            element={
+              <ProtectedRouteForEmailConfirm>
+                <EmailConfirmation />
+              </ProtectedRouteForEmailConfirm>
+            }
+          />
 
           <Route
             path="/admin"
@@ -314,14 +320,6 @@ function App() {
             element={
               <PrivateRoute roles={["SuperAdmin", "Admin"]}>
                 <AdsCreate />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/ads/detail/:id"
-            element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
-                <AdsDetail />
               </PrivateRoute>
             }
           />

@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { useFormik } from "formik";
 import { typeCreateSchema } from "../../../schemas";
 import { useNavigate, Link } from "react-router-dom";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 function TypeCreate() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+  useEffect(() => {
+    document.title = "Type create";
+  }, []);
   const onSubmit = async (values, actions) => {
     console.log(values);
 
@@ -13,6 +29,8 @@ function TypeCreate() {
     formData.append("TypeName", values.name);
 
     try {
+      setLoading(true);
+
       const res = await axios.post(
         "https://localhost:44300/api/Type/Create",
         formData,
@@ -22,11 +40,27 @@ function TypeCreate() {
           },
         }
       );
-      actions.resetForm();
-      console.log(res);
-      navigate("/admin/types");
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("Type created successfully");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+      }, 2000);
+      setTimeout(() => {
+        navigate("/admin/types");
+      }, 3000);
     } catch (error) {
-      console.error("Error submitting the form", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -42,6 +76,23 @@ function TypeCreate() {
     <div>
       {" "}
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -67,11 +118,15 @@ function TypeCreate() {
                     )}
                   </div>
                   <button
-                    type="submit"
+                    disabled={isSubmitting || loading}
                     className="btn btn-success"
-                    disabled={isSubmitting}
+                    type="submit"
                   >
-                    Create
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Create"
+                    )}
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/types">
                     Back

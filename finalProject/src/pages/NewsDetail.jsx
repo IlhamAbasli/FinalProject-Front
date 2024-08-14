@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import "../assets/scss/NewsDetail.scss";
@@ -8,6 +8,7 @@ function NewsDetail() {
   const [news, setNews] = useState(null); // Initialize as null
   const { id } = useParams(); // Destructure id from useParams
   console.log(id);
+  const navigate = useNavigate();
 
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -22,6 +23,7 @@ function NewsDetail() {
         setNews(response.data);
         console.log(response.data);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching news:", error);
       }
     };

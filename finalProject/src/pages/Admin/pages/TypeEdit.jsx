@@ -4,13 +4,27 @@ import Sidebar from "../components/layout/Sidebar";
 import axios from "axios";
 import { typeCreateSchema } from "../../../schemas";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 function TypeEdit() {
   const navigate = useNavigate();
   const [type, setType] = useState(null);
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
+    document.title = "Type edit";
     const fetchNews = async () => {
       try {
         const response = await axios.get(
@@ -32,6 +46,8 @@ function TypeEdit() {
     formData.append("TypeName", values.name);
 
     try {
+      setLoading(true);
+
       const res = await axios.put(
         `https://localhost:44300/api/Type/Edit/${id}`,
         formData,
@@ -41,11 +57,25 @@ function TypeEdit() {
           },
         }
       );
-      actions.resetForm();
-      console.log(res);
-      navigate("/admin/types");
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("Type updated successfully");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+        navigate("/admin/types");
+      }, 2000);
     } catch (error) {
-      console.error("Error submitting the form", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -62,6 +92,23 @@ function TypeEdit() {
     <div>
       {" "}
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -87,11 +134,15 @@ function TypeEdit() {
                     )}
                   </div>
                   <button
-                    type="submit"
+                    disabled={isSubmitting || loading}
                     className="btn btn-success"
-                    disabled={isSubmitting}
+                    type="submit"
                   >
-                    Update
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Update"
+                    )}
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/types">
                     Back

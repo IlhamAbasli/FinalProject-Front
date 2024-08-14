@@ -5,14 +5,29 @@ import { gameCreateSchema } from "../../../schemas";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { MenuItem, Select, InputLabel } from "@mui/material";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 function GamesCreate() {
   const navigate = useNavigate();
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
   const [platforms, setPlatforms] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+  console.log(platforms);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
+    document.title = "Game create";
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
@@ -79,6 +94,8 @@ function GamesCreate() {
     }
 
     try {
+      setLoading(true);
+
       const res = await axios.post(
         "https://localhost:44300/api/Product/Create",
         formData,
@@ -88,11 +105,27 @@ function GamesCreate() {
           },
         }
       );
-      actions.resetForm();
-      console.log(res);
-      navigate("/admin/games");
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("Game created successfully");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+      }, 2000);
+      setTimeout(() => {
+        navigate("/admin/games");
+      }, 3000);
     } catch (error) {
-      console.error("Error submitting the form", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -113,9 +146,9 @@ function GamesCreate() {
       publisherName: "",
       price: 0,
       count: 0,
-      genreId: 0,
-      typeId: 0,
-      platformId: 0,
+      genreId: "",
+      typeId: "",
+      platformId: "",
       minOsVersion: "",
       minCpuName: "",
       minMemory: "",
@@ -125,12 +158,30 @@ function GamesCreate() {
       recomMemory: "",
       recomGpu: "",
     },
+    enableReinitialize: true,
     validationSchema: gameCreateSchema,
     onSubmit,
   });
   return (
     <div>
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -477,11 +528,15 @@ function GamesCreate() {
                     )}
                   </div>
                   <button
-                    type="submit"
+                    disabled={isSubmitting || loading}
                     className="btn btn-success"
-                    disabled={isSubmitting}
+                    type="submit"
                   >
-                    Create
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Create"
+                    )}
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/games">
                     Back

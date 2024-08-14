@@ -4,14 +4,28 @@ import { useFormik } from "formik";
 import { platformEditSchema } from "../../../schemas";
 import axios from "axios";
 import { useNavigate, Link, useParams } from "react-router-dom";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 function PlatformEdit() {
   const navigate = useNavigate();
   const [platform, setPlatform] = useState(null);
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const baseURL = "https://localhost:44300/assets/images/";
 
   useEffect(() => {
+    document.title = "Platform edit";
     const fetchNews = async () => {
       try {
         const response = await axios.get(
@@ -31,10 +45,12 @@ function PlatformEdit() {
     console.log(values);
 
     const formData = new FormData();
-    formData.append("PlatformName", values.title);
+    formData.append("PlatformName", values.name);
     formData.append("NewPlatformLogo", values.image);
 
     try {
+      setLoading(true);
+
       const res = await axios.put(
         `https://localhost:44300/api/Platform/Edit/${id}`,
         formData,
@@ -44,11 +60,25 @@ function PlatformEdit() {
           },
         }
       );
-      actions.resetForm();
-      console.log(res);
-      navigate("/admin/platforms");
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("Platform updated successfully");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+        navigate("/admin/platforms");
+      }, 2000);
     } catch (error) {
-      console.error("Error submitting the form", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -72,6 +102,23 @@ function PlatformEdit() {
     <div>
       {" "}
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -132,11 +179,15 @@ function PlatformEdit() {
                     </div>
                   </div>
                   <button
-                    type="submit"
+                    disabled={isSubmitting || loading}
                     className="btn btn-success"
-                    disabled={isSubmitting}
+                    type="submit"
                   >
-                    Update
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Update"
+                    )}
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/platforms">
                     Back

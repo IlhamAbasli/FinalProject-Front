@@ -11,6 +11,7 @@ import "../assets/scss/Shop.scss";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Tooltip } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 
 function Shop() {
   const [genres, setGenres] = useState([]);
@@ -22,6 +23,7 @@ function Shop() {
   const [wishlist, setWishlist] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("New Release");
+  const [loading, setLoading] = useState({});
 
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
@@ -49,10 +51,15 @@ function Shop() {
   }, []);
 
   useEffect(() => {
+    if (id) {
+      fetchWishlist();
+    }
+  }, [id]);
+
+  useEffect(() => {
     document.title =
       "Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games";
 
-    fetchWishlist();
     fetchTypes();
     fetchGenres();
     fetchPlatforms();
@@ -71,7 +78,6 @@ function Shop() {
       console.error("Error fetching wishlist:", error);
     }
   };
-  fetchWishlist();
 
   const fetchGenres = async () => {
     try {
@@ -123,11 +129,16 @@ function Shop() {
   }, [selectedOption]);
 
   const addToWishlist = async (productId) => {
+    setLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
+
     try {
       const response = await axios.post(
         `https://localhost:44300/api/Wishlist/AddWishlist?userId=${id}&productId=${productId}`
       );
-      setWishlist([...wishlist, productId]);
+      setTimeout(() => {
+        setLoading((prevLoading) => ({ ...prevLoading, [productId]: false }));
+        setWishlist([...wishlist, productId]);
+      }, 2000);
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
@@ -217,11 +228,20 @@ function Shop() {
   };
 
   const removeFromWishlist = async (productId) => {
+    setLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
+
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Wishlist/RemoveFromWishlist?userId=${id}&productId=${productId}`
       );
-      setWishlist(wishlist.filter((item) => item.product.id !== productId));
+      setTimeout(() => {
+        setLoading((prevLoading) => ({
+          ...prevLoading,
+          [productId]: false,
+        }));
+        setWishlist(wishlist.filter((item) => item.product?.id !== productId));
+        fetchWishlist();
+      }, 2000);
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
@@ -417,7 +437,14 @@ function Shop() {
                                 onClick={() => removeFromWishlist(game.id)}
                               >
                                 <div className="wishlist-circle">
-                                  <img src={checked} alt="" />
+                                  {loading[game?.id] ? (
+                                    <CircularProgress
+                                      size={10}
+                                      sx={{ color: "white" }}
+                                    />
+                                  ) : (
+                                    <img src={checked} alt="" />
+                                  )}
                                 </div>
                               </button>
                             </Tooltip>
@@ -446,7 +473,14 @@ function Shop() {
                                 onClick={() => addToWishlist(game.id)}
                               >
                                 <div className="wishlist-circle">
-                                  <div className="plus-item"></div>
+                                  {loading[game?.id] ? (
+                                    <CircularProgress
+                                      size={10}
+                                      sx={{ color: "white" }}
+                                    />
+                                  ) : (
+                                    <div className="plus-item"></div>
+                                  )}
                                 </div>
                               </button>
                             </Tooltip>

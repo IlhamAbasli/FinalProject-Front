@@ -1,17 +1,30 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 function Genres() {
   const [genres, setGenres] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState({});
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   useEffect(() => {
+    document.title = "Genres";
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
           "https://localhost:44300/api/Genre/GetAll"
         );
         setGenres(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -21,19 +34,51 @@ function Genres() {
   }, []);
 
   const handleDelete = async (id) => {
+    setLoading((prevLoading) => ({ ...prevLoading, [id]: true }));
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Genre/Delete/${id}`
       );
-      setGenres(response.data);
-      console.log(response.data);
+      setTimeout(() => {
+        setGenres((prev) => prev.filter((genre) => genre.id !== id));
+        setLoading((prevLoading) => ({ ...prevLoading, [id]: false }));
+        setSnackbarMessage("Genre deleted successfully");
+        setSeverity("success");
+        setOpen(true);
+      }, 2000);
     } catch (error) {
-      console.error("Error fetching news:", error);
+      setTimeout(() => {
+        setLoading((prevLoading) => ({ ...prevLoading, [id]: false }));
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
   return (
     <div>
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -81,10 +126,19 @@ function Genres() {
                                         Edit
                                       </Link>
                                       <button
+                                        disabled={loading[data.id] || false}
+                                        type="submit"
                                         className="btn btn-danger"
                                         onClick={() => handleDelete(data.id)}
                                       >
-                                        Delete
+                                        {loading[data.id] ? (
+                                          <CircularProgress
+                                            size={24}
+                                            sx={{ color: "white" }}
+                                          />
+                                        ) : (
+                                          "Delete"
+                                        )}
                                       </button>
                                     </td>
                                   </tr>

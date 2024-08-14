@@ -2,9 +2,22 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 function Platform() {
   const [platforms, setPlatforms] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState({});
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   useEffect(() => {
+    document.title = "Platform";
     const fetchGenres = async () => {
       try {
         const response = await axios.get(
@@ -21,20 +34,53 @@ function Platform() {
   }, []);
 
   const handleDelete = async (id) => {
+    setLoading((prevLoading) => ({ ...prevLoading, [id]: true }));
+
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Platform/Delete/${id}`
       );
-      setPlatforms(response.data);
-      console.log(response.data);
+      setTimeout(() => {
+        setPlatforms((prev) => prev.filter((platform) => platform.id !== id));
+        setLoading((prevLoading) => ({ ...prevLoading, [id]: false }));
+        setSnackbarMessage("Platform deleted successfully");
+        setSeverity("success");
+        setOpen(true);
+      }, 2000);
     } catch (error) {
-      console.error("Error fetching news:", error);
+      setTimeout(() => {
+        setLoading((prevLoading) => ({ ...prevLoading, [id]: false }));
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
   return (
     <div>
       {" "}
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -82,10 +128,19 @@ function Platform() {
                                         Edit
                                       </Link>
                                       <button
+                                        disabled={loading[data.id] || false}
+                                        type="submit"
                                         className="btn btn-danger"
                                         onClick={() => handleDelete(data.id)}
                                       >
-                                        Delete
+                                        {loading[data.id] ? (
+                                          <CircularProgress
+                                            size={24}
+                                            sx={{ color: "white" }}
+                                          />
+                                        ) : (
+                                          "Delete"
+                                        )}
                                       </button>
                                     </td>
                                   </tr>

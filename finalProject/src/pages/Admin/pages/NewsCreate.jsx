@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { useFormik } from "formik";
 import { newsCreateSchema } from "../../../schemas";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 function NewsCreate() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "News create";
+  }, []);
+
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   const onSubmit = async (values, actions) => {
     console.log(values);
 
@@ -20,6 +37,8 @@ function NewsCreate() {
     formData.append("newsContent3", values.content3);
 
     try {
+      setLoading(true);
+
       const res = await axios.post(
         "https://localhost:44300/api/News/Create",
         formData,
@@ -29,11 +48,27 @@ function NewsCreate() {
           },
         }
       );
-      actions.resetForm();
-      console.log(res);
-      navigate("/admin/news");
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("News created successfully");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+      }, 2000);
+      setTimeout(() => {
+        navigate("/admin/news");
+      }, 3000);
     } catch (error) {
-      console.error("Error submitting the form", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -59,6 +94,23 @@ function NewsCreate() {
   return (
     <div>
       <section id="admin-area" style={{ background: "white" }}>
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="admin-container">
           <div className="row">
             <div className="col-2">
@@ -150,11 +202,15 @@ function NewsCreate() {
                     )}
                   </div>
                   <button
-                    type="submit"
+                    disabled={isSubmitting || loading}
                     className="btn btn-success"
-                    disabled={isSubmitting}
+                    type="submit"
                   >
-                    Create
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Create"
+                    )}
                   </button>
                   <Link className="btn btn-danger mx-3" to="/admin/news">
                     Back

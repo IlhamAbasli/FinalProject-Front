@@ -11,7 +11,8 @@ import moment from "moment";
 import Loading from "../components/layout/Loading";
 import { jwtDecode } from "jwt-decode";
 import { Tooltip, CircularProgress } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 function ProductDetail() {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,7 @@ function ProductDetail() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [userId, setUserId] = useState("");
+  const navigate = useNavigate();
   const baseURL = "https://localhost:44300/assets/images/";
 
   useEffect(() => {
@@ -54,6 +56,7 @@ function ProductDetail() {
         setGame(response.data);
         setLoading(false);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching game:", error);
       }
     };
@@ -135,8 +138,8 @@ function ProductDetail() {
       );
       setTimeout(() => {
         setCartLoading(false);
+        setBasket([...wishlist, productId]);
       }, 2000);
-      setBasket([...wishlist, productId]);
       fetchWishlist();
     } catch (error) {
       console.error("Error adding to wishlist:", error);
@@ -454,7 +457,14 @@ function ProductDetail() {
                             className="add-cart"
                             onClick={() => addToCart(game?.id)}
                           >
-                            Add to cart
+                            {cartLoading ? (
+                              <CircularProgress
+                                size={24}
+                                sx={{ color: "white" }}
+                              />
+                            ) : (
+                              "Add to cart"
+                            )}
                           </button>
                         ) : (
                           <Link

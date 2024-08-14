@@ -6,6 +6,9 @@ import Sidebar from "../components/layout/Sidebar";
 function NewsAdminDetail() {
   const [news, setNews] = useState(null);
   const { id } = useParams();
+  useEffect(() => {
+    document.title = "News detail";
+  }, []);
   console.log(id);
 
   const baseURL = "https://localhost:44300/assets/images/";

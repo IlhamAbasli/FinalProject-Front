@@ -5,6 +5,9 @@ import Sidebar from "../components/layout/Sidebar";
 function GamesDetail() {
   const [game, setGame] = useState(null);
   const { id } = useParams();
+  useEffect(() => {
+    document.title = "Game detail";
+  }, []);
   console.log(id);
 
   const baseURL = "https://localhost:44300/assets/images/";

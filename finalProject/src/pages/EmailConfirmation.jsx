@@ -24,7 +24,7 @@ const EmailConfirmation = () => {
           }
         );
         setMessage("Email confirmed successfully! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 5000);
+        setTimeout(() => navigate("/login"), 2000);
       } catch (error) {
         setMessage("Failed to confirm email. Please try again.");
       }

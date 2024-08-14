@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../assets/scss/Redeem.scss";
 import icon from "../assets/icons/icon.svg";
-import gameimg from "../assets/images/gtav.avif";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 function RedeemCode() {
   useEffect(() => {
     document.title = "Redeem Code";
@@ -14,6 +15,16 @@ function RedeemCode() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [id, setId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,14 +46,30 @@ function RedeemCode() {
   const handleRedeem = (e) => {
     e.preventDefault();
     const redeemGame = async () => {
+      setLoading(true);
       try {
         const response = await axios.post(
           `https://localhost:44300/api/Library/AddLibraryByRedeem?userId=${id}&productId=${game?.productId}`
         );
-        console.log(response);
-        setGame(null);
+        setTimeout(() => {
+          setLoading(false);
+          setSnackbarMessage("Game added to your library");
+          setSeverity("success");
+          setOpen(true);
+          setGame(null);
+        }, 2000);
       } catch (error) {
-        console.error("Error fetching news:", error);
+        setTimeout(() => {
+          setLoading(false);
+          setSnackbarMessage(
+            error.response.data.Message
+              ? error.response.data.Message
+              : "Something went wrong!"
+          );
+          setSeverity("error");
+          setOpen(true);
+          setGame(null);
+        }, 2000);
       }
     };
 
@@ -100,6 +127,23 @@ function RedeemCode() {
   return (
     <>
       <section id="redeem-area">
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="container-redeem">
           <div className="row">
             <div className="col-12 col-md-4">
@@ -151,7 +195,11 @@ function RedeemCode() {
                         onClick={handleRedeem}
                         className={!game ? "button-disabled" : "button"}
                       >
-                        Redeem
+                        {loading ? (
+                          <CircularProgress size={24} sx={{ color: "white" }} />
+                        ) : (
+                          "Redeem"
+                        )}
                       </button>
                     </div>
                   </form>

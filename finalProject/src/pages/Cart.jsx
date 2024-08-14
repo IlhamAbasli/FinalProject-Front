@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "../assets/scss/Cart.scss";
 import navigateWallet from "../assets/icons/navigate.svg";
 import { Link, useNavigate } from "react-router-dom";
-import wishlistgame from "../assets/images/wishlistgame.avif";
 import PersonIcon from "@mui/icons-material/Person";
 import icon from "../assets/icons/icon.svg";
 import notFoundIcon from "../assets/icons/notfoundicon.svg";
+import { CircularProgress, Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 import xicon from "../assets/icons/closeIcon.svg";
 import axios from "axios";
@@ -21,7 +22,16 @@ function Cart() {
   const [balance, setBalance] = useState(0);
   const [id, setId] = useState("");
   const [cart, setCart] = useState({});
-
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
   const baseURL = "https://localhost:44300/assets/images/";
 
   const fetchCart = async () => {
@@ -128,6 +138,7 @@ function Cart() {
   };
 
   const buyProducts = async () => {
+    setLoading(true);
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Basket/BuyProducts`,
@@ -138,8 +149,27 @@ function Cart() {
           },
         }
       );
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage("Thanks for your purchase");
+        setSeverity("success");
+        setOpen(true);
+        actions.resetForm();
+      }, 2000);
+      setTimeout(() => {
+        navigate("/");
+      }, 2500);
     } catch (error) {
-      console.error("Error processing the purchase:", error);
+      setTimeout(() => {
+        setLoading(false);
+        setSnackbarMessage(
+          error.response.data.Message
+            ? error.response.data.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -270,6 +300,23 @@ function Cart() {
 
       {isPaymentAreaVisible && (
         <section id="payment-area">
+          <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <Alert
+              icon={<CheckIcon fontSize="inherit" />}
+              onClose={handleClose}
+              severity={severity}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
           <div className="payment-container">
             <div className="payment-area">
               <div className="row">
@@ -379,7 +426,11 @@ function Cart() {
                         disabled={!isPaymentMethodSelected}
                         onClick={() => buyProducts()}
                       >
-                        Place order
+                        {loading ? (
+                          <CircularProgress size={24} sx={{ color: "white" }} />
+                        ) : (
+                          "Place order"
+                        )}
                       </button>
                     </div>
                   </div>

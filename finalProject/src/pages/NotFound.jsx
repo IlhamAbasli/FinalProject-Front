@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import icon from "../assets/icons/notfoundicon.svg";
 import { Link } from "react-router-dom";
 import "../assets/scss/NotFound.scss";
 function NotFound() {
+  useEffect(() => {
+    document.title = "404 Not Found";
+  }, []);
   return (
     <div>
       <section id="not-found-area">
