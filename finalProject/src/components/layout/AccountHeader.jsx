@@ -35,7 +35,6 @@ function AccountHeader() {
   };
 
   const handleItemClick = (text) => {
-    setButtonText(text);
     setIsOpen(false); // Close the dropdown after selecting an item
   };
 

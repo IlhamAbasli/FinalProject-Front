@@ -23,6 +23,8 @@ function Cart() {
   const [id, setId] = useState("");
   const [cart, setCart] = useState({});
   const [loading, setLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState({});
+  const [removeLoading, setRemoveLoading] = useState({});
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
@@ -103,6 +105,11 @@ function Cart() {
 
   const removeFromCart = async (productId) => {
     try {
+      setRemoveLoading((prevLoading) => ({
+        ...prevLoading,
+        [productId]: true,
+      }));
+
       const response = await axios.delete(
         `https://localhost:44300/api/Basket/RemoveFromBasket?userId=${id}&productId=${productId}`
       );
@@ -114,26 +121,51 @@ function Cart() {
         (total, item) => total + item.product.productPrice,
         0
       );
+      setTimeout(() => {
+        setCart({
+          ...cart,
+          userBasket: updatedBasket,
+          basketTotal: updatedTotal,
+        });
+        setRemoveLoading((prevLoading) => ({
+          ...prevLoading,
+          [productId]: false,
+        }));
 
-      setCart({
-        ...cart,
-        userBasket: updatedBasket,
-        basketTotal: updatedTotal,
-      });
-      navigate("/cart");
+        navigate("/cart");
+      }, 2000);
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
   };
 
   const addToWishlist = async (productId) => {
+    setCartLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
     try {
       const response = await axios.post(
         `https://localhost:44300/api/Wishlist/AddWishlist?userId=${id}&productId=${productId}`
       );
-      removeFromCart(productId);
+      setTimeout(() => {
+        setCartLoading(false);
+        setSnackbarMessage("Game moved to wishlist");
+        setSeverity("success");
+        setOpen(true);
+        removeFromCart(productId);
+      }, 2000);
     } catch (error) {
-      console.error("Error adding to wishlist:", error);
+      setTimeout(() => {
+        setCartLoading((prevLoading) => ({
+          ...prevLoading,
+          [productId]: false,
+        }));
+        setSnackbarMessage(
+          error.response.data?.Message
+            ? error.response.data?.Message
+            : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+      }, 2000);
     }
   };
 
@@ -176,6 +208,23 @@ function Cart() {
   return (
     <>
       <section id="cart-title">
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="container-main">
           <div className="row">
             <div className="col-12 col-lg-6">
@@ -241,14 +290,29 @@ function Cart() {
                             <button
                               onClick={() => removeFromCart(item.product.id)}
                             >
-                              Remove
+                              {removeLoading[item.product?.id] ? (
+                                <CircularProgress
+                                  size={24}
+                                  sx={{ color: "white" }}
+                                />
+                              ) : (
+                                "Remove"
+                              )}
                             </button>
                           </div>
                           <div className="add-wishlist-bttn">
                             <button
+                              className="add-cart"
                               onClick={() => addToWishlist(item.product.id)}
                             >
-                              MOVE TO WISHLIST
+                              {cartLoading[item.product.id] ? (
+                                <CircularProgress
+                                  size={24}
+                                  sx={{ color: "white" }}
+                                />
+                              ) : (
+                                "MOVE TO WISHLIST"
+                              )}
                             </button>
                           </div>
                         </div>

@@ -97,6 +97,18 @@ function Sidebar() {
               <span className="hide-menu">News</span>
             </Link>
           </li>
+          <li className="sidebar-item">
+            <Link
+              className="sidebar-link"
+              to="/admin/users"
+              aria-expanded="false"
+            >
+              <span>
+                <i className="ti ti-file-description"></i>
+              </span>
+              <span className="hide-menu">Users</span>
+            </Link>
+          </li>
         </ul>
       </nav>
     </>

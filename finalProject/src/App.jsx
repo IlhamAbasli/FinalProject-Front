@@ -48,6 +48,8 @@ import NotFound from "./pages/NotFound";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import ProtectedRouteForEmailConfirm from "./components/ProtectedRouteForEmailConfirm";
+import Users from "./pages/Admin/pages/Users";
+import AddRole from "./pages/Admin/pages/AddRole";
 
 function App() {
   const location = useLocation();
@@ -89,6 +91,9 @@ function App() {
     "/admin/platforms",
     "/admin/platforms/create",
     /^\/admin\/platforms\/edit\/[^\/]+$/,
+
+    "/admin/users",
+    "/admin/users/addrole",
   ];
 
   const shouldHideHeaderFooter = noHeaderFooterPaths.some((path) =>
@@ -235,7 +240,7 @@ function App() {
           <Route
             path="/admin/games/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <GamesCreate />
               </PrivateRoute>
             }
@@ -268,7 +273,7 @@ function App() {
           <Route
             path="/admin/genres/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <GenresCreate />
               </PrivateRoute>
             }
@@ -293,7 +298,7 @@ function App() {
           <Route
             path="/admin/types/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <TypeCreate />
               </PrivateRoute>
             }
@@ -318,7 +323,7 @@ function App() {
           <Route
             path="/admin/ads/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <AdsCreate />
               </PrivateRoute>
             }
@@ -343,7 +348,7 @@ function App() {
           <Route
             path="/admin/news/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <NewsCreate />
               </PrivateRoute>
             }
@@ -376,7 +381,7 @@ function App() {
           <Route
             path="/admin/platforms/create"
             element={
-              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+              <PrivateRoute roles={["SuperAdmin"]}>
                 <PlatformCreate />
               </PrivateRoute>
             }
@@ -386,6 +391,22 @@ function App() {
             element={
               <PrivateRoute roles={["SuperAdmin", "Admin"]}>
                 <PlatformEdit />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Users />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/users/addrole"
+            element={
+              <PrivateRoute roles={["SuperAdmin"]}>
+                <AddRole />
               </PrivateRoute>
             }
           />

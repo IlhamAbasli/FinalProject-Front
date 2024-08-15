@@ -20,8 +20,8 @@ function ProductDetail() {
   const [cartLoading, setCartLoading] = useState(false);
   const { id } = useParams();
   const [wishlist, setWishlist] = useState([]);
-  const [library, setLibrary] = useState([]);
   const [basket, setBasket] = useState([]);
+  const [library, setLibrary] = useState([]);
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [userId, setUserId] = useState("");
@@ -139,6 +139,7 @@ function ProductDetail() {
       setTimeout(() => {
         setCartLoading(false);
         setBasket([...wishlist, productId]);
+        navigate(`/p/${productId}`);
       }, 2000);
       fetchWishlist();
     } catch (error) {

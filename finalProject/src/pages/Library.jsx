@@ -9,6 +9,8 @@ import "../assets/scss/Library.scss";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Loading from "../components/layout/Loading";
+import icon from "../assets/icons/notfoundicon.svg";
+
 function Library() {
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -174,7 +176,7 @@ function Library() {
     <>
       {loading ? (
         <Loading />
-      ) : (
+      ) : games.length !== 0 ? (
         <section id="games-area">
           <div className="container-main">
             <div className="library-title">
@@ -402,6 +404,24 @@ function Library() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section id="not-found-area">
+          <div className="row">
+            <div className="col-12">
+              <div className="not-found">
+                <div className="icon">
+                  <img src={icon} alt="" />
+                </div>
+                <div className="title">
+                  <h1>You haven't purchased anything yet.</h1>
+                </div>
+                <div className="back-to-store">
+                  <Link to="/">Shop for Games & Apps</Link>
                 </div>
               </div>
             </div>

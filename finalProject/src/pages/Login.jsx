@@ -40,21 +40,28 @@ function Login() {
         }
       );
       console.log(res);
-      setSignInError(res.data);
       if (res.data.success) {
-        actions.resetForm();
         localStorage.setItem("user-info", JSON.stringify(res.data.token));
+        setTimeout(() => {
+          setSignInError(res.data);
+          actions.resetForm();
+        }, 2000);
         setTimeout(() => {
           setLoading(false);
           navigate("/");
-        }, 2000);
+        }, 3500);
       } else {
-        setLoading(false);
+        setTimeout(() => {
+          setSignInError(res.data);
+          setLoading(false);
+        }, 2000);
       }
     } catch (error) {
-      console.error("Error submitting the form", error);
-      setSignInError("An error occurred while submitting the form.");
-      setLoading(false);
+      setTimeout(() => {
+        console.error("Error submitting the form", error);
+        setSignInError("An error occurred while submitting the form.");
+        setLoading(false);
+      }, 2000);
     }
   };
 

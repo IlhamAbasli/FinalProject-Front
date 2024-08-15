@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../assets/scss/Security.scss";
 import { useFormik } from "formik";
 import { changePasswordSchema } from "../schemas/index";
-import { TextField, Alert, Snackbar } from "@mui/material";
+import { TextField, Alert, Snackbar, CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 import Visibility from "@mui/icons-material/Visibility";
@@ -20,6 +20,7 @@ function Security() {
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -50,14 +51,14 @@ function Security() {
 
   const onSubmit = async (values, actions) => {
     const formData = new FormData();
-    formData.append("Email", values.email);
-    formData.append("Username", values.username);
-    formData.append("Firstname", values.firstname);
-    formData.append("Lastname", values.lastname);
+    formData.append("OldPassword", values.oldPassword);
+    formData.append("NewPassword", values.newPassword);
+    formData.append("UserId", id);
 
     try {
+      setLoading(true);
       const res = await axios.put(
-        `https://localhost:44300/api/Account/UpdateUser?userId=${id}`,
+        `https://localhost:44300/api/Account/ChangePassword`,
         formData,
         {
           headers: {
@@ -65,19 +66,22 @@ function Security() {
           },
         }
       );
-      setSnackbarMessage(
-        "Changes saved successfully,sign in again to see changes"
-      );
-      setSeverity("success");
-      setOpen(true);
+      setTimeout(() => {
+        setSnackbarMessage(res.data.message);
+        setSeverity(res.data.success ? "success" : "error");
+        setOpen(true);
+        res.data.success && actions.resetForm();
+        setLoading(false);
+      }, 2000);
     } catch (error) {
-      setSnackbarMessage(
-        error.response.data.Message
-          ? error.response.data.Message
-          : "Something went wrong!"
-      );
-      setSeverity("error");
-      setOpen(true);
+      setTimeout(() => {
+        setSnackbarMessage(
+          error.data.message ? error.data.message : "Something went wrong!"
+        );
+        setSeverity("error");
+        setOpen(true);
+        setLoading(false);
+      });
     }
   };
 
@@ -111,7 +115,7 @@ function Security() {
       <section id="account-area">
         <Snackbar
           open={open}
-          autoHideDuration={2000}
+          autoHideDuration={3000}
           onClose={handleClose}
           anchorOrigin={{
             vertical: "top",
@@ -205,7 +209,17 @@ function Security() {
                       </div>
                       <div className="col-12">
                         <div className="save-changes">
-                          <button>Save Changes</button>
+                          <button type="submit">
+                            {" "}
+                            {loading ? (
+                              <CircularProgress
+                                size={24}
+                                sx={{ color: "white" }}
+                              />
+                            ) : (
+                              "Save Changes"
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>

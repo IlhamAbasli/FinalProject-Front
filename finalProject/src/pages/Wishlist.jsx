@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../assets/scss/Wishlist.scss";
-import navigate from "../assets/icons/navigate.svg";
+import navigateIcon from "../assets/icons/navigate.svg";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
 import "../assets/scss/NotFound.scss";
 import { jwtDecode } from "jwt-decode";
 import icon from "../assets/icons/notfoundicon.svg";
+import { Tooltip, CircularProgress } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 import axios from "axios";
 
@@ -17,9 +20,31 @@ function Wishlist() {
 
   const [balance, setBalance] = useState(0);
   const [wishlist, setWishlist] = useState([]);
+  const [basket, setBasket] = useState([]);
+  const [cartLoading, setCartLoading] = useState({});
+  const [wishlistLoading, setWishlistLoading] = useState({});
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
   const [id, setId] = useState("");
+
+  const navigate = useNavigate();
+
+  const fetchBasket = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Basket/GetUserBasketIds?userId=${id}`
+        );
+        setBasket(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -49,6 +74,12 @@ function Wishlist() {
     setSelectedOption(option);
     setIsDropdownOpen(false);
   };
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const fetchSortedWishlist = async () => {
     try {
@@ -57,6 +88,7 @@ function Wishlist() {
           `https://localhost:44300/api/Wishlist/SortBy?userId=${id}&sortType=${selectedOption}`
         );
         setWishlist(response.data);
+        fetchBasket();
       }
     } catch (error) {
       console.error("Error fetching wishlist:", error);
@@ -85,12 +117,44 @@ function Wishlist() {
     fetchSortedWishlist();
   }, [selectedOption]);
 
+  const addToCart = async (productId) => {
+    try {
+      setCartLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
+      const response = await axios.post(
+        `https://localhost:44300/api/Basket/AddBasket?userId=${id}&productId=${productId}`
+      );
+      setTimeout(() => {
+        setSnackbarMessage("Game added to cart");
+        setSeverity("success");
+        setOpen(true);
+        setCartLoading((prevLoading) => ({
+          ...prevLoading,
+          [productId]: false,
+        }));
+        setBasket([...wishlist, productId]);
+        navigate("/wishlist");
+      }, 2000);
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+    }
+  };
+
   const removeFromWishlist = async (productId) => {
+    setWishlistLoading((prevLoading) => ({
+      ...prevLoading,
+      [productId]: true,
+    }));
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Wishlist/RemoveFromWishlist?userId=${id}&productId=${productId}`
       );
-      setWishlist(wishlist.filter((item) => item.product.id !== productId));
+      setTimeout(() => {
+        setWishlistLoading((prevLoading) => ({
+          ...prevLoading,
+          [productId]: false,
+        }));
+        setWishlist(wishlist.filter((item) => item.product.id !== productId));
+      }, 2000);
     } catch (error) {
       console.error("Error adding to wishlist:", error);
     }
@@ -98,6 +162,23 @@ function Wishlist() {
   return (
     <>
       <section id="wishlist-title">
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="container-main">
           <div className="row">
             <div className="col-12 col-lg-6">
@@ -109,7 +190,7 @@ function Wishlist() {
               <div className="wallet-balance">
                 <Link>
                   <span className="wallet-title">
-                    Epic Wallet <img src={navigate} alt="" />
+                    Epic Wallet <img src={navigateIcon} alt="" />
                   </span>
                   <span className="wallet-counter">${balance.toFixed(2)}</span>
                 </Link>
@@ -218,11 +299,44 @@ function Wishlist() {
                           <button
                             onClick={() => removeFromWishlist(item.product.id)}
                           >
-                            Remove
+                            {wishlistLoading[item.product?.id] ? (
+                              <CircularProgress
+                                size={24}
+                                sx={{ color: "white" }}
+                              />
+                            ) : (
+                              "Remove"
+                            )}
                           </button>
                         </div>
                         <div className="add-cart-bttn">
-                          <button>ADD TO CART</button>
+                          {basket.includes(item.product?.id) ? (
+                            <Link to="/cart" className="in-cart">
+                              View in cart
+                            </Link>
+                          ) : id ? (
+                            <button
+                              className="add-cart"
+                              onClick={() => addToCart(item.product?.id)}
+                            >
+                              {cartLoading[item.product?.id] ? (
+                                <CircularProgress
+                                  size={24}
+                                  sx={{ color: "white" }}
+                                />
+                              ) : (
+                                "Add to cart"
+                              )}
+                            </button>
+                          ) : (
+                            <Link
+                              className="add-cart"
+                              style={{ textTransform: "uppercase" }}
+                              to="/login"
+                            >
+                              Add to cart
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>

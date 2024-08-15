@@ -8,11 +8,11 @@ export const getUserRole = () => {
   try {
     const decodedToken = jwtDecode(token);
     // Extract role from the specific property
-    const role =
+    const roles =
       decodedToken[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
       ];
-    return role;
+    return Array.isArray(roles) ? roles : [roles];
   } catch (error) {
     console.error("Invalid token");
     return null;

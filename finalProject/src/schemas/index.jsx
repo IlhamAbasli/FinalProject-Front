@@ -52,12 +52,32 @@ export const logInSchema = yup.object().shape({
 });
 
 export const changePasswordSchema = yup.object().shape({
-  oldPassword: yup.string().required("Required"),
-  newPassword: yup.string().required("Required"),
+  oldPassword: yup.string().required("Old Password is required"),
+  newPassword: yup
+    .string()
+    .min(7, "Password must be at least 7 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/\d/, "Password must contain at least one digit")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one non-alphanumeric character"
+    )
+    .required("New Password is required"),
 });
 
 export const resetPasswordSchema = yup.object().shape({
-  newPassword: yup.string().required("New password is required"),
+  newPassword: yup
+    .string()
+    .min(7, "Password must be at least 7 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/\d/, "Password must contain at least one digit")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one non-alphanumeric character"
+    )
+    .required("New Password is required"),
   confirmNewPassword: yup
     .string()
     .oneOf([yup.ref("newPassword")], "Passwords must match")
