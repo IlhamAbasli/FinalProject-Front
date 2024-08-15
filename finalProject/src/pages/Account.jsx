@@ -44,8 +44,6 @@ function Account() {
       }
     }
   }, []);
-  console.log(decodedToken);
-  console.log(id);
 
   const onSubmit = async (values, actions) => {
     const formData = new FormData();
