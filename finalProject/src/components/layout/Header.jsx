@@ -26,7 +26,6 @@ function Header() {
           `https://localhost:44300/api/Basket/GetUserBasket?userId=${id}`
         );
         setCartCount(response.data.userBasket.length);
-        console.log(cartCount);
       }
     } catch (error) {
       console.error("Error fetching wishlist:", error);
@@ -274,7 +273,7 @@ function Header() {
                     </li>
                     <li>
                       <NavLink to="/cart">
-                        <Badge badgeContent={2} color="secondary">
+                        <Badge badgeContent={cartCount} color="secondary">
                           <img src={cartIcon} alt="" />
                         </Badge>
                       </NavLink>

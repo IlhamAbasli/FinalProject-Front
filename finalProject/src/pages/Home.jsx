@@ -2,30 +2,42 @@ import React, { useState, useEffect, useRef } from "react";
 import "../assets/scss/Home.scss";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import game1 from "../assets/images/game1.avif";
-import game2 from "../assets/images/game2.avif";
-import gameLogo from "../assets/images/zenless-logo.png";
-import thumb1 from "../assets/images/game1thumbimage.avif";
-import crosshair from "../assets/images/crosshair.avif";
-import banner from "../assets/images/bannerImg.avif";
-import gta from "../assets/images/gtav.avif";
-import ad1 from "../assets/images/ad1.avif";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
 import axios from "axios";
 import "swiper/css";
 import "swiper/css/pagination";
+import { jwtDecode } from "jwt-decode";
+import { CircularProgress } from "@mui/material";
+import { Tooltip } from "@mui/material";
+import checked from "../assets/icons/checked.svg";
+
 function Home() {
-  const [itemId, setItemId] = useState(1);
-  const elements = [1, 2, 3, 4, 5, 6];
+  const [itemId, setItemId] = useState("");
+  const [slider, setSlider] = useState([]);
+  const [latestProducts, setLatestProducts] = useState([]);
+  const [topSellers, setTopSellers] = useState([]);
+  const [trending, setTrending] = useState([]);
+  const [editors, setEditors] = useState([]);
+  const [latestNews, setLatestNews] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+
+  const [token, setToken] = useState(null);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [id, setId] = useState("");
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setItemId((prev) => (prev < elements.length ? prev + 1 : 1));
+      setItemId((prev) => {
+        const currentIndex = slider.findIndex((item) => item.id === prev);
+        const nextIndex = (currentIndex + 1) % slider.length;
+        return slider[nextIndex].id;
+      });
     }, 7000);
 
     return () => clearInterval(interval);
-  }, [elements.length]);
+  }, [slider]);
   const handleClick = (e, id) => {
     setItemId(id);
   };
@@ -59,6 +71,20 @@ function Home() {
   const [ads, setAds] = useState([]);
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = `Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games`;
+
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        setToken(parsedToken);
+        setDecodedToken(decoded);
+        setId(decoded.sid);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
 
     const fetchAds = async () => {
       try {
@@ -66,36 +92,129 @@ function Home() {
           "https://localhost:44300/api/Ad/GetAll"
         );
         setAds(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
       }
     };
 
+    const fetchLatest = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetLatestProducts"
+        );
+        setLatestProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchTopSellers = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetTopSellers"
+        );
+        setTopSellers(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchTrending = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetTrending"
+        );
+        setTrending(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+    const fetchEditors = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetEditorsChoices"
+        );
+        setEditors(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    const fetchLatestNews = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/News/GetLatestNews"
+        );
+        setLatestNews(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    const fetchSlider = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/Product/GetSliderProducts"
+        );
+        setSlider(response.data);
+        setItemId(response.data[0].id);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchTopSellers();
+    fetchLatestNews();
+    fetchTrending();
+    fetchLatest();
+    fetchEditors();
+    fetchSlider();
     fetchAds();
   }, []);
+  const fetchWishlist = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Wishlist/GetUserWishlistIds?userId=${id}`
+        );
+        setWishlist(response.data);
+        console.log(wishlist);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+    }
+  };
+
   useEffect(() => {
-    document.title = `Epic Games Store | Download & Play PC Games, Mods, DLC & More – Epic Games`;
-  }, []);
+    if (id) {
+      fetchWishlist();
+    }
+  }, [id]);
   return (
     <>
       <section id="slider">
         <div className="container-main">
           <div className="row">
             <div className="col-md-9 d-none d-md-block">
-              {elements.map((id, index) => {
+              {slider?.map((item, index) => {
+                const mainImage = item.productImages.filter(
+                  (image) => !image.isMain
+                )[0];
                 return (
                   <div
                     className={`carousel ${
-                      id === itemId ? "d-block" : "d-none"
+                      item.id === itemId ? "d-block" : "d-none"
                     }`}
-                    id={id}
+                    id={item.id}
                     key={index}
                   >
                     <div className="carousel-main-item">
                       <Link href="" className="image-link">
                         <div className="slider-image">
-                          <img src={game2} alt="" />
+                          <img
+                            src={`${baseURL}${
+                              mainImage ? mainImage.imageName : ""
+                            }`}
+                            alt=""
+                          />
                         </div>
                         <div className="image-shadow"></div>
                       </Link>
@@ -103,22 +222,27 @@ function Home() {
                         <div className="game-description">
                           <div
                             className="game-logo"
-                            style={{ backgroundImage: `url(${gameLogo})` }}
+                            style={{
+                              backgroundImage: `url(${baseURL}${item.productLogo})`,
+                            }}
                           ></div>
                           <div className="about-game">
-                            <span>AVAILABLE{id}</span>
-                            <p>
-                              Welcome to New Eridu — Where Humanity Rises Anew!
-                              HoYoverse's urban fantasy ARPG has released!
-                            </p>
+                            <span>AVAILABLE</span>
+                            <p>{item.productDescription}</p>
                           </div>
                         </div>
                         <div className="game-operations">
                           <div className="price">
-                            <p>Free</p>
+                            <p>
+                              {item.productPrice === 0
+                                ? "Free"
+                                : `$${item.productPrice}`}
+                            </p>
                           </div>
                           <div className="buy-wishlist">
-                            <Link>PLAY FREE NOW</Link>
+                            <Link to={`/p/${item.id}`}>
+                              BUY {item.productPrice === 0 && "FREE"} NOW
+                            </Link>
                             <button>
                               <div className="wishlist-button">
                                 <div className="spinner"></div>
@@ -136,23 +260,31 @@ function Home() {
             <div className="col-md-3 d-none d-md-block">
               <div className="carousel-mini-item active-thumb">
                 <ul>
-                  {elements.map((id, index) => {
+                  {slider.map((item, index) => {
+                    const mainImage = item.productImages.filter(
+                      (image) => image.isMain
+                    )[0];
                     return (
                       <li key={index}>
-                        <Link onClick={(e) => handleClick(e, id)}>
+                        <Link onClick={(e) => handleClick(e, item.id)}>
                           <div
-                            id={id}
+                            id={item.id}
                             className={`mini-item-thumb ${
-                              id === itemId && "active-thumb"
+                              item.id === itemId && "active-thumb"
                             }`}
                           >
                             <div className="item-image">
-                              <img src={thumb1} alt="" />
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
                             </div>
                             <div className="game-name">
-                              <span>Zenless Zone Zero</span>
+                              <span>{item.productName}</span>
                             </div>
-                            {id == itemId && (
+                            {item.id === itemId && (
                               <div className="cover">
                                 <div className="cover-item"></div>
                                 <div className="cover-progress"></div>
@@ -241,281 +373,45 @@ function Home() {
               },
             }}
           >
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
+            {latestProducts?.map((item, index) => {
+              const mainImage = item.productImages.filter(
+                (image) => image.isMain
+              )[0];
+              return (
+                <SwiperSlide key={index}>
+                  <div className="offer-card">
+                    <Link to={`/p/${item.id}`}>
+                      <div className="card-body">
+                        <div className="card-image">
+                          <img
+                            src={`${baseURL}${
+                              mainImage ? mainImage.imageName : ""
+                            }`}
+                            alt=""
+                          />
+                        </div>
+                        <div className="card-desc">
+                          <span className="game-type">
+                            {item.productType.typeName}
+                          </span>
+                          <p className="name">{item.productName}</p>
+                          <div className="price">
+                            <span>${item.productPrice}</span>
+                          </div>
+                        </div>
                       </div>
+                    </Link>
+                    <div className="to-wishlist">
+                      <button className="add-to-wishlist">
+                        <div className="wishlist-circle">
+                          <div className="plus-item"></div>
+                        </div>
+                      </button>
                     </div>
                   </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
-            <SwiperSlide>
-              <div className="offer-card">
-                <Link>
-                  <div className="card-body">
-                    <div className="card-image">
-                      <img src={crosshair} alt="" />
-                    </div>
-                    <div className="card-desc">
-                      <span className="game-type">BASE GAME</span>
-                      <p className="name">Crosshair X</p>
-                      <div className="price">
-                        <span>$3.59</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="to-wishlist">
-                  <button className="add-to-wishlist">
-                    <div className="wishlist-circle">
-                      <div className="plus-item"></div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </SwiperSlide>
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
         </div>
       </section>
@@ -531,11 +427,27 @@ function Home() {
                 <div className="list-title">
                   <h2>Top Sellers</h2>
                 </div>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
+                {topSellers?.map((item, index) => {
+                  const mainImage = item.productImages.filter(
+                    (image) => image.isMain
+                  )[0];
+                  return (
+                    <li key={index}>
+                      <div className="item">
+                        <Link to={`/p/${item.id}`}>
+                          <div className="left-side">
+                            <img
+                              src={`${baseURL}${
+                                mainImage ? mainImage.imageName : ""
+                              }`}
+                              alt=""
+                            />
+                          </div>
+                          <div className="right-side">
+                            <p>{item.productName}</p>
+                            <span>${item.productPrice}</span>
+                          </div>
+                        </Link>
                         <div className="to-wishlist">
                           <button className="add-to-wishlist">
                             <div className="wishlist-circle">
@@ -544,93 +456,9 @@ function Home() {
                           </button>
                         </div>
                       </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
             <div
@@ -639,13 +467,29 @@ function Home() {
             >
               <ul>
                 <div className="list-title">
-                  <h2>Top Sellers</h2>
+                  <h2>Trending Games</h2>
                 </div>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
+                {trending?.map((item, index) => {
+                  const mainImage = item.productImages.filter(
+                    (image) => image.isMain
+                  )[0];
+                  return (
+                    <li key={index}>
+                      <div className="item">
+                        <Link to={`/p/${item.id}`}>
+                          <div className="left-side">
+                            <img
+                              src={`${baseURL}${
+                                mainImage ? mainImage.imageName : ""
+                              }`}
+                              alt=""
+                            />
+                          </div>
+                          <div className="right-side">
+                            <p>{item.productName}</p>
+                            <span>${item.productPrice}</span>
+                          </div>
+                        </Link>
                         <div className="to-wishlist">
                           <button className="add-to-wishlist">
                             <div className="wishlist-circle">
@@ -654,105 +498,37 @@ function Home() {
                           </button>
                         </div>
                       </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
             <div className="col-4">
               <ul>
                 <div className="list-title">
-                  <h2>Top Sellers</h2>
+                  <h2>Editor`s Choices</h2>
                 </div>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
+                {editors?.map((item, index) => {
+                  const mainImage = item.productImages.filter(
+                    (image) => image.isMain
+                  )[0];
+                  return (
+                    <li key={index}>
+                      <div className="item">
+                        <Link to={`/p/${item.id}`}>
+                          <div className="left-side">
+                            <img
+                              src={`${baseURL}${
+                                mainImage ? mainImage.imageName : ""
+                              }`}
+                              alt=""
+                            />
+                          </div>
+                          <div className="right-side">
+                            <p>{item.productName}</p>
+                            <span>${item.productPrice}</span>
+                          </div>
+                        </Link>
                         <div className="to-wishlist">
                           <button className="add-to-wishlist">
                             <div className="wishlist-circle">
@@ -761,93 +537,9 @@ function Home() {
                           </button>
                         </div>
                       </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>{" "}
-                <li>
-                  <div className="item">
-                    <Link>
-                      <div className="left-side">
-                        <img src={gta} alt="" />
-                        <div className="to-wishlist">
-                          <button className="add-to-wishlist">
-                            <div className="wishlist-circle">
-                              <div className="plus-item"></div>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="right-side">
-                        <p>Grand Theft Auto V: Premium Edition</p>
-                        <span>$24.99</span>
-                      </div>
-                    </Link>
-                  </div>
-                </li>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
@@ -868,11 +560,27 @@ function Home() {
                   <div className="list-title">
                     <h2>Top Sellers</h2>
                   </div>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
+                  {topSellers?.map((item, index) => {
+                    const mainImage = item.productImages.filter(
+                      (image) => image.isMain
+                    )[0];
+                    return (
+                      <li key={index}>
+                        <div className="item">
+                          <Link>
+                            <div className="left-side">
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </div>
+                            <div className="right-side">
+                              <p>{item.productName}</p>
+                              <span>${item.productPrice}</span>
+                            </div>
+                          </Link>
                           <div className="to-wishlist">
                             <button className="add-to-wishlist">
                               <div className="wishlist-circle">
@@ -881,105 +589,37 @@ function Home() {
                             </button>
                           </div>
                         </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
+                      </li>
+                    );
+                  })}
                 </ul>
               </SwiperSlide>
               <SwiperSlide>
                 <ul>
                   <div className="list-title">
-                    <h2>Top Sellers</h2>
+                    <h2>Trending Games</h2>
                   </div>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
+                  {trending?.map((item, index) => {
+                    const mainImage = item.productImages.filter(
+                      (image) => image.isMain
+                    )[0];
+                    return (
+                      <li key={index}>
+                        <div className="item">
+                          <Link to={`/p/${item.id}`}>
+                            <div className="left-side">
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </div>
+                            <div className="right-side">
+                              <p>{item.productName}</p>
+                              <span>${item.productPrice}</span>
+                            </div>
+                          </Link>
                           <div className="to-wishlist">
                             <button className="add-to-wishlist">
                               <div className="wishlist-circle">
@@ -988,105 +628,37 @@ function Home() {
                             </button>
                           </div>
                         </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
+                      </li>
+                    );
+                  })}
                 </ul>
               </SwiperSlide>
               <SwiperSlide>
                 <ul>
                   <div className="list-title">
-                    <h2>Top Sellers</h2>
+                    <h2>Editor`s Choice</h2>
                   </div>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
+                  {editors?.map((item, index) => {
+                    const mainImage = item.productImages.filter(
+                      (image) => image.isMain
+                    )[0];
+                    return (
+                      <li key={index}>
+                        <div className="item">
+                          <Link to={`/p/${item.id}`}>
+                            <div className="left-side">
+                              <img
+                                src={`${baseURL}${
+                                  mainImage ? mainImage.imageName : ""
+                                }`}
+                                alt=""
+                              />
+                            </div>
+                            <div className="right-side">
+                              <p>{item.productName}</p>
+                              <span>${item.productPrice}</span>
+                            </div>
+                          </Link>
                           <div className="to-wishlist">
                             <button className="add-to-wishlist">
                               <div className="wishlist-circle">
@@ -1095,93 +667,9 @@ function Home() {
                             </button>
                           </div>
                         </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>{" "}
-                  <li>
-                    <div className="item">
-                      <Link>
-                        <div className="left-side">
-                          <img src={gta} alt="" />
-                          <div className="to-wishlist">
-                            <button className="add-to-wishlist">
-                              <div className="wishlist-circle">
-                                <div className="plus-item"></div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="right-side">
-                          <p>Grand Theft Auto V: Premium Edition</p>
-                          <span>$24.99</span>
-                        </div>
-                      </Link>
-                    </div>
-                  </li>
+                      </li>
+                    );
+                  })}
                 </ul>
               </SwiperSlide>
             </Swiper>
@@ -1192,62 +680,34 @@ function Home() {
       <section id="discover-banner">
         <div className="container-main">
           <div className="row">
-            <div className="col-md-6 col-12">
-              <div className="banner-item">
-                <div className="banner-image">
-                  <Link>
-                    <img src={banner} alt="" />
-                  </Link>
-                  <div className="to-wishlist">
-                    <button className="add-to-wishlist">
-                      <div className="wishlist-circle">
-                        <div className="plus-item"></div>
+            {latestNews?.map((item, index) => {
+              const mainImage = item.newsImages?.filter(
+                (image) => image.isMain
+              )[0];
+              return (
+                <div className="col-md-6 col-12" key={index}>
+                  <div className="banner-item">
+                    <div className="banner-image">
+                      <Link to={`/news/${item.id}`}>
+                        <img
+                          src={`${baseURL}${mainImage ? mainImage.image : ""}`}
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                    <div className="banner-desc">
+                      <div className="banner-name">
+                        <Link to={`/news/${item.id}`}>{item.newsTitle}</Link>
                       </div>
-                    </button>
-                  </div>
-                </div>
-                <div className="banner-desc">
-                  <div className="banner-name">
-                    <Link>Planet Coaster 2</Link>
-                  </div>
-                  <p>
-                    From towering rollercoasters to twisting water slides, build
-                    a coaster and waterpark paradise in Planet Coaster 2!
-                  </p>
-                  <div className="price">
-                    <Link>Wishlist Now</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12">
-              <div className="banner-item">
-                <div className="banner-image">
-                  <Link>
-                    <img src={banner} alt="" />
-                  </Link>
-                  <div className="to-wishlist">
-                    <button className="add-to-wishlist">
-                      <div className="wishlist-circle">
-                        <div className="plus-item"></div>
+                      <p>{item.newsContent1}</p>
+                      <div className="price">
+                        <Link to={`/news/${item.id}`}>Read more</Link>
                       </div>
-                    </button>
+                    </div>
                   </div>
                 </div>
-                <div className="banner-desc">
-                  <div className="banner-name">
-                    <Link>Planet Coaster 2</Link>
-                  </div>
-                  <p>
-                    From towering rollercoasters to twisting water slides, build
-                    a coaster and waterpark paradise in Planet Coaster 2!
-                  </p>
-                  <div className="price">
-                    <Link>Wishlist Now</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>

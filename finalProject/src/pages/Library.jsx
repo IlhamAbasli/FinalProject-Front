@@ -117,7 +117,6 @@ function Library() {
 
   const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
   const [checkedFilters, setCheckedFilters] = useState({
-    price: [],
     genre: [],
     types: [],
     platform: [],
@@ -146,7 +145,6 @@ function Library() {
 
   const resetFilters = () => {
     setCheckedFilters({
-      price: [],
       genre: [],
       types: [],
       platform: [],
@@ -317,30 +315,6 @@ function Library() {
                       </div>
                     </div>
                     <div className="col-12">
-                      <div className="filter">
-                        <button onClick={() => toggleFilterDropdown("price")}>
-                          Price
-                          <img
-                            src={chevronDownIcon}
-                            alt="Chevron Down"
-                            className={filterDropdownOpen.price ? "rotate" : ""}
-                          />
-                        </button>
-                        {filterDropdownOpen.price && (
-                          <div className="filter-dropdown">
-                            <ul>
-                              {[
-                                "Free",
-                                "Under $5.00",
-                                "Under $10.00",
-                                "Under $20.00",
-                                "Under $30.00",
-                                "$14.00 and above",
-                              ].map((item) => renderFilterItem("price", item))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
                       <div className="filter">
                         <button onClick={() => toggleFilterDropdown("genre")}>
                           Genre

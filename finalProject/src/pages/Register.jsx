@@ -53,7 +53,9 @@ function Register() {
           setLoading(false);
         }, 2000);
       } else {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
       }
     } catch (error) {
       console.error("Error submitting the form", error);
@@ -97,22 +99,28 @@ function Register() {
                 <div className="title">
                   <h2>Create Account</h2>
                 </div>
-                {signUpErrors && (
+                {!loading && signUpErrors && (
                   <div className="errors">
-                    <ul style={{ color: "#e97780", listStyle: "circle" }}>
-                      {signUpErrors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                      ))}
-                    </ul>
+                    {signUpErrors.map((error, index) => (
+                      <Alert
+                        variant="outlined"
+                        severity="error"
+                        sx={{ color: "red", marginTop: "15px" }}
+                        key={index}
+                      >
+                        {error}
+                      </Alert>
+                    ))}
                   </div>
                 )}
                 {!loading && signUp && (
                   <Alert
                     variant="outlined"
                     severity="success"
-                    sx={{ color: "green" }}
+                    sx={{ color: "green", marginTop: "30px" }}
                   >
-                    Register successfull, please check your email
+                    Register successfull, please check your email to confirm
+                    your account
                   </Alert>
                 )}
 

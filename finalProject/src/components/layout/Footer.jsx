@@ -53,13 +53,13 @@ function Footer() {
               <div className="menu-title">Menus</div>
               <ul>
                 <li>
-                  <Link>Wishlist</Link>
+                  <Link to="/wishlist">Wishlist</Link>
                 </li>
                 <li>
-                  <Link>Cart</Link>
+                  <Link to="/cart">Cart</Link>
                 </li>
                 <li>
-                  <Link>Browse</Link>
+                  <Link to="/shop">Browse</Link>
                 </li>
               </ul>
             </div>
@@ -67,13 +67,13 @@ function Footer() {
               <div className="menu-title">Account</div>
               <ul>
                 <li>
-                  <Link>Log in</Link>
+                  <Link to="/login">Log in</Link>
                 </li>
                 <li>
-                  <Link>Register</Link>
+                  <Link to="/register">Register</Link>
                 </li>
                 <li>
-                  <Link>Account</Link>
+                  <Link to="/account/*">Account</Link>
                 </li>
               </ul>
             </div>
@@ -81,10 +81,7 @@ function Footer() {
               <div className="menu-title">Epic Games</div>
               <ul>
                 <li>
-                  <Link>About</Link>
-                </li>
-                <li>
-                  <Link>News</Link>
+                  <Link to="/news">News</Link>
                 </li>
               </ul>
             </div>

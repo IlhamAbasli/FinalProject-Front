@@ -18,6 +18,7 @@ function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
   const [token, setToken] = useState("");
+  const [resetPass, setResetPass] = useState(false);
 
   useEffect(() => {
     document.title = "Reset Your Password | Epic Games";
@@ -46,7 +47,15 @@ function ResetPassword() {
           },
         }
       );
-      setTimeout(() => setLoading(false), navigate("/login"), 5000);
+      console.log(response);
+      setTimeout(() => {
+        setLoading(false);
+        setResetPass(true);
+      }, 3500);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 4500);
     } catch (error) {
       setMessage("Failed to reset password. Please try again.");
     }
@@ -95,6 +104,18 @@ function ResetPassword() {
                     that you don't use elsewhere.
                   </p>
                 </div>
+                {!loading && resetPass && (
+                  <Alert
+                    variant="outlined"
+                    severity={resetPass ? "success" : "error"}
+                    sx={{
+                      color: resetPass ? "green" : "red",
+                      marginTop: "30px",
+                    }}
+                  >
+                    Password reset successfully
+                  </Alert>
+                )}
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-12">
@@ -161,7 +182,10 @@ function ResetPassword() {
                           type="submit"
                         >
                           {loading ? (
-                            <CircularProgress size={24} />
+                            <CircularProgress
+                              size={24}
+                              sx={{ color: "white" }}
+                            />
                           ) : (
                             "Reset Password"
                           )}

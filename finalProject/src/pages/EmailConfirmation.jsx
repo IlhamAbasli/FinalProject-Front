@@ -11,8 +11,7 @@ const EmailConfirmation = () => {
     const params = new URLSearchParams(location.search);
     const userId = params.get("userId");
     const token = params.get("token");
-    console.log(userId);
-    console.log(token);
+    document.title = "Email confirmation...";
 
     const confirmEmail = async () => {
       try {

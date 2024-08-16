@@ -10,7 +10,8 @@ import { TextField, Alert, CircularProgress } from "@mui/material";
 function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [forgetPassword, setForgetPassword] = useState(false);
-  const [forgetPasswordMessage, setForgetPasswrodMessage] = useState("");
+  const [forgetPasswordMessage, setForgetPasswordMessage] = useState("");
+  const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
 
   const onSubmit = async (values, actions) => {
@@ -22,15 +23,21 @@ function ForgotPassword() {
         `https://localhost:44300/api/Account/ForgetPassword?email=${values.email}`
       );
       console.log(response.data);
-      setTimeout(
-        () => setLoading(false),
-        setForgetPasswrodMessage(response.data.message),
-        setForgetPassword(response.data.success),
-        actions.resetForm(),
-        5000
-      );
+      setTimeout(() => {
+        setLoading(false),
+          setForgetPasswordMessage(response.data.message),
+          setForgetPassword(response.data.success),
+          setOpen(true);
+        actions.resetForm();
+      }, 2000);
     } catch (error) {
-      setForgetPasswrodMessage("Failed to reset password. Please try again.");
+      setTimeout(() => {
+        setLoading(false),
+          setForgetPasswordMessage(
+            "Failed to reset password. Please try again."
+          ),
+          setForgetPassword(false);
+      }, 2000);
     }
   };
   useEffect(() => {
@@ -63,11 +70,14 @@ function ForgotPassword() {
                 <div className="title">
                   <h2>Forgot your password?</h2>
                 </div>
-                {!loading && forgetPassword && (
+                {!loading && open && (
                   <Alert
                     variant="outlined"
                     severity={forgetPassword ? "success" : "error"}
-                    sx={{ color: forgetPassword ? "green" : "red" }}
+                    sx={{
+                      color: forgetPassword ? "green" : "red",
+                      marginTop: "30px",
+                    }}
                   >
                     {forgetPasswordMessage}
                   </Alert>

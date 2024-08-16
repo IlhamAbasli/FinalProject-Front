@@ -4,7 +4,7 @@ import icon from "../assets/icons/icon.svg";
 import { useFormik } from "formik";
 import { logInSchema } from "../schemas/index";
 import { Link, useNavigate } from "react-router-dom";
-import { TextField } from "@mui/material";
+import { TextField, Alert } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import axios from "axios";
 
@@ -99,14 +99,16 @@ function Login() {
                 </div>
                 {signInError && (
                   <div className="errors">
-                    <ul
-                      style={{
+                    <Alert
+                      variant="outlined"
+                      severity={signInError.success ? "success" : "error"}
+                      sx={{
                         color: signInError.success ? "green" : "#e97780",
-                        listStyle: "circle",
+                        marginTop: "15px",
                       }}
                     >
-                      <li>{signInError.message}</li>
-                    </ul>
+                      {signInError.message}
+                    </Alert>
                   </div>
                 )}
                 <div className="form">
