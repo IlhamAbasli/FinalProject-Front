@@ -66,7 +66,7 @@ function Account() {
       setTimeout(() => {
         setLoading(false);
         setSnackbarMessage(
-          "Changes saved successfully, sign in again to see changes"
+          "Changes saved successfully, sign in again to see changes(If you change email please confirm it)"
         );
         setSeverity("success");
         setOpen(true);

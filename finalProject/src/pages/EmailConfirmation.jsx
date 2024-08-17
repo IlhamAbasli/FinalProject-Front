@@ -23,6 +23,7 @@ const EmailConfirmation = () => {
           }
         );
         setMessage("Email confirmed successfully! Redirecting to login...");
+        localStorage.clear();
         setTimeout(() => navigate("/login"), 2000);
       } catch (error) {
         setMessage("Failed to confirm email. Please try again.");

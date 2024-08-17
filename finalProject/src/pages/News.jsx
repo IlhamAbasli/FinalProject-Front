@@ -13,6 +13,7 @@ function News() {
   });
 
   const [news, setNews] = useState([]);
+  const [latestNews, setLatestNews] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const baseURL = "https://localhost:44300/assets/images/";
@@ -36,6 +37,21 @@ function News() {
     fetchNews();
   }, [currentPage]);
 
+  useEffect(() => {
+    const fetchLatestNews = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:44300/api/News/GetLatestNews"
+        );
+        setLatestNews(response.data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchLatestNews();
+  }, []);
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -46,60 +62,39 @@ function News() {
         <div className="container-main">
           <div className="title">Epic Games News</div>
           <div className="row">
-            <div className="col-md-6 col-12">
-              <div className="news-item">
-                <div className="news-image">
-                  <Link>
-                    <img src={summersale} alt="" />
-                  </Link>
-                </div>
-                <div className="news-desc">
-                  <div className="news-date">
-                    <span>2d ago</span>
-                  </div>
-                  <div className="news-name">
-                    <Link>
-                      Heat up your Epic Games Store library with Summer Sale
-                      2024
-                    </Link>
-                  </div>
-                  <p>
-                    Maybe it’s finally time to grab that game you’ve been eyeing
-                    for months.
-                  </p>
-                  <div className="read-more">
-                    <Link>Read More</Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 col-12">
-              <div className="news-item">
-                <div className="news-image">
-                  <Link>
-                    <img src={summersale} alt="" />
-                  </Link>
-                </div>
-                <div className="news-desc">
-                  <div className="news-date">
-                    <span>2d ago</span>
-                  </div>
-                  <div className="news-name">
-                    <Link>
-                      Heat up your Epic Games Store library with Summer Sale
-                      2024
-                    </Link>
-                  </div>
-                  <p>
-                    Maybe it’s finally time to grab that game you’ve been eyeing
-                    for months.
-                  </p>
-                  <div className="read-more">
-                    <Link>Read More</Link>
+            {latestNews?.map((item, index) => {
+              const mainImage = item.newsImages?.filter(
+                (image) => image.isMain
+              )[0];
+              return (
+                <div className="col-md-6 col-12" key={index}>
+                  <div className="news-item">
+                    <div className="news-image">
+                      <Link to={`/news/${item.id}`}>
+                        <img
+                          src={`${baseURL}${mainImage ? mainImage.image : ""}`}
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                    <div className="news-desc">
+                      <div className="news-date">
+                        <span>
+                          {moment(item.createdDate).format("MMMM DD")}
+                        </span>
+                      </div>
+                      <div className="news-name">
+                        <Link to={`/news/${item.id}`}>{item.newsTitle}</Link>
+                      </div>
+                      <p>{item.newsContent1}</p>
+                      <div className="read-more">
+                        <Link to={`/news/${item.id}`}>Read More</Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
