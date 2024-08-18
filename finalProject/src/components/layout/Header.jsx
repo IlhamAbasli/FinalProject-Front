@@ -11,13 +11,17 @@ import closeIcon from "../../assets/icons/closeIcon.svg";
 import chevronDownIcon from "../../assets/icons/chevron-down.svg";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
+import { Autocomplete, TextField, InputAdornment, Popper } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+
 function Header() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [id, setId] = useState("");
+  const [games, setGames] = useState([]);
 
   const fetchCart = async () => {
     try {
@@ -31,9 +35,10 @@ function Header() {
       console.error("Error fetching wishlist:", error);
     }
   };
+
   useEffect(() => {
     fetchCart();
-  });
+  }, [id]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("user-info");
@@ -48,6 +53,17 @@ function Header() {
         console.error("Invalid token:", error);
       }
     }
+    const fetchGames = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:44300/api/Product/GetAll`
+        );
+        setGames(response.data);
+      } catch (error) {
+        console.error("Error fetching games:", error);
+      }
+    };
+    fetchGames();
   }, []);
 
   const navigate = useNavigate();
@@ -100,6 +116,29 @@ function Header() {
     navigate("/login");
   };
 
+  function CustomPopper(props) {
+    return (
+      <Popper
+        {...props}
+        style={{
+          ...props.style, // Ensure existing styles are preserved
+          width: "400px",
+          backgroundColor: "black",
+        }}
+        modifiers={[
+          {
+            name: "offset",
+            options: {
+              offset: [90, 8], // Adjust the vertical spacing
+            },
+          },
+        ]}
+      />
+    );
+  }
+  const baseURL = "https://localhost:44300/assets/images/";
+
+  const [onInputFocus, setOnInputFocus] = useState(false);
   return (
     <>
       <section id="header">
@@ -166,43 +205,196 @@ function Header() {
         <div className="container-main">
           <div className="row">
             <div className="col-4 col-lg-4 col-xl-2 search-input">
-              <div className="search-input d-none d-lg-flex">
-                <div className="input-area">
-                  <div className="search-icon">
-                    <img src={search} alt="" />
-                  </div>
-                  <form action="">
-                    <input
-                      type="text"
-                      placeholder="Search store"
-                      className="search"
+              <Autocomplete
+                freeSolo
+                options={games}
+                filterOptions={(options, state) =>
+                  options
+                    .filter((option) =>
+                      option.productName
+                        .toLowerCase()
+                        .includes(state.inputValue.toLowerCase())
+                    )
+                    .slice(0, 3)
+                }
+                getOptionLabel={(option) => option.productName}
+                PopperComponent={CustomPopper}
+                renderOption={(props, option) => (
+                  <li
+                    {...props}
+                    key={option.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "white",
+                    }}
+                  >
+                    <img
+                      src={`${baseURL}${
+                        option.productImages.filter((image) => image.isMain)[0]
+                          .imageName
+                      }`}
+                      alt={option.productName}
+                      style={{
+                        width: "40px",
+                        height: "50px",
+                        marginRight: "10px",
+                        objectFit: "cover",
+                        borderRadius: "5px",
+                      }}
                     />
-                  </form>
-                </div>
-              </div>
+                    <Link style={{ color: "#18181c" }} to={`/p/${option.id}`}>
+                      {option.productName}
+                    </Link>
+                  </li>
+                )}
+                onInputChange={(event, value) => {
+                  setOnInputFocus(!!value);
+                }}
+                renderInput={(props, option) => (
+                  <TextField
+                    onFocus={() => setOnInputFocus(false)}
+                    {...props}
+                    placeholder="Search store"
+                    InputProps={{
+                      ...props.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <img
+                            src={search}
+                            style={{ marginLeft: "3px" }}
+                            alt=""
+                          />
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        height: "40px",
+                        borderRadius: "24px",
+                        backgroundColor: "#202020",
+                        color: "whitesmoke",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                        "&::placeholder": {
+                          color: "#aaaaae",
+                        },
+                      },
+                    }}
+                    sx={{
+                      width: "100%",
+                      "& .MuiInputBase-root": {
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  width: "100%",
+                  height: "100px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              />
+
               <div className="search-mobile d-block d-lg-none">
                 <div className="input-area">
-                  <div className="search-icon" onClick={toggleSearch}>
-                    <img src={search} alt="Search Icon" />
-                  </div>
                   <div
                     className={`search-overlay ${isSearchOpen ? "show" : ""}`}
                   >
-                    <button className="search-store" onClick={toggleSearch}>
-                      <div className="search-icon">
-                        <img src={search} alt="Search Icon" />
-                      </div>
-                    </button>
-                    <form action="">
-                      <input
-                        type="text"
-                        placeholder="Search store"
-                        className="search"
-                      />
-                    </form>
-                    <button className="search-close" onClick={closeSearch}>
-                      <img src={closeIcon} alt="Close Icon" />
-                    </button>
+                    <Autocomplete
+                      freeSolo
+                      options={games}
+                      filterOptions={(options, state) =>
+                        options
+                          .filter((option) =>
+                            option.productName
+                              .toLowerCase()
+                              .includes(state.inputValue.toLowerCase())
+                          )
+                          .slice(0, 3)
+                      }
+                      getOptionLabel={(option) => option.productName}
+                      PopperComponent={CustomPopper}
+                      renderOption={(props, option) => (
+                        <li
+                          {...props}
+                          key={option.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: "white",
+                          }}
+                        >
+                          <img
+                            src={`${baseURL}${
+                              option.productImages.filter(
+                                (image) => image.isMain
+                              )[0].imageName
+                            }`}
+                            alt={option.productName}
+                            style={{
+                              width: "40px",
+                              height: "50px",
+                              marginRight: "10px",
+                              objectFit: "cover",
+                              borderRadius: "5px",
+                            }}
+                          />
+                          <Link
+                            style={{ color: "#18181c" }}
+                            to={`/p/${option.id}`}
+                          >
+                            {option.productName}
+                          </Link>
+                        </li>
+                      )}
+                      onInputChange={(event, value) => {
+                        setOnInputFocus(!!value);
+                      }}
+                      renderInput={(props, option) => (
+                        <TextField
+                          onFocus={() => setOnInputFocus(false)}
+                          {...props}
+                          placeholder="Search store"
+                          InputProps={{
+                            ...props.InputProps,
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <img
+                                  src={search}
+                                  style={{ marginLeft: "3px" }}
+                                  alt=""
+                                />
+                              </InputAdornment>
+                            ),
+                            sx: {
+                              height: "40px",
+                              borderRadius: "24px",
+                              backgroundColor: "#202020",
+                              color: "whitesmoke",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                border: "none",
+                              },
+                              "&::placeholder": {
+                                color: "#aaaaae",
+                              },
+                            },
+                          }}
+                          sx={{
+                            width: "100%",
+                            "& .MuiInputBase-root": {
+                              fontSize: "14px",
+                            },
+                          }}
+                        />
+                      )}
+                      sx={{
+                        width: "100%",
+                        height: "100px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    />
                   </div>
                 </div>
               </div>

@@ -23,7 +23,9 @@ function Shop() {
   const [wishlist, setWishlist] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("New Release");
+  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState({});
+  const [productLoading, setProductLoading] = useState(false);
 
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
@@ -113,12 +115,14 @@ function Shop() {
   };
 
   const fetchGames = async () => {
+    setProductLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:44300/api/Product/GetAllPaginated?sortType=${selectedOption}&page=${currentPage}`
+        `https://localhost:44300/api/Product/GetAllPaginated?sortType=${selectedOption}&searchText=${searchText}&page=${currentPage}`
       );
       setGames(response.data);
       setPageCount(response.data.pageCount);
+      setProductLoading(false);
     } catch (error) {
       console.error("Error fetching games:", error);
     }
@@ -127,6 +131,10 @@ function Shop() {
   useEffect(() => {
     fetchGames();
   }, [selectedOption]);
+
+  useEffect(() => {
+    fetchGames();
+  }, [searchText]);
 
   const addToWishlist = async (productId) => {
     setLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
@@ -225,6 +233,11 @@ function Shop() {
       (acc, filters) => acc + filters.length,
       0
     );
+  };
+
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+    console.log(searchText);
   };
 
   const removeFromWishlist = async (productId) => {
@@ -384,151 +397,167 @@ function Shop() {
                   )}
                 </div>
               </div>
-              <div className="row">
-                {games.products?.map((game, index) => {
-                  const mainImage = game.productImages.filter(
-                    (image) => image.isMain
-                  )[0];
-                  return (
-                    <div className="col-6 col-md-3" key={index}>
-                      <div className="offer-card">
-                        <Link to={`/p/${game.id}`}>
-                          <div className="card-body">
-                            <div className="card-image">
-                              <img
-                                src={`${baseURL}${
-                                  mainImage ? mainImage.imageName : ""
-                                }`}
-                                alt=""
-                              />
-                            </div>
-                            <div className="card-desc">
-                              <span className="game-type">
-                                {game.productType.typeName}
-                              </span>
-                              <p className="name">{game.productName}</p>
-                              <div className="price">
-                                <span>${game.productPrice}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                        {wishlist.includes(game.id) ? (
-                          <div className="to-wishlist">
-                            <Tooltip
-                              title="Remove from wishlist"
-                              arrow
-                              placement="top"
-                              slotProps={{
-                                popper: {
-                                  modifiers: [
-                                    {
-                                      name: "offset",
-                                      options: {
-                                        offset: [0, -20],
-                                      },
-                                    },
-                                  ],
-                                },
-                              }}
-                            >
-                              <button
-                                className="add-to-wishlist"
-                                onClick={() => removeFromWishlist(game.id)}
-                              >
-                                <div className="wishlist-circle">
-                                  {loading[game?.id] ? (
-                                    <CircularProgress
-                                      size={10}
-                                      sx={{ color: "white" }}
-                                    />
-                                  ) : (
-                                    <img src={checked} alt="" />
-                                  )}
-                                </div>
-                              </button>
-                            </Tooltip>
-                          </div>
-                        ) : id ? (
-                          <div className="to-wishlist">
-                            <Tooltip
-                              title="Add to wishlist"
-                              arrow
-                              placement="top"
-                              slotProps={{
-                                popper: {
-                                  modifiers: [
-                                    {
-                                      name: "offset",
-                                      options: {
-                                        offset: [0, -20],
-                                      },
-                                    },
-                                  ],
-                                },
-                              }}
-                            >
-                              <button
-                                className="add-to-wishlist"
-                                onClick={() => addToWishlist(game.id)}
-                              >
-                                <div className="wishlist-circle">
-                                  {loading[game?.id] ? (
-                                    <CircularProgress
-                                      size={10}
-                                      sx={{ color: "white" }}
-                                    />
-                                  ) : (
-                                    <div className="plus-item"></div>
-                                  )}
-                                </div>
-                              </button>
-                            </Tooltip>
-                          </div>
-                        ) : (
-                          <div className="to-wishlist">
-                            <Tooltip
-                              title="Add to wishlist"
-                              arrow
-                              placement="top"
-                              slotProps={{
-                                popper: {
-                                  modifiers: [
-                                    {
-                                      name: "offset",
-                                      options: {
-                                        offset: [0, -20],
-                                      },
-                                    },
-                                  ],
-                                },
-                              }}
-                            >
-                              <Link className="add-to-wishlist" to="/login">
-                                <div className="wishlist-circle">
-                                  <div className="plus-item"></div>
-                                </div>
-                              </Link>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              {pageCount > 1 ? (
-                <div className="col-12 d-flex justify-content-center">
-                  <div className="pagination">
-                    <Pagination
-                      count={pageCount}
-                      page={currentPage}
-                      onChange={handlePageChange}
-                    />
-                  </div>
+              {productLoading ? (
+                <div
+                  className="loading"
+                  style={{
+                    width: "100%",
+                    height: "1088px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CircularProgress />
                 </div>
               ) : (
-                ""
+                <>
+                  <div className="row">
+                    {games.products?.map((game, index) => {
+                      const mainImage = game.productImages.filter(
+                        (image) => image.isMain
+                      )[0];
+                      return (
+                        <div className="col-6 col-md-3" key={index}>
+                          <div className="offer-card">
+                            <Link to={`/p/${game.id}`}>
+                              <div className="card-body">
+                                <div className="card-image">
+                                  <img
+                                    src={`${baseURL}${
+                                      mainImage ? mainImage.imageName : ""
+                                    }`}
+                                    alt=""
+                                  />
+                                </div>
+                                <div className="card-desc">
+                                  <span className="game-type">
+                                    {game.productType.typeName}
+                                  </span>
+                                  <p className="name">{game.productName}</p>
+                                  <div className="price">
+                                    <span>${game.productPrice}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            {wishlist.includes(game.id) ? (
+                              <div className="to-wishlist">
+                                <Tooltip
+                                  title="Remove from wishlist"
+                                  arrow
+                                  placement="top"
+                                  slotProps={{
+                                    popper: {
+                                      modifiers: [
+                                        {
+                                          name: "offset",
+                                          options: {
+                                            offset: [0, -20],
+                                          },
+                                        },
+                                      ],
+                                    },
+                                  }}
+                                >
+                                  <button
+                                    className="add-to-wishlist"
+                                    onClick={() => removeFromWishlist(game.id)}
+                                  >
+                                    <div className="wishlist-circle">
+                                      {loading[game?.id] ? (
+                                        <CircularProgress
+                                          size={10}
+                                          sx={{ color: "white" }}
+                                        />
+                                      ) : (
+                                        <img src={checked} alt="" />
+                                      )}
+                                    </div>
+                                  </button>
+                                </Tooltip>
+                              </div>
+                            ) : id ? (
+                              <div className="to-wishlist">
+                                <Tooltip
+                                  title="Add to wishlist"
+                                  arrow
+                                  placement="top"
+                                  slotProps={{
+                                    popper: {
+                                      modifiers: [
+                                        {
+                                          name: "offset",
+                                          options: {
+                                            offset: [0, -20],
+                                          },
+                                        },
+                                      ],
+                                    },
+                                  }}
+                                >
+                                  <button
+                                    className="add-to-wishlist"
+                                    onClick={() => addToWishlist(game.id)}
+                                  >
+                                    <div className="wishlist-circle">
+                                      {loading[game?.id] ? (
+                                        <CircularProgress
+                                          size={10}
+                                          sx={{ color: "white" }}
+                                        />
+                                      ) : (
+                                        <div className="plus-item"></div>
+                                      )}
+                                    </div>
+                                  </button>
+                                </Tooltip>
+                              </div>
+                            ) : (
+                              <div className="to-wishlist">
+                                <Tooltip
+                                  title="Add to wishlist"
+                                  arrow
+                                  placement="top"
+                                  slotProps={{
+                                    popper: {
+                                      modifiers: [
+                                        {
+                                          name: "offset",
+                                          options: {
+                                            offset: [0, -20],
+                                          },
+                                        },
+                                      ],
+                                    },
+                                  }}
+                                >
+                                  <Link className="add-to-wishlist" to="/login">
+                                    <div className="wishlist-circle">
+                                      <div className="plus-item"></div>
+                                    </div>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {pageCount > 1 ? (
+                    <div className="col-12 d-flex justify-content-center">
+                      <div className="pagination">
+                        <Pagination
+                          count={pageCount}
+                          page={currentPage}
+                          onChange={handlePageChange}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
               )}
             </div>
             <div className="col-12 col-lg-4 col-xl-3">
@@ -560,7 +589,11 @@ function Shop() {
                     <div className="filter-search">
                       <img src={search} alt="Search" />
                       <form action="">
-                        <input type="text" placeholder="Keywords" />
+                        <input
+                          type="text"
+                          placeholder="Keywords"
+                          onKeyUp={handleSearch}
+                        />
                       </form>
                     </div>
                   </div>
