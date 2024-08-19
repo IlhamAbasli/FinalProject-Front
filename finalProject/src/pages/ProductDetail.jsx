@@ -183,6 +183,7 @@ function ProductDetail() {
         const response = await axios.get(
           `https://localhost:44300/api/Library/GetUserLibraryIds?userId=${userId}`
         );
+        console.log(response.data);
         setLibrary(response.data);
       }
     } catch (error) {

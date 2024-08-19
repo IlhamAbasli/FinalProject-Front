@@ -25,6 +25,7 @@ function Shop() {
   const [selectedOption, setSelectedOption] = useState("New Release");
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState({});
+  const [library, setLibrary] = useState([]);
   const [productLoading, setProductLoading] = useState(false);
 
   const [token, setToken] = useState(null);
@@ -55,6 +56,7 @@ function Shop() {
   useEffect(() => {
     if (id) {
       fetchWishlist();
+      fetchLibrary();
     }
   }, [id]);
 
@@ -66,6 +68,7 @@ function Shop() {
     fetchGenres();
     fetchPlatforms();
     fetchGames();
+    fetchLibrary();
   }, [currentPage]);
 
   const fetchWishlist = async () => {
@@ -125,6 +128,20 @@ function Shop() {
       setProductLoading(false);
     } catch (error) {
       console.error("Error fetching games:", error);
+    }
+  };
+
+  const fetchLibrary = async () => {
+    try {
+      if (id) {
+        const response = await axios.get(
+          `https://localhost:44300/api/Library/GetUserLibraryIds?userId=${id}`
+        );
+        console.log(response.data);
+        setLibrary(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
     }
   };
 
@@ -440,104 +457,116 @@ function Shop() {
                                 </div>
                               </div>
                             </Link>
-                            {wishlist.includes(game.id) ? (
-                              <div className="to-wishlist">
-                                <Tooltip
-                                  title="Remove from wishlist"
-                                  arrow
-                                  placement="top"
-                                  slotProps={{
-                                    popper: {
-                                      modifiers: [
-                                        {
-                                          name: "offset",
-                                          options: {
-                                            offset: [0, -20],
-                                          },
-                                        },
-                                      ],
-                                    },
-                                  }}
-                                >
-                                  <button
-                                    className="add-to-wishlist"
-                                    onClick={() => removeFromWishlist(game.id)}
-                                  >
-                                    <div className="wishlist-circle">
-                                      {loading[game?.id] ? (
-                                        <CircularProgress
-                                          size={10}
-                                          sx={{ color: "white" }}
-                                        />
-                                      ) : (
-                                        <img src={checked} alt="" />
-                                      )}
-                                    </div>
-                                  </button>
-                                </Tooltip>
-                              </div>
-                            ) : id ? (
-                              <div className="to-wishlist">
-                                <Tooltip
-                                  title="Add to wishlist"
-                                  arrow
-                                  placement="top"
-                                  slotProps={{
-                                    popper: {
-                                      modifiers: [
-                                        {
-                                          name: "offset",
-                                          options: {
-                                            offset: [0, -20],
-                                          },
-                                        },
-                                      ],
-                                    },
-                                  }}
-                                >
-                                  <button
-                                    className="add-to-wishlist"
-                                    onClick={() => addToWishlist(game.id)}
-                                  >
-                                    <div className="wishlist-circle">
-                                      {loading[game?.id] ? (
-                                        <CircularProgress
-                                          size={10}
-                                          sx={{ color: "white" }}
-                                        />
-                                      ) : (
-                                        <div className="plus-item"></div>
-                                      )}
-                                    </div>
-                                  </button>
-                                </Tooltip>
-                              </div>
+                            {library.includes(game.id) ? (
+                              ""
                             ) : (
-                              <div className="to-wishlist">
-                                <Tooltip
-                                  title="Add to wishlist"
-                                  arrow
-                                  placement="top"
-                                  slotProps={{
-                                    popper: {
-                                      modifiers: [
-                                        {
-                                          name: "offset",
-                                          options: {
-                                            offset: [0, -20],
-                                          },
+                              <>
+                                {" "}
+                                {wishlist.includes(game.id) ? (
+                                  <div className="to-wishlist">
+                                    <Tooltip
+                                      title="Remove from wishlist"
+                                      arrow
+                                      placement="top"
+                                      slotProps={{
+                                        popper: {
+                                          modifiers: [
+                                            {
+                                              name: "offset",
+                                              options: {
+                                                offset: [0, -20],
+                                              },
+                                            },
+                                          ],
                                         },
-                                      ],
-                                    },
-                                  }}
-                                >
-                                  <Link className="add-to-wishlist" to="/login">
-                                    <div className="wishlist-circle">
-                                      <div className="plus-item"></div>
-                                    </div>
-                                  </Link>
-                                </Tooltip>
-                              </div>
+                                      }}
+                                    >
+                                      <button
+                                        className="add-to-wishlist"
+                                        onClick={() =>
+                                          removeFromWishlist(game.id)
+                                        }
+                                      >
+                                        <div className="wishlist-circle">
+                                          {loading[game?.id] ? (
+                                            <CircularProgress
+                                              size={10}
+                                              sx={{ color: "white" }}
+                                            />
+                                          ) : (
+                                            <img src={checked} alt="" />
+                                          )}
+                                        </div>
+                                      </button>
+                                    </Tooltip>
+                                  </div>
+                                ) : id ? (
+                                  <div className="to-wishlist">
+                                    <Tooltip
+                                      title="Add to wishlist"
+                                      arrow
+                                      placement="top"
+                                      slotProps={{
+                                        popper: {
+                                          modifiers: [
+                                            {
+                                              name: "offset",
+                                              options: {
+                                                offset: [0, -20],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      }}
+                                    >
+                                      <button
+                                        className="add-to-wishlist"
+                                        onClick={() => addToWishlist(game.id)}
+                                      >
+                                        <div className="wishlist-circle">
+                                          {loading[game?.id] ? (
+                                            <CircularProgress
+                                              size={10}
+                                              sx={{ color: "white" }}
+                                            />
+                                          ) : (
+                                            <div className="plus-item"></div>
+                                          )}
+                                        </div>
+                                      </button>
+                                    </Tooltip>
+                                  </div>
+                                ) : (
+                                  <div className="to-wishlist">
+                                    <Tooltip
+                                      title="Add to wishlist"
+                                      arrow
+                                      placement="top"
+                                      slotProps={{
+                                        popper: {
+                                          modifiers: [
+                                            {
+                                              name: "offset",
+                                              options: {
+                                                offset: [0, -20],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      }}
+                                    >
+                                      <Link
+                                        className="add-to-wishlist"
+                                        to="/login"
+                                      >
+                                        <div className="wishlist-circle">
+                                          <div className="plus-item"></div>
+                                        </div>
+                                      </Link>
+                                    </Tooltip>
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>

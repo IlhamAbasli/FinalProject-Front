@@ -1,15 +1,35 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { CircularProgress, Snackbar, Alert } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 function Games() {
   const [games, setGames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
   const [loading, setLoading] = useState({});
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        const rolesStr =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        setRoles([rolesStr]);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -25,6 +45,7 @@ function Games() {
           "https://localhost:44300/api/Product/GetAll"
         );
         setGames(response.data);
+        setFilteredGames(response.data);
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -43,6 +64,7 @@ function Games() {
       );
       setTimeout(() => {
         setGames((prev) => prev.filter((game) => game.id !== id));
+        setFilteredGames((prev) => prev.filter((game) => game.id !== id));
         setLoading((prevLoading) => ({ ...prevLoading, [id]: false }));
         setSnackbarMessage("Game deleted successfully");
         setSeverity("success");
@@ -60,6 +82,15 @@ function Games() {
         setOpen(true);
       }, 2000);
     }
+  };
+
+  const handleSearch = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    setFilteredGames(
+      games.filter((game) =>
+        game.productName.toLowerCase().includes(searchValue)
+      )
+    );
   };
   return (
     <div>
@@ -91,13 +122,27 @@ function Games() {
                 <div className="card w-100">
                   <div className="card-body p-4">
                     <h5 className="card-title fw-semibold mb-4 mx-3">Games</h5>
-                    <Link
-                      to="/admin/games/create"
-                      className="btn btn-success mx-2"
-                    >
-                      Create
-                    </Link>
-                    {games.length != 0 ? (
+                    {roles.includes("SuperAdmin") ? (
+                      <Link
+                        to="/admin/games/create"
+                        className="btn btn-success mx-2"
+                      >
+                        Create
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+
+                    <div className="search-area">
+                      <input
+                        type="text"
+                        className="form-control mt-3"
+                        placeholder="Search game..."
+                        onChange={handleSearch}
+                      />
+                    </div>
+
+                    {filteredGames.length != 0 ? (
                       <div className="table-responsive mt-3">
                         <table className="table text-nowrap mb-0 align-middle">
                           <thead v="text-dark fs-4">
@@ -117,8 +162,8 @@ function Games() {
                             </tr>
                           </thead>
                           <tbody>
-                            {games.length != 0 &&
-                              games.map((data, index) => {
+                            {filteredGames.length != 0 &&
+                              filteredGames.map((data, index) => {
                                 return (
                                   <tr key={index}>
                                     <td className="border-bottom-0">
@@ -149,21 +194,25 @@ function Games() {
                                       >
                                         Detail
                                       </Link>
-                                      <button
-                                        disabled={loading[data.id] || false}
-                                        type="submit"
-                                        className="btn btn-danger"
-                                        onClick={() => handleDelete(data.id)}
-                                      >
-                                        {loading[data.id] ? (
-                                          <CircularProgress
-                                            size={24}
-                                            sx={{ color: "white" }}
-                                          />
-                                        ) : (
-                                          "Delete"
-                                        )}
-                                      </button>
+                                      {roles.includes("SuperAdmin") ? (
+                                        <button
+                                          disabled={loading[data.id] || false}
+                                          type="submit"
+                                          className="btn btn-danger"
+                                          onClick={() => handleDelete(data.id)}
+                                        >
+                                          {loading[data.id] ? (
+                                            <CircularProgress
+                                              size={24}
+                                              sx={{ color: "white" }}
+                                            />
+                                          ) : (
+                                            "Delete"
+                                          )}
+                                        </button>
+                                      ) : (
+                                        ""
+                                      )}
                                     </td>
                                   </tr>
                                 );

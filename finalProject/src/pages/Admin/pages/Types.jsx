@@ -3,6 +3,7 @@ import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
 import { CircularProgress, Snackbar, Alert } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 function Types() {
   const [types, setTypes] = useState([]);
@@ -10,6 +11,24 @@ function Types() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
   const [loading, setLoading] = useState({});
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        const rolesStr =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        setRoles([rolesStr]);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -91,12 +110,17 @@ function Types() {
                 <div className="card w-100">
                   <div className="card-body p-4">
                     <h5 className="card-title fw-semibold mb-4">Types</h5>
-                    <Link
-                      to="/admin/types/create"
-                      className="btn btn-success mx-2"
-                    >
-                      Create
-                    </Link>
+                    {roles.includes("SuperAdmin") ? (
+                      <Link
+                        to="/admin/types/create"
+                        className="btn btn-success mx-2"
+                      >
+                        Create
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+
                     {types.length != 0 ? (
                       <div className="table-responsive mt-3">
                         <table className="table text-nowrap mb-0 align-middle">
@@ -127,21 +151,25 @@ function Types() {
                                       >
                                         Edit
                                       </Link>
-                                      <button
-                                        disabled={loading[data.id] || false}
-                                        type="submit"
-                                        className="btn btn-danger"
-                                        onClick={() => handleDelete(data.id)}
-                                      >
-                                        {loading[data.id] ? (
-                                          <CircularProgress
-                                            size={24}
-                                            sx={{ color: "white" }}
-                                          />
-                                        ) : (
-                                          "Delete"
-                                        )}
-                                      </button>
+                                      {roles.includes("SuperAdmin") ? (
+                                        <button
+                                          disabled={loading[data.id] || false}
+                                          type="submit"
+                                          className="btn btn-danger"
+                                          onClick={() => handleDelete(data.id)}
+                                        >
+                                          {loading[data.id] ? (
+                                            <CircularProgress
+                                              size={24}
+                                              sx={{ color: "white" }}
+                                            />
+                                          ) : (
+                                            "Delete"
+                                          )}
+                                        </button>
+                                      ) : (
+                                        ""
+                                      )}
                                     </td>
                                   </tr>
                                 );

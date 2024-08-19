@@ -5,7 +5,6 @@ import { getUserRole } from "../utilities/auth";
 
 const PrivateRoute = ({ children, roles }) => {
   const userRoles = getUserRole();
-  console.log(userRoles);
 
   // Check if any of the user's roles are in the allowed roles
   const hasAccess =

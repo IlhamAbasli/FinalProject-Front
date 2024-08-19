@@ -3,6 +3,7 @@ import Sidebar from "../components/layout/Sidebar";
 import { Link } from "react-router-dom";
 import { CircularProgress, Snackbar, Alert, NativeSelect } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 function Users() {
@@ -11,8 +12,25 @@ function Users() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [severity, setSeverity] = useState("success");
   const [loading, setLoading] = useState({});
-  const [selectedRoles, setSelectedRoles] = useState({}); // State to manage selected roles per user
+  const [selectedRoles, setSelectedRoles] = useState({});
+  const [roles, setRoles] = useState([]);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("user-info");
+    if (storedToken) {
+      try {
+        const parsedToken = JSON.parse(storedToken);
+        const decoded = jwtDecode(parsedToken);
+        const rolesStr =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        setRoles([rolesStr]);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -101,12 +119,17 @@ function Users() {
                 <div className="card w-100">
                   <div className="card-body p-4">
                     <h5 className="card-title fw-semibold mb-4">Users</h5>
-                    <Link
-                      to="/admin/users/addrole"
-                      className="btn btn-success mx-2"
-                    >
-                      Add Role to User
-                    </Link>
+                    {roles.includes("SuperAdmin") ? (
+                      <Link
+                        to="/admin/users/addrole"
+                        className="btn btn-success mx-2"
+                      >
+                        Add Role to User
+                      </Link>
+                    ) : (
+                      ""
+                    )}
+
                     {users.length !== 0 ? (
                       <div className="table-responsive mt-3">
                         <table className="table text-nowrap mb-0 align-middle">
