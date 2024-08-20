@@ -16,7 +16,6 @@ import { CircularProgress } from "@mui/material";
 function Shop() {
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
-  const [platforms, setPlatforms] = useState([]);
   const [games, setGames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -31,6 +30,14 @@ function Shop() {
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [id, setId] = useState("");
+
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
+  const [checkedFilters, setCheckedFilters] = useState({
+    price: [],
+    genre: [],
+    types: [],
+    platform: [],
+  });
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -66,7 +73,6 @@ function Shop() {
 
     fetchTypes();
     fetchGenres();
-    fetchPlatforms();
     fetchGames();
     fetchLibrary();
   }, [currentPage]);
@@ -106,22 +112,25 @@ function Shop() {
     }
   };
 
-  const fetchPlatforms = async () => {
-    try {
-      const response = await axios.get(
-        "https://localhost:44300/api/Platform/GetAll"
-      );
-      setPlatforms(response.data);
-    } catch (error) {
-      console.error("Error fetching platforms:", error);
-    }
-  };
-
   const fetchGames = async () => {
     setProductLoading(true);
     try {
+      // Prepare the query parameters
+      const priceQuery = checkedFilters.price
+        .map((price) => `priceFilters=${price}`)
+        .join("&");
+      const genreQuery = checkedFilters.genre
+        .map((genre) => `genreFilters=${genre}`)
+        .join("&");
+      const typeQuery = checkedFilters.types
+        .map((type) => `typeFilters=${type}`)
+        .join("&");
+
+      // Combine all filters into a single query string
+      const queryString = `sortType=${selectedOption}&searchText=${searchText}&${priceQuery}&${genreQuery}&${typeQuery}&page=${currentPage}`;
+
       const response = await axios.get(
-        `https://localhost:44300/api/Product/GetAllPaginated?sortType=${selectedOption}&searchText=${searchText}&page=${currentPage}`
+        `https://localhost:44300/api/Product/GetAllPaginated?${queryString}`
       );
       setGames(response.data);
       setPageCount(response.data.pageCount);
@@ -147,11 +156,15 @@ function Shop() {
 
   useEffect(() => {
     fetchGames();
-  }, [selectedOption]);
+  }, [selectedOption, searchText, checkedFilters]);
 
-  useEffect(() => {
-    fetchGames();
-  }, [searchText]);
+  // useEffect(() => {
+  //   fetchGames();
+  // }, [searchText]);
+
+  // useEffect(() => {
+  //   fetchGames();
+  // }, [checkedFilters]);
 
   const addToWishlist = async (productId) => {
     setLoading((prevLoading) => ({ ...prevLoading, [productId]: true }));
@@ -194,14 +207,6 @@ function Shop() {
     setIsDropdownOpen(false);
   };
 
-  const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
-  const [checkedFilters, setCheckedFilters] = useState({
-    price: [],
-    genre: [],
-    types: [],
-    platform: [],
-  });
-
   const toggleFilterDropdown = (filterName) => {
     setFilterDropdownOpen((prev) => ({
       ...prev,
@@ -222,13 +227,12 @@ function Shop() {
       };
     });
   };
-
+  console.log(checkedFilters);
   const resetFilters = () => {
     setCheckedFilters({
       price: [],
       genre: [],
       types: [],
-      platform: [],
     });
   };
 
@@ -342,12 +346,12 @@ function Shop() {
                             </div>
                           ))}
                         {/* 
-                        <div className="genre-image">
-                          <img src={genreImg} alt="" />
-                        </div>
-                        <div className="genre-image">
-                          <img src={genreImg} alt="" />
-                        </div> */}
+                          <div className="genre-image">
+                            <img src={genreImg} alt="" />
+                          </div>
+                          <div className="genre-image">
+                            <img src={genreImg} alt="" />
+                          </div> */}
                       </div>
                       <div className="genre-name">
                         <h2>{genre.genreName} Games</h2>
@@ -428,163 +432,178 @@ function Shop() {
                 </div>
               ) : (
                 <>
-                  <div className="row">
-                    {games.products?.map((game, index) => {
-                      const mainImage = game.productImages.filter(
-                        (image) => image.isMain
-                      )[0];
-                      return (
-                        <div className="col-6 col-md-3" key={index}>
-                          <div className="offer-card">
-                            <Link to={`/p/${game.id}`}>
-                              <div className="card-body">
-                                <div className="card-image">
-                                  <img
-                                    src={`${baseURL}${
-                                      mainImage ? mainImage.imageName : ""
-                                    }`}
-                                    alt=""
-                                  />
-                                </div>
-                                <div className="card-desc">
-                                  <span className="game-type">
-                                    {game.productType.typeName}
-                                  </span>
-                                  <p className="name">{game.productName}</p>
-                                  <div className="price">
-                                    <span>${game.productPrice}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </Link>
-                            {library.includes(game.id) ? (
-                              ""
-                            ) : (
-                              <>
-                                {" "}
-                                {wishlist.includes(game.id) ? (
-                                  <div className="to-wishlist">
-                                    <Tooltip
-                                      title="Remove from wishlist"
-                                      arrow
-                                      placement="top"
-                                      slotProps={{
-                                        popper: {
-                                          modifiers: [
-                                            {
-                                              name: "offset",
-                                              options: {
-                                                offset: [0, -20],
-                                              },
-                                            },
-                                          ],
-                                        },
-                                      }}
-                                    >
-                                      <button
-                                        className="add-to-wishlist"
-                                        onClick={() =>
-                                          removeFromWishlist(game.id)
-                                        }
-                                      >
-                                        <div className="wishlist-circle">
-                                          {loading[game?.id] ? (
-                                            <CircularProgress
-                                              size={10}
-                                              sx={{ color: "white" }}
-                                            />
-                                          ) : (
-                                            <img src={checked} alt="" />
-                                          )}
-                                        </div>
-                                      </button>
-                                    </Tooltip>
-                                  </div>
-                                ) : id ? (
-                                  <div className="to-wishlist">
-                                    <Tooltip
-                                      title="Add to wishlist"
-                                      arrow
-                                      placement="top"
-                                      slotProps={{
-                                        popper: {
-                                          modifiers: [
-                                            {
-                                              name: "offset",
-                                              options: {
-                                                offset: [0, -20],
-                                              },
-                                            },
-                                          ],
-                                        },
-                                      }}
-                                    >
-                                      <button
-                                        className="add-to-wishlist"
-                                        onClick={() => addToWishlist(game.id)}
-                                      >
-                                        <div className="wishlist-circle">
-                                          {loading[game?.id] ? (
-                                            <CircularProgress
-                                              size={10}
-                                              sx={{ color: "white" }}
-                                            />
-                                          ) : (
-                                            <div className="plus-item"></div>
-                                          )}
-                                        </div>
-                                      </button>
-                                    </Tooltip>
-                                  </div>
-                                ) : (
-                                  <div className="to-wishlist">
-                                    <Tooltip
-                                      title="Add to wishlist"
-                                      arrow
-                                      placement="top"
-                                      slotProps={{
-                                        popper: {
-                                          modifiers: [
-                                            {
-                                              name: "offset",
-                                              options: {
-                                                offset: [0, -20],
-                                              },
-                                            },
-                                          ],
-                                        },
-                                      }}
-                                    >
-                                      <Link
-                                        className="add-to-wishlist"
-                                        to="/login"
-                                      >
-                                        <div className="wishlist-circle">
-                                          <div className="plus-item"></div>
-                                        </div>
-                                      </Link>
-                                    </Tooltip>
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {pageCount > 1 ? (
-                    <div className="col-12 d-flex justify-content-center">
-                      <div className="pagination">
-                        <Pagination
-                          count={pageCount}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                        />
-                      </div>
+                  {games.products?.length == 0 ? (
+                    <div className="not-found">
+                      <h1>No results found</h1>
+                      <p>
+                        Unfortunately I could not find any results matching your
+                        search.
+                      </p>
                     </div>
                   ) : (
-                    ""
+                    <>
+                      {" "}
+                      <div className="row">
+                        {games.products?.map((game, index) => {
+                          const mainImage = game.productImages.filter(
+                            (image) => image.isMain
+                          )[0];
+                          return (
+                            <div className="col-6 col-md-3" key={index}>
+                              <div className="offer-card">
+                                <Link to={`/p/${game.id}`}>
+                                  <div className="card-body">
+                                    <div className="card-image">
+                                      <img
+                                        src={`${baseURL}${
+                                          mainImage ? mainImage.imageName : ""
+                                        }`}
+                                        alt=""
+                                      />
+                                    </div>
+                                    <div className="card-desc">
+                                      <span className="game-type">
+                                        {game.productType.typeName}
+                                      </span>
+                                      <p className="name">{game.productName}</p>
+                                      <div className="price">
+                                        <span>${game.productPrice}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Link>
+                                {library.includes(game.id) ? (
+                                  ""
+                                ) : (
+                                  <>
+                                    {" "}
+                                    {wishlist.includes(game.id) ? (
+                                      <div className="to-wishlist">
+                                        <Tooltip
+                                          title="Remove from wishlist"
+                                          arrow
+                                          placement="top"
+                                          slotProps={{
+                                            popper: {
+                                              modifiers: [
+                                                {
+                                                  name: "offset",
+                                                  options: {
+                                                    offset: [0, -20],
+                                                  },
+                                                },
+                                              ],
+                                            },
+                                          }}
+                                        >
+                                          <button
+                                            className="add-to-wishlist"
+                                            onClick={() =>
+                                              removeFromWishlist(game.id)
+                                            }
+                                          >
+                                            <div className="wishlist-circle">
+                                              {loading[game?.id] ? (
+                                                <CircularProgress
+                                                  size={10}
+                                                  sx={{ color: "white" }}
+                                                />
+                                              ) : (
+                                                <img src={checked} alt="" />
+                                              )}
+                                            </div>
+                                          </button>
+                                        </Tooltip>
+                                      </div>
+                                    ) : id ? (
+                                      <div className="to-wishlist">
+                                        <Tooltip
+                                          title="Add to wishlist"
+                                          arrow
+                                          placement="top"
+                                          slotProps={{
+                                            popper: {
+                                              modifiers: [
+                                                {
+                                                  name: "offset",
+                                                  options: {
+                                                    offset: [0, -20],
+                                                  },
+                                                },
+                                              ],
+                                            },
+                                          }}
+                                        >
+                                          <button
+                                            className="add-to-wishlist"
+                                            onClick={() =>
+                                              addToWishlist(game.id)
+                                            }
+                                          >
+                                            <div className="wishlist-circle">
+                                              {loading[game?.id] ? (
+                                                <CircularProgress
+                                                  size={10}
+                                                  sx={{ color: "white" }}
+                                                />
+                                              ) : (
+                                                <div className="plus-item"></div>
+                                              )}
+                                            </div>
+                                          </button>
+                                        </Tooltip>
+                                      </div>
+                                    ) : (
+                                      <div className="to-wishlist">
+                                        <Tooltip
+                                          title="Add to wishlist"
+                                          arrow
+                                          placement="top"
+                                          slotProps={{
+                                            popper: {
+                                              modifiers: [
+                                                {
+                                                  name: "offset",
+                                                  options: {
+                                                    offset: [0, -20],
+                                                  },
+                                                },
+                                              ],
+                                            },
+                                          }}
+                                        >
+                                          <Link
+                                            className="add-to-wishlist"
+                                            to="/login"
+                                          >
+                                            <div className="wishlist-circle">
+                                              <div className="plus-item"></div>
+                                            </div>
+                                          </Link>
+                                        </Tooltip>
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {pageCount > 1 ? (
+                        <div className="col-12 d-flex justify-content-center">
+                          <div className="pagination">
+                            <Pagination
+                              count={pageCount}
+                              page={currentPage}
+                              onChange={handlePageChange}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -684,27 +703,6 @@ function Shop() {
                           <ul>
                             {types.map((item) =>
                               renderFilterItem("types", item.typeName)
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    <div className="filter">
-                      <button onClick={() => toggleFilterDropdown("platform")}>
-                        Platform
-                        <img
-                          src={chevronDownIcon}
-                          alt="Chevron Down"
-                          className={
-                            filterDropdownOpen.platform ? "rotate" : ""
-                          }
-                        />
-                      </button>
-                      {filterDropdownOpen.platform && (
-                        <div className="filter-dropdown">
-                          <ul>
-                            {platforms.map((item) =>
-                              renderFilterItem("platform", item.platformName)
                             )}
                           </ul>
                         </div>

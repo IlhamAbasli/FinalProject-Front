@@ -10,6 +10,8 @@ import { paymentMethodSchema } from "../schemas";
 import { useFormik } from "formik";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { Snackbar, Alert, TextField, CircularProgress } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
 
 function PaymentManagement() {
   useEffect(() => {
@@ -21,6 +23,10 @@ function PaymentManagement() {
   const [decodedToken, setDecodedToken] = useState(null);
   const [balance, setBalance] = useState(0);
   const [selectedAmount, setSelectedAmount] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
 
   const amounts = [5, 10, 20, 50, 100];
 
@@ -56,6 +62,13 @@ function PaymentManagement() {
       fetchBalance();
     }
   }, [decodedToken]);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const formatCardNumber = (value) => {
     return value
@@ -100,11 +113,18 @@ function PaymentManagement() {
 
   const handleAddFunds = async () => {
     try {
+      setLoading(true);
       const res = await axios.post(
         `https://localhost:44300/api/Wallet/AddFunds?balance=${selectedAmount}&userId=${decodedToken.sid}`
       );
       console.log(res);
-      await fetchBalance(); // Update balance after adding funds
+      setTimeout(async () => {
+        await fetchBalance();
+        setLoading(false);
+        setSnackbarMessage("Funds successfully added!");
+        setSeverity("success");
+        setOpen(true);
+      }, 2000);
     } catch (error) {
       console.error("Error submitting the form", error);
     }
@@ -114,6 +134,24 @@ function PaymentManagement() {
     <div>
       <AccountHeader />
       <section id="account-area">
+        <Snackbar
+          open={open}
+          autoHideDuration={2000}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+        >
+          <Alert
+            icon={<CheckIcon fontSize="inherit" />}
+            onClose={handleClose}
+            severity={severity}
+            variant="filled"
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <div className="container-account">
           <div className="row">
             <div className="col-12 col-md-4 col-lg-3">
@@ -146,7 +184,11 @@ function PaymentManagement() {
                       values.expiration == ""
                     }
                   >
-                    Add funds to wallet
+                    {loading ? (
+                      <CircularProgress size={24} sx={{ color: "white" }} />
+                    ) : (
+                      "Add funds to wallet"
+                    )}
                   </button>
                 </div>
                 <div className="top-up">
