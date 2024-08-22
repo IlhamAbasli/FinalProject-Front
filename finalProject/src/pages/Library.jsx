@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import chevronDownIcon from "../assets/icons/chevron-down.svg";
-import crosshair from "../assets/images/crosshair.avif";
 import search from "../assets/icons/search.svg";
 import checked from "../assets/icons/checked.svg";
 import Pagination from "@mui/material/Pagination";
 import "../assets/scss/Library.scss";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { CircularProgress } from "@mui/material";
 import Loading from "../components/layout/Loading";
 import icon from "../assets/icons/notfoundicon.svg";
 
@@ -20,15 +20,20 @@ function Library() {
 
   const [genres, setGenres] = useState([]);
   const [types, setTypes] = useState([]);
-  const [platforms, setPlatforms] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
   const [games, setGames] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [id, setId] = useState("");
 
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
+  const [checkedFilters, setCheckedFilters] = useState({
+    genre: [],
+    types: [],
+  });
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "My Library";
@@ -52,22 +57,27 @@ function Library() {
   const fetchGames = async () => {
     setLoading(true);
     try {
+      const genreQuery = checkedFilters.genre
+        .map((genre) => `genreFilters=${genre}`)
+        .join("&");
+      const typeQuery = checkedFilters.types
+        .map((type) => `typeFilters=${type}`)
+        .join("&");
+
+      const queryString = `userId=${id}&sortType=${selectedOption}&searchText=${searchText}&${genreQuery}&${typeQuery}&page=${currentPage}`;
+
       const response = await axios.get(
-        `https://localhost:44300/api/Library/GetAllPaginated?userId=${id}&sortType=${selectedOption}&page=${currentPage}`
+        `https://localhost:44300/api/Library/GetAllPaginated?${queryString}`
       );
-      setGames(response.data.libraryProducts);
-      setPageCount(response.data.pageCount);
-      setLoading(false);
+      setTimeout(() => {
+        setGames(response.data.libraryProducts);
+        setPageCount(response.data.pageCount);
+        setLoading(false);
+      }, 300);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
   };
-
-  useEffect(() => {
-    if (id) {
-      fetchGames();
-    }
-  }, [id, currentPage, selectedOption]);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -90,21 +100,18 @@ function Library() {
         console.error("Error fetching news:", error);
       }
     };
-    const fetchPlatforms = async () => {
-      try {
-        const response = await axios.get(
-          "https://localhost:44300/api/Platform/GetAll"
-        );
-        setPlatforms(response.data);
-      } catch (error) {
-        console.error("Error fetching news:", error);
-      }
-    };
 
     fetchTypes();
     fetchGenres();
-    fetchPlatforms();
-  }, [id, currentPage]);
+    fetchGames();
+  }, [
+    id,
+    currentPage,
+    selectedOption,
+    searchText,
+    checkedFilters,
+    currentPage,
+  ]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -115,19 +122,16 @@ function Library() {
     setIsDropdownOpen(false);
   };
 
-  const [filterDropdownOpen, setFilterDropdownOpen] = useState({});
-  const [checkedFilters, setCheckedFilters] = useState({
-    genre: [],
-    types: [],
-    platform: [],
-  });
-
   const toggleFilterDropdown = (filterName) => {
     setFilterDropdownOpen((prev) => ({
       ...prev,
       [filterName]: !prev[filterName],
     }));
   };
+
+  // useEffect(() => {
+  //   fetchGames();
+  // }, [selectedOption, searchText, checkedFilters, currentPage]);
 
   const toggleChecked = (filterName, value) => {
     setCheckedFilters((prev) => {
@@ -147,7 +151,6 @@ function Library() {
     setCheckedFilters({
       genre: [],
       types: [],
-      platform: [],
     });
   };
 
@@ -170,238 +173,224 @@ function Library() {
       0
     );
   };
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
   return (
     <>
-      {loading ? (
-        <Loading />
-      ) : games.length !== 0 ? (
-        <section id="games-area">
-          <div className="container-main">
-            <div className="library-title">
-              <h1>Library</h1>
-            </div>
-            <div className="row">
-              <div className="col-12 col-lg-8 col-xl-9">
-                <div className="sort-area">
-                  <span className="text">Show:</span>
-                  <div className="sort-dropdown">
-                    <button
-                      className="toggle-dropdown"
-                      onClick={toggleDropdown}
+      <section id="games-area">
+        <div className="container-main">
+          <div className="library-title">
+            <h1>Library</h1>
+          </div>
+          <div className="row">
+            <div className="col-12 col-lg-8 col-xl-9">
+              <div className="sort-area">
+                <span className="text">Show:</span>
+                <div className="sort-dropdown">
+                  <button className="toggle-dropdown" onClick={toggleDropdown}>
+                    <span>{selectedOption}</span>
+                    <span
+                      className={`chevron ${isDropdownOpen ? "rotate" : ""}`}
                     >
-                      <span>{selectedOption}</span>
-                      <span
-                        className={`chevron ${isDropdownOpen ? "rotate" : ""}`}
-                      >
-                        <img src={chevronDownIcon} alt="Chevron Down" />
-                      </span>
-                    </button>
-                    {isDropdownOpen && (
-                      <div className="sort-menu">
-                        <ul>
-                          <li>
-                            <button
-                              onClick={() =>
-                                handleOptionClick("Recently Purchased")
-                              }
-                            >
-                              Recently Purchased
-                            </button>
-                          </li>
-                          <li>
-                            <button onClick={() => handleOptionClick("All")}>
-                              All
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() =>
-                                handleOptionClick("Alphabetical A-Z")
-                              }
-                            >
-                              Alphabetical A-Z
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() =>
-                                handleOptionClick("Alphabetical Z-A")
-                              }
-                            >
-                              Alphabetical Z-A
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  {games.map((game, index) => {
-                    const mainImage = game.product.productImages.filter(
-                      (image) => image.isMain
-                    )[0];
-                    return (
-                      <div className="col-6 col-md-3" key={index}>
-                        <div className="offer-card">
-                          <Link>
-                            <div className="card-body">
-                              <div className="card-image">
-                                <img
-                                  src={`${baseURL}${
-                                    mainImage ? mainImage.imageName : ""
-                                  }`}
-                                  alt=""
-                                />
-                              </div>
-                              <div className="card-desc py-2">
-                                <p className="name">
-                                  {game.product.productName}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {pageCount > 1 ? (
-                    <div className="col-12 d-flex justify-content-center">
-                      <div className="pagination">
-                        <Pagination
-                          count={pageCount}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                        />
-                      </div>
+                      <img src={chevronDownIcon} alt="Chevron Down" />
+                    </span>
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="sort-menu">
+                      <ul>
+                        <li>
+                          <button
+                            onClick={() =>
+                              handleOptionClick("Recently Purchased")
+                            }
+                          >
+                            Recently Purchased
+                          </button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleOptionClick("All")}>
+                            All
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() =>
+                              handleOptionClick("Alphabetical A-Z")
+                            }
+                          >
+                            Alphabetical A-Z
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() =>
+                              handleOptionClick("Alphabetical Z-A")
+                            }
+                          >
+                            Alphabetical Z-A
+                          </button>
+                        </li>
+                      </ul>
                     </div>
-                  ) : (
-                    ""
                   )}
                 </div>
               </div>
-              <div className="col-12 col-lg-4 col-xl-3">
-                <div className="filter-area">
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="filter-title">
-                        <span>
-                          Filters{" "}
-                          {countSelectedFilters() === 0
+              {loading ? (
+                <div
+                  className="loading"
+                  style={{
+                    width: "100%",
+                    height: "1088px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CircularProgress />
+                </div>
+              ) : (
+                <>
+                  {games.length === 0 ? (
+                    <div className="not-found">
+                      <h1>No results found</h1>
+                      <p>
+                        Unfortunately I could not find any results matching your
+                        search.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      {" "}
+                      <div className="row">
+                        {games.map((game, index) => {
+                          const mainImage = game.product.productImages.filter(
+                            (image) => image.isMain
+                          )[0];
+                          return (
+                            <div className="col-6 col-md-3" key={index}>
+                              <div className="offer-card">
+                                <Link>
+                                  <div className="card-body">
+                                    <div className="card-image">
+                                      <img
+                                        src={`${baseURL}${
+                                          mainImage ? mainImage.imageName : ""
+                                        }`}
+                                        alt=""
+                                      />
+                                    </div>
+                                    <div className="card-desc py-2">
+                                      <p className="name">
+                                        {game.product.productName}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {pageCount > 1 ? (
+                          <div className="col-12 d-flex justify-content-center">
+                            <div className="pagination">
+                              <Pagination
+                                count={pageCount}
+                                page={currentPage}
+                                onChange={handlePageChange}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+            <div className="col-12 col-lg-4 col-xl-3">
+              <div className="filter-area">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="filter-title">
+                      <span>
+                        Filters{" "}
+                        {countSelectedFilters() === 0
+                          ? ""
+                          : `(${countSelectedFilters()})`}
+                      </span>
+                      <button
+                        className={`reset-filters ${
+                          Object.values(checkedFilters).some(
+                            (arr) => arr.length
+                          )
                             ? ""
-                            : `(${countSelectedFilters()})`}
-                        </span>
-                        <button
-                          className={`reset-filters ${
-                            Object.values(checkedFilters).some(
-                              (arr) => arr.length
-                            )
-                              ? ""
-                              : "d-none"
-                          }`}
-                          onClick={resetFilters}
-                        >
-                          Reset
-                        </button>
-                      </div>
+                            : "d-none"
+                        }`}
+                        onClick={resetFilters}
+                      >
+                        Reset
+                      </button>
                     </div>
-                    <div className="col-12">
-                      <div className="filter-search">
-                        <img src={search} alt="Search" />
-                        <form action="">
-                          <input type="text" placeholder="Keywords" />
-                        </form>
-                      </div>
+                  </div>
+                  <div className="col-12">
+                    <div className="filter-search">
+                      <img src={search} alt="Search" />
+                      <input
+                        type="text"
+                        placeholder="Keywords"
+                        onKeyUp={handleSearch}
+                      />
                     </div>
-                    <div className="col-12">
-                      <div className="filter">
-                        <button onClick={() => toggleFilterDropdown("genre")}>
-                          Genre
-                          <img
-                            src={chevronDownIcon}
-                            alt="Chevron Down"
-                            className={filterDropdownOpen.genre ? "rotate" : ""}
-                          />
-                        </button>
-                        {filterDropdownOpen.genre && (
-                          <div className="filter-dropdown">
-                            <ul>
-                              {genres.map((item) =>
-                                renderFilterItem("genre", item.genreName)
-                              )}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                      <div className="filter">
-                        <button onClick={() => toggleFilterDropdown("types")}>
-                          Types
-                          <img
-                            src={chevronDownIcon}
-                            alt="Chevron Down"
-                            className={filterDropdownOpen.types ? "rotate" : ""}
-                          />
-                        </button>
-                        {filterDropdownOpen.types && (
-                          <div className="filter-dropdown">
-                            <ul>
-                              {types.map((item) =>
-                                renderFilterItem("types", item.typeName)
-                              )}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                      <div className="filter">
-                        <button
-                          onClick={() => toggleFilterDropdown("platform")}
-                        >
-                          Platform
-                          <img
-                            src={chevronDownIcon}
-                            alt="Chevron Down"
-                            className={
-                              filterDropdownOpen.platform ? "rotate" : ""
-                            }
-                          />
-                        </button>
-                        {filterDropdownOpen.platform && (
-                          <div className="filter-dropdown">
-                            <ul>
-                              {platforms.map((item) =>
-                                renderFilterItem("platform", item.platformName)
-                              )}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
+                  </div>
+                  <div className="col-12">
+                    <div className="filter">
+                      <button onClick={() => toggleFilterDropdown("genre")}>
+                        Genre
+                        <img
+                          src={chevronDownIcon}
+                          alt="Chevron Down"
+                          className={filterDropdownOpen.genre ? "rotate" : ""}
+                        />
+                      </button>
+                      {filterDropdownOpen.genre && (
+                        <div className="filter-dropdown">
+                          <ul>
+                            {genres.map((item) =>
+                              renderFilterItem("genre", item.genreName)
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    <div className="filter">
+                      <button onClick={() => toggleFilterDropdown("types")}>
+                        Types
+                        <img
+                          src={chevronDownIcon}
+                          alt="Chevron Down"
+                          className={filterDropdownOpen.types ? "rotate" : ""}
+                        />
+                      </button>
+                      {filterDropdownOpen.types && (
+                        <div className="filter-dropdown">
+                          <ul>
+                            {types.map((item) =>
+                              renderFilterItem("types", item.typeName)
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      ) : (
-        <section id="not-found-area">
-          <div className="row">
-            <div className="col-12">
-              <div className="not-found">
-                <div className="icon">
-                  <img src={icon} alt="" />
-                </div>
-                <div className="title">
-                  <h1>You haven't purchased anything yet.</h1>
-                </div>
-                <div className="back-to-store">
-                  <Link to="/">Shop for Games & Apps</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
     </>
   );
 }

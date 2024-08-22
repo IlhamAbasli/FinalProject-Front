@@ -32,7 +32,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-article"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Genres</span>
             </Link>
@@ -44,7 +44,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-alert-circle"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Game</span>
             </Link>
@@ -56,7 +56,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-cards"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Type</span>
             </Link>
@@ -68,7 +68,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-file-description"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Platforms</span>
             </Link>
@@ -80,7 +80,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-file-description"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Ad</span>
             </Link>
@@ -92,7 +92,7 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-file-description"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">News</span>
             </Link>
@@ -104,9 +104,21 @@ function Sidebar() {
               aria-expanded="false"
             >
               <span>
-                <i className="ti ti-file-description"></i>
+                <i className="ti ti-tags"></i>
               </span>
               <span className="hide-menu">Users</span>
+            </Link>
+          </li>
+          <li className="sidebar-item">
+            <Link
+              className="sidebar-link"
+              to="/admin/comments"
+              aria-expanded="false"
+            >
+              <span>
+                <i className="ti ti-tags"></i>
+              </span>
+              <span className="hide-menu">Comments</span>
             </Link>
           </li>
         </ul>

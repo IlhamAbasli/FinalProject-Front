@@ -37,6 +37,7 @@ function NewsEdit() {
         setNews(response.data);
         console.log(response.data);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching news:", error);
       }
     };
@@ -110,7 +111,8 @@ function NewsEdit() {
     setFieldValue,
   } = formik;
 
-  const handleDelete = async (newsId, imageId) => {
+  const handleDelete = async (e, newsId, imageId) => {
+    e.preventDefault();
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/News/DeleteImage?imageId=${imageId}&newsId=${newsId}`
@@ -291,8 +293,8 @@ function NewsEdit() {
                                         <li>
                                           <button
                                             className="remove-image"
-                                            onClick={() =>
-                                              handleDelete(news.id, image.id)
+                                            onClick={(e) =>
+                                              handleDelete(e, news.id, image.id)
                                             }
                                           >
                                             <DeleteIcon color="error" />

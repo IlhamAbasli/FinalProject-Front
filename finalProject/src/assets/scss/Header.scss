@@ -162,6 +162,12 @@
 }
 
 #header-bottom {
+  .MuiAutocomplete-clearIndicator {
+    color: white;
+    &:hover {
+      background-color: #ffffff0a;
+    }
+  }
   background-color: #121212;
   height: 100px;
   .search-input {

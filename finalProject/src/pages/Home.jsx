@@ -4,10 +4,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
-import chevronDownIcon from "../assets/icons/chevron-down.svg";
-import axios from "axios";
 import "swiper/css";
 import "swiper/css/pagination";
+import chevronDownIcon from "../assets/icons/chevron-down.svg";
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { CircularProgress } from "@mui/material";
 import { Tooltip } from "@mui/material";
@@ -534,7 +534,12 @@ function Home() {
                               </span>
                               <p className="name">{item.productName}</p>
                               <div className="price">
-                                <span>${item.productPrice}</span>
+                                <span>
+                                  {" "}
+                                  {item.productPrice === 0
+                                    ? "Free"
+                                    : `$${item.productPrice}`}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -687,7 +692,12 @@ function Home() {
                               </div>
                               <div className="right-side">
                                 <p>{item.productName}</p>
-                                <span>${item.productPrice}</span>
+                                <span>
+                                  {" "}
+                                  {item.productPrice === 0
+                                    ? "Free"
+                                    : `$${item.productPrice}`}
+                                </span>
                               </div>
                             </Link>
                             {library.includes(item.id) ? (
@@ -839,7 +849,12 @@ function Home() {
                               </div>
                               <div className="right-side">
                                 <p>{item.productName}</p>
-                                <span>${item.productPrice}</span>
+                                <span>
+                                  {" "}
+                                  {item.productPrice === 0
+                                    ? "Free"
+                                    : `$${item.productPrice}`}
+                                </span>
                               </div>
                             </Link>
                             {library.includes(item.id) ? (
@@ -988,7 +1003,12 @@ function Home() {
                               </div>
                               <div className="right-side">
                                 <p>{item.productName}</p>
-                                <span>${item.productPrice}</span>
+                                <span>
+                                  {" "}
+                                  {item.productPrice === 0
+                                    ? "Free"
+                                    : `$${item.productPrice}`}
+                                </span>
                               </div>
                             </Link>
                             {library.includes(item.id) ? (
@@ -1150,7 +1170,12 @@ function Home() {
                                 </div>
                                 <div className="right-side">
                                   <p>{item.productName}</p>
-                                  <span>${item.productPrice}</span>
+                                  <span>
+                                    {" "}
+                                    {item.productPrice === 0
+                                      ? "Free"
+                                      : `$${item.productPrice}`}
+                                  </span>
                                 </div>
                               </Link>
                               {library.includes(item.id) ? (
@@ -1301,7 +1326,12 @@ function Home() {
                                 </div>
                                 <div className="right-side">
                                   <p>{item.productName}</p>
-                                  <span>${item.productPrice}</span>
+                                  <span>
+                                    {" "}
+                                    {item.productPrice === 0
+                                      ? "Free"
+                                      : `$${item.productPrice}`}
+                                  </span>
                                 </div>
                               </Link>
                               {library.includes(item.id) ? (
@@ -1452,7 +1482,12 @@ function Home() {
                                 </div>
                                 <div className="right-side">
                                   <p>{item.productName}</p>
-                                  <span>${item.productPrice}</span>
+                                  <span>
+                                    {" "}
+                                    {item.productPrice === 0
+                                      ? "Free"
+                                      : `$${item.productPrice}`}
+                                  </span>
                                 </div>
                               </Link>
                               {library.includes(item.id) ? (

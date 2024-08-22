@@ -314,3 +314,9 @@ export const paymentMethodSchema = yup.object().shape({
     .required("CVV is required")
     .matches(/^[0-9]{3,4}$/, "Invalid CVV"),
 });
+
+export const commentSchema = yup.object().shape({
+  username: yup.string().required("Please enter your username"),
+  subject: yup.string().required("Please enter subject"),
+  comment: yup.string().required("Comment can`t leave empty"),
+});

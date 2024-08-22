@@ -242,18 +242,16 @@
         left: 25px;
         position: absolute;
       }
-      form {
-        input {
-          color: whitesmoke;
-          width: 100%;
-          padding-right: 30px;
-          padding-left: 40px;
-          background-color: rgb(32, 32, 32);
-          border: none;
-          height: 40px;
-          border-radius: 4px;
-          font-size: 14px;
-        }
+      input {
+        color: whitesmoke;
+        width: 100%;
+        padding-right: 30px;
+        padding-left: 40px;
+        background-color: rgb(32, 32, 32);
+        border: none;
+        height: 40px;
+        border-radius: 4px;
+        font-size: 14px;
       }
     }
     .filter {

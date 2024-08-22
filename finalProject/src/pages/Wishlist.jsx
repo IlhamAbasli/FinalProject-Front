@@ -188,7 +188,7 @@ function Wishlist() {
             </div>
             <div className="col-12 col-lg-6">
               <div className="wallet-balance">
-                <Link>
+                <Link to="/account/payment">
                   <span className="wallet-title">
                     Epic Wallet <img src={navigateIcon} alt="" />
                   </span>
@@ -289,7 +289,12 @@ function Wishlist() {
                             </div>
                           </div>
                           <div className="price">
-                            <span>${item.product.productPrice}</span>
+                            <span>
+                              {" "}
+                              {item.product.productPrice === 0
+                                ? "Free"
+                                : `$${item.product.productPrice}`}
+                            </span>
                           </div>
                         </div>
                       </div>

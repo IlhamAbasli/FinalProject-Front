@@ -41,6 +41,7 @@ function GameEdit() {
         setGame(response.data);
         console.log(response.data);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching news:", error);
       }
     };
@@ -159,8 +160,8 @@ function GameEdit() {
       description: game?.productDescription || "",
       developerName: game?.developerName || "",
       publisherName: game?.publisherName || "",
-      price: game?.productPrice || "",
-      count: game?.count || "",
+      price: game?.productPrice || 0,
+      count: game?.count || 0,
       genreId: game?.genre.id || "",
       typeId: game?.productType.id || "",
       platformId: game?.platformProducts[0].platformId || "",
@@ -178,12 +179,12 @@ function GameEdit() {
     onSubmit,
   });
 
-  const handleDelete = async (gameId, imageId) => {
+  const handleDelete = async (e, gameId, imageId) => {
+    e.preventDefault();
     try {
       const response = await axios.delete(
         `https://localhost:44300/api/Product/DeleteImage?imageId=${imageId}&productId=${gameId}`
       );
-      // Update the news data after deleting the image
       setGame((prevGame) => ({
         ...prevGame,
         productImages: prevGame.productImages.filter(
@@ -200,7 +201,6 @@ function GameEdit() {
       const response = await axios.put(
         `https://localhost:44300/api/Product/ChangeMainImage?imageId=${imageId}&productId=${gameId}`
       );
-      // Update the news data after deleting the image
       setGame((prevGame) => ({
         ...prevGame,
         productImages: prevGame.productImages.filter(
@@ -646,8 +646,8 @@ function GameEdit() {
                                       <li>
                                         <button
                                           className="remove-image"
-                                          onClick={() =>
-                                            handleDelete(game.id, image.id)
+                                          onClick={(e) =>
+                                            handleDelete(e, game.id, image.id)
                                           }
                                         >
                                           <DeleteIcon color="error" />

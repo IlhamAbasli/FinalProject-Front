@@ -32,6 +32,7 @@ function TypeEdit() {
         );
         setType(response.data);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching news:", error);
       }
     };

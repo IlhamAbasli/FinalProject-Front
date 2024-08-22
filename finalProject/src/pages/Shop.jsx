@@ -115,7 +115,6 @@ function Shop() {
   const fetchGames = async () => {
     setProductLoading(true);
     try {
-      // Prepare the query parameters
       const priceQuery = checkedFilters.price
         .map((price) => `priceFilters=${price}`)
         .join("&");
@@ -126,15 +125,16 @@ function Shop() {
         .map((type) => `typeFilters=${type}`)
         .join("&");
 
-      // Combine all filters into a single query string
       const queryString = `sortType=${selectedOption}&searchText=${searchText}&${priceQuery}&${genreQuery}&${typeQuery}&page=${currentPage}`;
 
       const response = await axios.get(
         `https://localhost:44300/api/Product/GetAllPaginated?${queryString}`
       );
-      setGames(response.data);
-      setPageCount(response.data.pageCount);
-      setProductLoading(false);
+      setTimeout(() => {
+        setGames(response.data);
+        setPageCount(response.data.pageCount);
+        setProductLoading(false);
+      }, 300);
     } catch (error) {
       console.error("Error fetching games:", error);
     }
@@ -146,7 +146,6 @@ function Shop() {
         const response = await axios.get(
           `https://localhost:44300/api/Library/GetUserLibraryIds?userId=${id}`
         );
-        console.log(response.data);
         setLibrary(response.data);
       }
     } catch (error) {
@@ -227,7 +226,6 @@ function Shop() {
       };
     });
   };
-  console.log(checkedFilters);
   const resetFilters = () => {
     setCheckedFilters({
       price: [],
@@ -258,7 +256,6 @@ function Shop() {
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
-    console.log(searchText);
   };
 
   const removeFromWishlist = async (productId) => {
@@ -467,7 +464,12 @@ function Shop() {
                                       </span>
                                       <p className="name">{game.productName}</p>
                                       <div className="price">
-                                        <span>${game.productPrice}</span>
+                                        <span>
+                                          {" "}
+                                          {game.productPrice === 0
+                                            ? "Free"
+                                            : `$${game.productPrice}`}
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -636,13 +638,11 @@ function Shop() {
                   <div className="col-12">
                     <div className="filter-search">
                       <img src={search} alt="Search" />
-                      <form action="">
-                        <input
-                          type="text"
-                          placeholder="Keywords"
-                          onKeyUp={handleSearch}
-                        />
-                      </form>
+                      <input
+                        type="text"
+                        placeholder="Keywords"
+                        onKeyUp={handleSearch}
+                      />
                     </div>
                   </div>
                   <div className="col-12">

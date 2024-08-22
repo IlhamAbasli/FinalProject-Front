@@ -12,19 +12,29 @@ import Loading from "../components/layout/Loading";
 import { jwtDecode } from "jwt-decode";
 import { Tooltip, CircularProgress } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { commentSchema } from "../schemas";
+import { useFormik } from "formik";
 
 function ProductDetail() {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
   const { id } = useParams();
   const [wishlist, setWishlist] = useState([]);
   const [basket, setBasket] = useState([]);
+  const [comments, setComments] = useState([]);
   const [library, setLibrary] = useState([]);
   const [token, setToken] = useState(null);
   const [decodedToken, setDecodedToken] = useState(null);
   const [userId, setUserId] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
   const navigate = useNavigate();
   const baseURL = "https://localhost:44300/assets/images/";
 
@@ -44,7 +54,19 @@ function ProductDetail() {
       }
     }
   }, []);
-
+  const fetchComments = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://localhost:44300/api/Comment/GetComments?productId=${id}`
+      );
+      setComments(response.data);
+      setLoading(false);
+    } catch (error) {
+      navigate("/notfound");
+      console.error("Error fetching game:", error);
+    }
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoading(true);
@@ -61,6 +83,7 @@ function ProductDetail() {
       }
     };
 
+    fetchComments();
     fetchGame();
   }, [id]);
 
@@ -85,6 +108,7 @@ function ProductDetail() {
     }
 
     setOpen(false);
+    setSnackbarOpen(false);
   };
 
   const handleCopyToClipboard = () => {
@@ -203,6 +227,53 @@ function ProductDetail() {
       console.error("Error fetching wishlist:", error);
     }
   };
+
+  const onSubmit = async (values, actions) => {
+    const formData = new FormData();
+    formData.append("UserId", userId);
+    formData.append("ProductId", id);
+    formData.append("Subject", values.subject);
+    formData.append("UserComment", values.comment);
+
+    try {
+      setCommentLoading(true);
+
+      const res = await axios.post(
+        "https://localhost:44300/api/Comment/AddComment",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setTimeout(() => {
+        setCommentLoading(false);
+        setSnackbarMessage("Comment posted successfully!");
+        setSeverity("success");
+        setSnackbarOpen(true);
+        actions.resetForm();
+        fetchComments();
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting the form", error);
+      setCommentLoading(false);
+    }
+  };
+
+  const { values, errors, isSubmitting, handleChange, handleSubmit } =
+    useFormik({
+      initialValues: {
+        username: decodedToken?.sub ? decodedToken?.sub : "",
+        subject: "",
+        comment: "",
+      },
+      validationSchema: commentSchema,
+      enableReinitialize: true,
+      onSubmit,
+    });
+
+  console.log(comments);
   return (
     <>
       {loading ? (
@@ -210,6 +281,24 @@ function ProductDetail() {
       ) : (
         <>
           {" "}
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+          >
+            <Alert
+              icon={<CheckIcon fontSize="inherit" />}
+              onClose={handleClose}
+              severity={severity}
+              variant="filled"
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
           <section id="game-name">
             <div className="container-main">
               <div className="row">
@@ -283,6 +372,145 @@ function ProductDetail() {
                       <p>{game?.genre?.genreName}</p>
                     </div>
                   </div>
+                  {comments.length !== 0 ? (
+                    <div className="comment-area">
+                      <Swiper
+                        spaceBetween={22}
+                        className="mySwiper"
+                        breakpoints={{
+                          320: {
+                            slidesPerView: 1.5,
+                            spaceBetween: 20,
+                          },
+                          768: {
+                            slidesPerView: 5,
+                            spaceBetween: 20,
+                          },
+                          1024: {
+                            slidesPerView: 5,
+                            spaceBetween: 20,
+                          },
+                          1920: {
+                            slidesPerView: 3,
+                            spaceBetween: 32,
+                          },
+                        }}
+                      >
+                        {comments.map((comment, index) => {
+                          return (
+                            <SwiperSlide key={index}>
+                              {" "}
+                              <div className="comment-item">
+                                <div className="user-details">
+                                  <span>{comment.subject}</span>
+                                  <p>by {comment.username}</p>
+                                </div>
+                                <hr />
+                                <div className="comment">
+                                  <p>"{comment.comment}."</p>
+                                </div>
+                                <div className="date">
+                                  <span>{comment.createdDate}</span>
+                                </div>
+                              </div>
+                            </SwiperSlide>
+                          );
+                        })}
+                      </Swiper>
+                    </div>
+                  ) : (
+                    <Alert
+                      variant="outlined"
+                      sx={{ marginTop: "50px" }}
+                      severity="info"
+                    >
+                      Nobody commented on this game, comment and be first!
+                    </Alert>
+                  )}
+
+                  {userId ? (
+                    <div className="add-comment-area mt-5">
+                      <form onSubmit={handleSubmit}>
+                        <div className="row">
+                          <div className="col-6">
+                            <div className="username-input">
+                              <input
+                                id="username"
+                                type="text"
+                                placeholder="Username"
+                                className="form-control"
+                                onChange={handleChange}
+                                value={values.username}
+                                disabled
+                                autoComplete="off"
+                              />
+                              {errors.username && (
+                                <p className="error">{errors.username}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="col-6">
+                            <div className="subject-input">
+                              <input
+                                id="subject"
+                                type="text"
+                                placeholder="Subject"
+                                className="form-control"
+                                onChange={handleChange}
+                                value={values.subject}
+                                autoComplete="off"
+                              />
+                              {errors.subject && (
+                                <p className="error">{errors.subject}</p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="col-12 mt-3">
+                            <div className="comment-text">
+                              <textarea
+                                id="comment"
+                                style={{ width: "100%" }}
+                                onChange={handleChange}
+                                value={values.comment}
+                                autoComplete="off"
+                                placeholder="Comment"
+                                rows="5"
+                              ></textarea>
+                              {errors.comment && (
+                                <p className="error">{errors.comment}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={
+                            errors.username ||
+                            errors.subject ||
+                            errors.comment ||
+                            values.comment == "" ||
+                            values.username == "" ||
+                            values.subject == "" ||
+                            isSubmitting ||
+                            commentLoading
+                          }
+                          className="add-comment"
+                        >
+                          {commentLoading ? (
+                            <CircularProgress
+                              size={24}
+                              sx={{ color: "white" }}
+                            />
+                          ) : (
+                            "Add Comment"
+                          )}
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
                   <div className="system-requirements">
                     <div className="requirement-title">
                       <h2>{`${game?.productName} System Requirements`}</h2>
@@ -428,14 +656,18 @@ function ProductDetail() {
                   <div className="game-operations">
                     <div className="game-logo">
                       {game && (
-                        <img src={`${baseURL}${game.productLogo}`} alt="" />
+                        <img src={`${baseURL}${game?.productLogo}`} alt="" />
                       )}
                     </div>
                     <div className="type">
                       <span>{game?.productType.typeName}</span>
                     </div>
                     <div className="price">
-                      <span>${game?.productPrice}</span>
+                      <span>
+                        {game?.productPrice === 0
+                          ? "Free"
+                          : `$${game?.productPrice}`}
+                      </span>
                     </div>
                     {library.includes(game?.id) ? (
                       <div className="buy-wish">
@@ -448,97 +680,114 @@ function ProductDetail() {
                           In Library
                         </button>
                       </div>
-                    ) : (
+                    ) : game.count <= 0 ? (
                       <div className="buy-wish">
-                        {basket.includes(game?.id) ? (
-                          <Link to="/cart" className="in-cart">
-                            View in cart
-                          </Link>
-                        ) : userId ? (
-                          <button
-                            className="add-cart"
-                            onClick={() => addToCart(game?.id)}
-                          >
-                            {cartLoading ? (
-                              <CircularProgress
-                                size={24}
-                                sx={{ color: "white" }}
-                              />
-                            ) : (
-                              "Add to cart"
-                            )}
-                          </button>
-                        ) : (
-                          <Link
-                            className="in-cart"
-                            style={{ textTransform: "uppercase" }}
-                            to="/login"
-                          >
-                            Add to cart
-                          </Link>
-                        )}
+                        <button
+                          className="in-library"
+                          disabled
+                          style={{ cursor: "not-allowed" }}
+                        >
+                          <img src={inlibrary} alt="" />
+                          Out Of Stock
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {" "}
+                        <div className="buy-wish">
+                          {basket.includes(game?.id) ? (
+                            <Link to="/cart" className="in-cart">
+                              View in cart
+                            </Link>
+                          ) : userId ? (
+                            <button
+                              className="add-cart"
+                              onClick={() => addToCart(game?.id)}
+                            >
+                              {cartLoading ? (
+                                <CircularProgress
+                                  size={24}
+                                  sx={{ color: "white" }}
+                                />
+                              ) : (
+                                "Add to cart"
+                              )}
+                            </button>
+                          ) : (
+                            <Link
+                              className="in-cart"
+                              style={{ textTransform: "uppercase" }}
+                              to="/login"
+                            >
+                              Add to cart
+                            </Link>
+                          )}
 
-                        {wishlist.includes(game?.id) ? (
-                          <Tooltip
-                            title="Remove from wishlist"
-                            placement="bottom"
-                            slotProps={{
-                              popper: {
-                                modifiers: [
-                                  {
-                                    name: "offset",
-                                    options: {
-                                      offset: [0, -5],
+                          {wishlist.includes(game?.id) ? (
+                            <Tooltip
+                              title="Remove from wishlist"
+                              placement="bottom"
+                              slotProps={{
+                                popper: {
+                                  modifiers: [
+                                    {
+                                      name: "offset",
+                                      options: {
+                                        offset: [0, -5],
+                                      },
                                     },
-                                  },
-                                ],
-                              },
-                            }}
-                          >
+                                  ],
+                                },
+                              }}
+                            >
+                              <button
+                                className="add-wishlist"
+                                onClick={() => removeFromWishlist(game?.id)}
+                              >
+                                {wishlistLoading ? (
+                                  <CircularProgress
+                                    size={24}
+                                    color="secondary"
+                                  />
+                                ) : (
+                                  "In wishlist"
+                                )}
+                              </button>
+                            </Tooltip>
+                          ) : userId ? (
                             <button
                               className="add-wishlist"
-                              onClick={() => removeFromWishlist(game?.id)}
+                              onClick={() => addToWishlist(game?.id)}
                             >
                               {wishlistLoading ? (
                                 <CircularProgress size={24} color="secondary" />
                               ) : (
-                                "In wishlist"
+                                <>
+                                  <div className="to-wishlist">
+                                    <span className="add-to-wishlist">
+                                      <div className="wishlist-circle">
+                                        <div className="plus-item"></div>
+                                      </div>
+                                    </span>
+                                  </div>
+                                  Add to wishlist
+                                </>
                               )}
                             </button>
-                          </Tooltip>
-                        ) : userId ? (
-                          <button
-                            className="add-wishlist"
-                            onClick={() => addToWishlist(game?.id)}
-                          >
-                            {wishlistLoading ? (
-                              <CircularProgress size={24} color="secondary" />
-                            ) : (
-                              <>
-                                <div className="to-wishlist">
-                                  <span className="add-to-wishlist">
-                                    <div className="wishlist-circle">
-                                      <div className="plus-item"></div>
-                                    </div>
-                                  </span>
-                                </div>
-                                Add to wishlist
-                              </>
-                            )}
-                          </button>
-                        ) : (
-                          <Link className="add-wishlist" to="/login">
-                            <div className="to-wishlist">
-                              <span className="add-to-wishlist">
-                                <div className="wishlist-circle">
-                                  <div className="plus-item"></div>
-                                </div>
-                              </span>
-                            </div>
-                            Add to wishlist
-                          </Link>
-                        )}
-                      </div>
+                          ) : (
+                            <Link className="add-wishlist" to="/login">
+                              <div className="to-wishlist">
+                                <span className="add-to-wishlist">
+                                  <div className="wishlist-circle">
+                                    <div className="plus-item"></div>
+                                  </div>
+                                </span>
+                              </div>
+                              Add to wishlist
+                            </Link>
+                          )}
+                        </div>
+                      </>
                     )}
 
                     <div className="creator-detail">
@@ -554,7 +803,7 @@ function ProductDetail() {
                         <li className="release">
                           <span>Release Date</span>
                           <p>
-                            {moment(game?.createdDate).format("DD/MM/YYYY")}
+                            {moment(game?.releaseDate).format("DD/MM/YYYY")}
                           </p>
                         </li>
                         <li className="platform">

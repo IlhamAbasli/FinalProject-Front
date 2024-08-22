@@ -39,6 +39,9 @@ function Header() {
   useEffect(() => {
     fetchCart();
   }, [id]);
+  useEffect(() => {
+    fetchCart();
+  });
 
   useEffect(() => {
     const storedToken = localStorage.getItem("user-info");

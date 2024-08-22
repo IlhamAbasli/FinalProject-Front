@@ -280,7 +280,12 @@ function Cart() {
                               </div>
                             </div>
                             <div className="price">
-                              <span>${item.product.productPrice}</span>
+                              <span>
+                                {" "}
+                                {item.product.productPrice === 0
+                                  ? "Free"
+                                  : `$${item.product.productPrice}`}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -467,7 +472,9 @@ function Cart() {
                                   {item.product.productName}
                                 </span>
                                 <span className="price">
-                                  ${item.product.productPrice}
+                                  {item.product.productPrice === 0
+                                    ? "Free"
+                                    : `$${item.product.productPrice}`}
                                 </span>
                               </div>
                             </div>

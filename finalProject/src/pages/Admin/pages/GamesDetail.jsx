@@ -21,6 +21,7 @@ function GamesDetail() {
         setGame(response.data);
         console.log(response.data);
       } catch (error) {
+        navigate("/notfound");
         console.error("Error fetching news:", error);
       }
     };

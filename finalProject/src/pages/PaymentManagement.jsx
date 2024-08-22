@@ -10,7 +10,7 @@ import { paymentMethodSchema } from "../schemas";
 import { useFormik } from "formik";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { Snackbar, Alert, TextField, CircularProgress } from "@mui/material";
+import { Snackbar, Alert, CircularProgress } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
 function PaymentManagement() {

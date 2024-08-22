@@ -50,6 +50,7 @@ import ResetPassword from "./pages/ResetPassword";
 import ProtectedRouteForEmailConfirm from "./components/ProtectedRouteForEmailConfirm";
 import Users from "./pages/Admin/pages/Users";
 import AddRole from "./pages/Admin/pages/AddRole";
+import Comments from "./pages/Admin/pages/Comments";
 
 function App() {
   const location = useLocation();
@@ -94,6 +95,8 @@ function App() {
 
     "/admin/users",
     "/admin/users/addrole",
+
+    "/admin/comments",
   ];
 
   const shouldHideHeaderFooter = noHeaderFooterPaths.some((path) =>
@@ -402,11 +405,20 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/admin/users/addrole"
             element={
               <PrivateRoute roles={["SuperAdmin"]}>
                 <AddRole />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/comments"
+            element={
+              <PrivateRoute roles={["SuperAdmin", "Admin"]}>
+                <Comments />
               </PrivateRoute>
             }
           />
