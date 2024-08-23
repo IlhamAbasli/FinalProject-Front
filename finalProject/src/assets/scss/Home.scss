@@ -969,10 +969,17 @@
         }
       }
       p {
+        width: 100%;
+        max-height: 60px;
         font-size: 16px;
         line-height: 20px;
         color: #f5f5f599;
         margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: wrap;
+        display: inline-block;
+        vertical-align: middle;
       }
       .price {
         margin-top: 25px;

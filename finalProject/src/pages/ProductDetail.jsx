@@ -680,7 +680,7 @@ function ProductDetail() {
                           In Library
                         </button>
                       </div>
-                    ) : game.count <= 0 ? (
+                    ) : game?.count <= 0 ? (
                       <div className="buy-wish">
                         <button
                           className="in-library"
